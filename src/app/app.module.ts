@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 // search module
@@ -18,6 +18,7 @@ import { initFirebaseBackend } from './authUtils';
 import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { JwtInterceptor } from './core/helpers/jwt.interceptor';
+import { KeycloakService } from './core/services/keycloak.service';
 
 // Language
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -43,6 +44,15 @@ import { AuthenticationEffects } from './store/Authentication/authentication.eff
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
+
+export function initializeKeycloak(keycloakService: KeycloakService) {
+    return () => {
+        if (environment.defaultauth === 'keycloak') {
+            return keycloakService.init();
+        }
+        return Promise.resolve(true);
+    };
 }
 
 if (environment.defaultauth === 'firebase') {
@@ -90,6 +100,12 @@ if (environment.defaultauth === 'firebase') {
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initializeKeycloak,
+            deps: [KeycloakService],
+            multi: true
+        },
         provideHttpClient(withInterceptorsFromDi()),
     ] })
 export class AppModule { }

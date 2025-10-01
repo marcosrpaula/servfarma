@@ -5,16 +5,25 @@ import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/ro
 import { AuthenticationService } from '../services/auth.service';
 import { AuthfakeauthenticationService } from '../services/authfake.service';
 import { environment } from '../../../environments/environment';
+import { KeycloakService } from '../services/keycloak.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard  {
     constructor(
         private router: Router,
         private authenticationService: AuthenticationService,
-        private authFackservice: AuthfakeauthenticationService
+        private authFackservice: AuthfakeauthenticationService,
+        private keycloakService: KeycloakService
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+        if (environment.defaultauth === 'keycloak') {
+            if (this.keycloakService.isLoggedIn()) {
+                return true;
+            }
+            this.keycloakService.login({ redirectUri: window.location.origin + state.url });
+            return false;
+        }
         if (environment.defaultauth === 'firebase') {
             const currentUser = this.authenticationService.currentUser();
             if (currentUser) {
