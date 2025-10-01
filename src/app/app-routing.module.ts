@@ -16,6 +16,10 @@ const routes: Routes = [
       {
         path: '',
         loadChildren: () => import('./pages/extrapages/extraspages.module').then(m => m.ExtraspagesModule)
+      },
+      {
+        path: 'gestao',
+        loadChildren: () => import('./pages/user-management/user-management.module').then(m => m.UserManagementModule)
       }
     ]
   },

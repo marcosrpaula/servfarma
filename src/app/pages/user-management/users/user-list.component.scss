@@ -1,0 +1,9 @@
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.badge-soft-secondary {
+  background-color: rgba(var(--vz-secondary-rgb), 0.15);
+  color: var(--vz-secondary);
+}

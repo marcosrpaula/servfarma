@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -7,6 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
+import { PermissionDictionary, PermissionService } from '../../core/services/permission.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-horizontal-topbar',
@@ -14,20 +16,24 @@ import { MenuItem } from './menu.model';
     styleUrls: ['./horizontal-topbar.component.scss'],
     standalone: false
 })
-export class HorizontalTopbarComponent implements OnInit {
+export class HorizontalTopbarComponent implements OnInit, OnDestroy {
 
   menu: any;
   menuItems: MenuItem[] = [];
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
+  private permissionSubscription?: Subscription;
 
-  constructor(private router: Router, public translate: TranslateService) {
+  constructor(private router: Router, public translate: TranslateService, private permissionService: PermissionService) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-    // Menu Items
-    this.menuItems = MENU;
+    this.permissionService.ensurePermissionsLoaded();
+    this.permissionSubscription = this.permissionService.permissions$.subscribe(permissions => {
+      this.menuItems = this.filterMenuItems(MENU, permissions);
+      setTimeout(() => this.initActiveMenu(), 0);
+    });
   }
 
   /***
@@ -35,6 +41,10 @@ export class HorizontalTopbarComponent implements OnInit {
    */
    ngAfterViewInit() {
     this.initActiveMenu();
+  }
+
+  ngOnDestroy(): void {
+    this.permissionSubscription?.unsubscribe();
   }
 
   removeActivation(items: any) {   
@@ -53,6 +63,42 @@ export class HorizontalTopbarComponent implements OnInit {
       }
       item.classList.remove("active");
     });
+  }
+
+  private filterMenuItems(items: MenuItem[], permissions: PermissionDictionary | null): MenuItem[] {
+    const filtered: MenuItem[] = [];
+    for (const item of items) {
+      if (!this.canDisplayMenuItem(item, permissions)) {
+        continue;
+      }
+      const clone: MenuItem = { ...item };
+      if (item.subItems) {
+        const subItems = this.filterMenuItems(item.subItems, permissions);
+        if (subItems.length) {
+          clone.subItems = subItems;
+        } else {
+          delete clone.subItems;
+          if (!item.link) {
+            continue;
+          }
+        }
+      }
+      filtered.push(clone);
+    }
+    return filtered;
+  }
+
+  private canDisplayMenuItem(item: MenuItem, permissions: PermissionDictionary | null): boolean {
+    if (!item.permission) {
+      return true;
+    }
+    if (!permissions) {
+      return true;
+    }
+    if (Array.isArray(item.permission)) {
+      return item.permission.every(expression => this.permissionService.can(expression));
+    }
+    return this.permissionService.can(item.permission);
   }
 
   // remove active items of two-column-menu
