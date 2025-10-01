@@ -18,7 +18,7 @@ export const environment = {
   keycloak: {
     url: 'http://localhost:8080',
     realm: 'servfarma',
-    clientId: 'servfarma-frontend',
+    clientId: 'frontend',
     initOptions: {
       onLoad: 'login-required',
       checkLoginIframe: false,
