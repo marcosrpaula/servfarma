@@ -1,10 +1,12 @@
-import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from 'src/environments/environment';
+import { PermissionDictionary, PermissionService } from '../../core/services/permission.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-sidebar',
@@ -12,21 +14,25 @@ import { environment } from 'src/environments/environment';
     styleUrls: ['./sidebar.component.scss'],
     standalone: false
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit, OnDestroy {
 
   menu: any;
   toggle: any = true;
   menuItems: MenuItem[] = [];
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
+  private permissionSubscription?: Subscription;
 
-  constructor(private router: Router, public translate: TranslateService) {
+  constructor(private router: Router, public translate: TranslateService, private permissionService: PermissionService) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-    // Menu Items
-    this.menuItems = MENU;
+    this.permissionService.ensurePermissionsLoaded();
+    this.permissionSubscription = this.permissionService.permissions$.subscribe(permissions => {
+      this.menuItems = this.filterMenuItems(MENU, permissions);
+      setTimeout(() => this.initActiveMenu(), 0);
+    });
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') != "twocolumn") {
         if (event instanceof NavigationEnd) {
@@ -36,6 +42,10 @@ export class SidebarComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.permissionSubscription?.unsubscribe();
+  }
+
   /***
    * Activate droup down set
    */
@@ -43,6 +53,42 @@ export class SidebarComponent implements OnInit {
     setTimeout(() => {
       this.initActiveMenu();
     }, 0);
+  }
+
+  private filterMenuItems(items: MenuItem[], permissions: PermissionDictionary | null): MenuItem[] {
+    const filtered: MenuItem[] = [];
+    for (const item of items) {
+      if (!this.canDisplayMenuItem(item, permissions)) {
+        continue;
+      }
+      const clone: MenuItem = { ...item };
+      if (item.subItems) {
+        const subItems = this.filterMenuItems(item.subItems, permissions);
+        if (subItems.length) {
+          clone.subItems = subItems;
+        } else {
+          delete clone.subItems;
+          if (!item.link) {
+            continue;
+          }
+        }
+      }
+      filtered.push(clone);
+    }
+    return filtered;
+  }
+
+  private canDisplayMenuItem(item: MenuItem, permissions: PermissionDictionary | null): boolean {
+    if (!item.permission) {
+      return true;
+    }
+    if (!permissions) {
+      return true;
+    }
+    if (Array.isArray(item.permission)) {
+      return item.permission.every(expression => this.permissionService.can(expression));
+    }
+    return this.permissionService.can(item.permission);
   }
 
   removeActivation(items: any) {
