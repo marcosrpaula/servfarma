@@ -1,0 +1,18 @@
+.card-title {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.form-check-label {
+  width: 100%;
+}
+
+.form-check-input:focus {
+  box-shadow: none;
+}
+
+.form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}

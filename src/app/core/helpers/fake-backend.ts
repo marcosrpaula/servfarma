@@ -11,6 +11,10 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
+        if (/^https?:\/\//i.test(request.url)) {
+            return next.handle(request);
+        }
+
         // tslint:disable-next-line: max-line-length
         const users: any[] = JSON.parse(sessionStorage.getItem('users')!) || [{ username: 'admin', email: 'admin@themesbrand.com', password: '123456' }];
 

@@ -1,0 +1,101 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="user-form">
+  <div class="row g-3">
+    <div class="col-md-6">
+      <label class="form-label">Nome</label>
+      <input type="text" class="form-control" formControlName="firstName" placeholder="Nome" />
+      <div class="invalid-feedback d-block" *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched">
+        Informe o nome.
+      </div>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Sobrenome</label>
+      <input type="text" class="form-control" formControlName="lastName" placeholder="Sobrenome" />
+      <div class="invalid-feedback d-block" *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched">
+        Informe o sobrenome.
+      </div>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">E-mail</label>
+      <input type="email" class="form-control" formControlName="email" placeholder="email@empresa.com" />
+      <div class="invalid-feedback d-block" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+        Informe um e-mail válido.
+      </div>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Documento</label>
+      <input type="text" class="form-control" formControlName="document" placeholder="CPF/CNPJ" />
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Telefone</label>
+      <input type="tel" class="form-control" formControlName="phone" placeholder="(00) 00000-0000" />
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Status</label>
+      <select class="form-select" formControlName="status">
+        <option value="active">Ativo</option>
+        <option value="inactive">Inativo</option>
+        <option value="blocked">Bloqueado</option>
+      </select>
+    </div>
+    <div class="col-md-4" *ngIf="!isEditMode">
+      <label class="form-label">Senha provisória</label>
+      <input type="password" class="form-control" formControlName="password" placeholder="Senha" />
+      <div class="invalid-feedback d-block" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">
+        A senha deve conter pelo menos 6 caracteres.
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="isEditMode">
+      <label class="form-label">Redefinir senha (opcional)</label>
+      <input type="password" class="form-control" formControlName="password" placeholder="Nova senha" />
+    </div>
+    <div class="col-12">
+      <label class="form-label">Perfis de acesso</label>
+      <ng-select
+        [items]="roles"
+        bindLabel="name"
+        bindValue="id"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        [searchable]="true"
+        formControlName="roleIds"
+        placeholder="Selecione um ou mais perfis"
+      >
+        <ng-template ng-option-tmp let-item="item">
+          <div class="d-flex flex-column">
+            <span class="fw-semibold">{{ item.name }}</span>
+            <small class="text-muted" *ngIf="item.description">{{ item.description }}</small>
+          </div>
+        </ng-template>
+      </ng-select>
+      <div class="invalid-feedback d-block" *ngIf="form.get('roleIds')?.invalid && form.get('roleIds')?.touched">
+        Selecione ao menos um perfil.
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4" />
+
+  <div class="mb-3 d-flex align-items-center justify-content-between">
+    <h5 class="mb-0">Permissões individuais</h5>
+    <span class="text-muted small">Personalize as diretivas liberadas para este usuário.</span>
+  </div>
+
+  <app-permission-grid
+    [permissionsForm]="permissionsArray"
+    [loading]="loading && !permissionsArray.length"
+  ></app-permission-grid>
+
+  <div class="alert alert-danger mt-3" *ngIf="submissionError">
+    {{ submissionError }}
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button type="button" class="btn btn-outline-secondary" (click)="cancelForm()" [disabled]="loading">
+      Cancelar
+    </button>
+    <button type="submit" class="btn btn-primary" [disabled]="loading">
+      <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="loading"></span>
+      {{ isEditMode ? 'Salvar alterações' : 'Cadastrar usuário' }}
+    </button>
+  </div>
+</form>

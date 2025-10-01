@@ -18,6 +18,8 @@ import { initFirebaseBackend } from './authUtils';
 import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { JwtInterceptor } from './core/helpers/jwt.interceptor';
+import { ApiPrefixInterceptor } from './core/helpers/api-prefix.interceptor';
+import { CaseTransformInterceptor } from './core/helpers/case-transform.interceptor';
 import { KeycloakService } from './core/services/keycloak.service';
 
 // Language
@@ -40,6 +42,8 @@ import { FileManagerEffects } from './store/File Manager/filemanager_effect';
 import { TodoEffects } from './store/Todo/todo_effect';
 import { ApplicationEffects } from './store/Jobs/jobs_effect';
 import { ApikeyEffects } from './store/APIKey/apikey_effect';
+import { UsersEffects } from './store/Administration/users/users.effects';
+import { RolesEffects } from './store/Administration/roles/roles.effects';
 import { AuthenticationEffects } from './store/Authentication/authentication.effects';
 
 export function createTranslateLoader(http: HttpClient): any {
@@ -93,11 +97,15 @@ if (environment.defaultauth === 'firebase') {
             FileManagerEffects,
             TodoEffects,
             ApplicationEffects,
-            ApikeyEffects
+            ApikeyEffects,
+            UsersEffects,
+            RolesEffects
         ]),
         PagesModule,
         NgPipesModule], providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: ApiPrefixInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: CaseTransformInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true },
         {
