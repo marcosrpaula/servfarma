@@ -516,6 +516,13 @@ export const MENU: MenuItem[] = [
         link: '/apikey',
         parentId: 8,
       },
+      {
+        id: 200,
+        label: 'Administração',
+        icon: 'ri-shield-user-line',
+        link: '/administration/users',
+        parentId: 8,
+      },
     ]
   },
   {
