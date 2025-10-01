@@ -24,7 +24,6 @@ import { ContactComponent } from './landing/index/contact/contact.component';
 import { FooterComponent } from './landing/index/footer/footer.component';
 import { ScrollspyDirective } from './scrollspy.directive';
 import { LandingScrollspyDirective } from './landingscrollspy.directive';
-import { HasPermissionDirective } from './directives/has-permission.directive';
 
 // NFT Landing 
 import { MarketPlaceComponent } from './landing/nft/market-place/market-place.component';
@@ -80,13 +79,11 @@ import { JobFooterComponent } from './landing/job/job-footer/job-footer.componen
     NgbAccordionModule,
     NgbDropdownModule,
     SlickCarouselModule,
-    CountUpModule,
-    HasPermissionDirective
+    CountUpModule
   ],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   exports: [BreadcrumbsComponent, ClientLogoComponent, ServicesComponent, CollectionComponent, CtaComponent, DesignedComponent, PlanComponent, FaqsComponent, ReviewComponent, CounterComponent, WorkProcessComponent, TeamComponent, ContactComponent, FooterComponent, 
     WalletComponent, MarketPlaceComponent, FeaturesComponent, CategoriesComponent, DiscoverComponent, TopCreatorComponent,   ScrollspyDirective,
-    LandingScrollspyDirective, ProcessComponent, FindjobsComponent, CandidatesComponent, BlogComponent, JobcategoriesComponent, JobFooterComponent,
-    HasPermissionDirective]
+    LandingScrollspyDirective, ProcessComponent, FindjobsComponent, CandidatesComponent, BlogComponent, JobcategoriesComponent, JobFooterComponent]
 })
 export class SharedModule { }
