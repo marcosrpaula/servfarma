@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  defaultauth: 'fakebackend',
+  defaultauth: 'keycloak',
   firebaseConfig: {
     apiKey: '',
     authDomain: '',
@@ -14,6 +14,16 @@ export const environment = {
     messagingSenderId: '',
     appId: '',
     measurementId: ''
+  },
+  keycloak: {
+    url: 'http://localhost:8080',
+    realm: 'servfarma',
+    clientId: 'servfarma-frontend',
+    initOptions: {
+      onLoad: 'login-required',
+      checkLoginIframe: false,
+      pkceMethod: 'S256'
+    }
   }
 };
 

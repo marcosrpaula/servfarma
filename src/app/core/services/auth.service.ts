@@ -3,10 +3,12 @@ import { getFirebaseBackend } from '../../authUtils';
 import { User } from 'src/app/store/Authentication/auth.models';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, from, of, throwError } from 'rxjs';
 import { GlobalComponent } from "../../global-component";
 import { Store } from '@ngrx/store';
 import { RegisterSuccess, loginFailure, loginSuccess, logout, logoutSuccess } from 'src/app/store/Authentication/authentication.actions';
+import { KeycloakService } from './keycloak.service';
+import { environment } from 'src/environments/environment';
 
 const AUTH_API = GlobalComponent.AUTH_API;
 
@@ -28,7 +30,7 @@ export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<User>;
     // public currentUser: Observable<User>;
 
-    constructor(private http: HttpClient, private store: Store) {
+    constructor(private http: HttpClient, private store: Store, private keycloakService: KeycloakService) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(sessionStorage.getItem('currentUser')!));
         // this.currentUser = this.currentUserSubject.asObservable();
      }
@@ -100,14 +102,16 @@ export class AuthenticationService {
      */
     logout() {
         this.store.dispatch(logout());
-        // logout the user
-        // return getFirebaseBackend()!.logout();
         sessionStorage.removeItem('currentUser');
         sessionStorage.removeItem('token');
         this.currentUserSubject.next(null!);
 
+        if (environment.defaultauth === 'keycloak') {
+            return from(this.keycloakService.logout(window.location.origin));
+        }
+
         return of(undefined).pipe(
-        
+
         );
 
     }

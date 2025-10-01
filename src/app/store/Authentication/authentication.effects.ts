@@ -1,11 +1,12 @@
 import { Injectable, Inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, switchMap, catchError, exhaustMap, tap } from 'rxjs/operators';
-import { from, of } from 'rxjs';
+import { EMPTY, from, of } from 'rxjs';
 import { AuthenticationService } from '../../core/services/auth.service';
 import { login, loginSuccess, loginFailure, logout, logoutSuccess, Register} from './authentication.actions';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { KeycloakService } from '../../core/services/keycloak.service';
 
 @Injectable()
 export class AuthenticationEffects {
@@ -40,12 +41,17 @@ export class AuthenticationEffects {
             }
             return loginSuccess({ user });
           }),
-          catchError((error) => of(loginFailure({ error })), // Closing parenthesis added here
-        ));
+          catchError((error) => of(loginFailure({ error })))
+        );
       } else if (environment.defaultauth === "firebase") {
         return of(); // Return an observable, even if it's empty
+      } else if (environment.defaultauth === 'keycloak') {
+        return from(this.keycloakService.login({ redirectUri: window.location.origin + '/' })).pipe(
+          switchMap(() => EMPTY),
+          catchError(() => EMPTY)
+        );
       } else {
-        return of(); // Return an observable, even if it's empty
+        return EMPTY;
       }
     })
   )
@@ -64,6 +70,7 @@ export class AuthenticationEffects {
   constructor(
     @Inject(Actions) private actions$: Actions,
     private AuthenticationService: AuthenticationService,
-    private router: Router) { }
+    private router: Router,
+    private keycloakService: KeycloakService) { }
 
 }

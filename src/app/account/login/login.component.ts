@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 // Login Auth
 import { environment } from '../../../environments/environment';
 import { AuthenticationService } from '../../core/services/auth.service';
-import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
-import { first } from 'rxjs/operators';
 import { ToastService } from './toast-service';
 import { Store } from '@ngrx/store';
 import { login } from 'src/app/store/Authentication/authentication.actions';
+import { KeycloakService } from '../../core/services/keycloak.service';
 
 @Component({
     selector: 'app-login',
@@ -36,15 +35,24 @@ export class LoginComponent implements OnInit {
   year: number = new Date().getFullYear();
 
   constructor(private formBuilder: UntypedFormBuilder,private authenticationService: AuthenticationService,private router: Router,
-    private authFackservice: AuthfakeauthenticationService, private route: ActivatedRoute, public toastService: ToastService,
-    private store: Store) {
+    public toastService: ToastService,
+    private store: Store, private keycloakService: KeycloakService) {
       // redirect to home if already logged in
+      if (environment.defaultauth === 'keycloak' && this.keycloakService.isLoggedIn()) {
+        this.router.navigate(['/']);
+        return;
+      }
       if (this.authenticationService.currentUserValue) {
         this.router.navigate(['/']);
       }
      }
 
   ngOnInit(): void {
+    if (environment.defaultauth === 'keycloak') {
+      this.keycloakService.login({ redirectUri: window.location.origin + '/' });
+      return;
+    }
+
     if(sessionStorage.getItem('currentUser')) {
       this.router.navigate(['/']);
     }
@@ -67,6 +75,11 @@ export class LoginComponent implements OnInit {
    */
    onSubmit() {
     this.submitted = true;
+
+    if (environment.defaultauth === 'keycloak') {
+      this.keycloakService.login({ redirectUri: window.location.origin + '/' });
+      return;
+    }
 
      // Login Api
      this.store.dispatch(login({ email: this.f['email'].value, password: this.f['password'].value }));
