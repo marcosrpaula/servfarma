@@ -100,19 +100,6 @@ export class VerticalComponent implements OnInit {
     this.isCondensed = !this.isCondensed;
   }
 
-  /**
-   * on settings button clicked from topbar
-   */
-  onSettingsButtonClicked() {
-    document.body.classList.toggle('right-bar-enabled');
-    const rightBar = document.getElementById('theme-settings-offcanvas');
-    if (rightBar != null) {
-      rightBar.classList.toggle('show');
-      rightBar.setAttribute('style', "visibility: visible;");
-
-    }
-  }
-
   onResize(event: any) {
     if (document.body.getAttribute('layout') == "twocolumn") {
       if (event.target.innerWidth <= 767) {

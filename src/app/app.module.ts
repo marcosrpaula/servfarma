@@ -8,7 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { LayoutsModule } from "./layouts/layouts.module";
-import { PagesModule } from "./pages/pages.module";
 
 // Auth
 import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -95,7 +94,6 @@ if (environment.defaultauth === 'firebase') {
             ApplicationEffects,
             ApikeyEffects
         ]),
-        PagesModule,
         NgPipesModule], providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

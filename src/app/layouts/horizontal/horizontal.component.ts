@@ -20,18 +20,6 @@ export class HorizontalComponent implements OnInit {
   }
 
   /**
-   * on settings button clicked from topbar
-   */
-  onSettingsButtonClicked() {
-    document.body.classList.toggle('right-bar-enabled');
-    const rightBar = document.getElementById('theme-settings-offcanvas');
-    if (rightBar != null) {
-      rightBar.classList.toggle('show');
-      rightBar.setAttribute('style', "visibility: visible;");
-    }
-  }
-
-  /**
    * On mobile toggle button clicked
    */
   onToggleMobileMenu() {
