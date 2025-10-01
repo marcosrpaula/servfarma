@@ -261,6 +261,25 @@ code {
     display: var(--#{$prefix}card-logo-light);
 }
 
+.logo-img {
+    max-height: 40px;
+    height: auto;
+    width: auto;
+}
+
+.logo .logo-img {
+    max-height: 36px;
+}
+
+.auth-logo .logo-img {
+    max-height: 48px;
+}
+
+.card-logo.logo-img,
+.card-logo-light.logo-img {
+    max-height: 28px;
+}
+
 .card-logo-dark {
     display: var(--#{$prefix}card-logo-dark);
 }
