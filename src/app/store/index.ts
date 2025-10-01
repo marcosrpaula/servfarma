@@ -11,8 +11,6 @@ import { FileManagerReducer, FileManagerState } from "./File Manager/filemanager
 import { TodoReducer, TodoState } from "./Todo/todo_reducer";
 import { ApplicationReducer, ApplicationState } from "./Jobs/jobs_reducer";
 import { ApikeyReducer, ApikeyState } from "./APIKey/apikey_reducer";
-import { usersReducer, UsersState } from "./Administration/users/users.reducer";
-import { rolesReducer, RolesState } from "./Administration/roles/roles.reducer";
 // import { authenticationReducer, AuthenticationState } from "./Authentication/authentication.reducer";
 
 export interface RootReducerState {
@@ -28,8 +26,6 @@ export interface RootReducerState {
     Todo: TodoState;
     Jobs: ApplicationState;
     APIKey: ApikeyState;
-    userManagement: UsersState;
-    roles: RolesState;
     // authentication: AuthenticationState;
 }
 
@@ -46,8 +42,6 @@ export const rootReducer: ActionReducerMap<RootReducerState> = {
     Todo: TodoReducer,
     Jobs: ApplicationReducer,
     APIKey: ApikeyReducer,
-    userManagement: usersReducer,
-    roles: rolesReducer,
     // authentication: authenticationReducer,
 
 }
