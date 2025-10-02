@@ -1,8 +1,49 @@
-.table td,
+﻿.table td,
 .table th {
   vertical-align: middle;
 }
 
-.badge {
-  font-weight: 500;
+.filter-form {
+  padding-top: 1.5rem;
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box .form-control {
+  padding-left: 2.5rem;
+}
+
+.search-box .search-icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: var(--vz-tertiary-color, #adb5bd);
+  font-size: 1rem;
+}
+
+.role-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  border-color: rgba(73, 88, 255, 0.2) !important;
+  background: rgba(73, 88, 255, 0.08) !important;
+  color: #4958ff !important;
+  letter-spacing: 0.05em;
+}
+
+.card-footer {
+  border-top: 1px solid rgba(15, 34, 58, 0.06);
+}
+
+@media (max-width: 767.98px) {
+  .filter-form {
+    padding-top: 1rem;
+  }
+
+  .search-box .form-control {
+    padding-left: 2.25rem;
+  }
 }

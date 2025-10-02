@@ -6,7 +6,7 @@
       <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
         <div>
           <h5 class="card-title mb-1">Usuarios</h5>
-          <p class="text-muted mb-0">Gerencie o acesso dos usuarios e seus perfis.</p>
+          <p class="text-muted mb-0">Gerencie o acesso dos usuarios, aplique filtros rapidos e mantenha a grade organizada.</p>
         </div>
         <button
           type="button"
@@ -18,6 +18,66 @@
           Novo usuario
         </button>
       </div>
+
+      <div class="card-body border-bottom pt-0">
+        <form
+          class="filter-form"
+          [formGroup]="filterForm"
+          autocomplete="off"
+          (submit)="$event.preventDefault()"
+        >
+          <div class="row g-3 align-items-center">
+            <div class="col-12 col-lg-4 col-md-6">
+              <div class="search-box">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Buscar por nome, e-mail, ID ou perfil"
+                  formControlName="search"
+                >
+                <i class="ri-search-line search-icon"></i>
+              </div>
+            </div>
+            <div class="col-6 col-lg-2 col-md-3">
+              <input
+                type="date"
+                class="form-control"
+                formControlName="createdFrom"
+                placeholder="De"
+                aria-label="Data inicial"
+              >
+            </div>
+            <div class="col-6 col-lg-2 col-md-3">
+              <input
+                type="date"
+                class="form-control"
+                formControlName="createdTo"
+                placeholder="Ate"
+                aria-label="Data final"
+              >
+            </div>
+            <div class="col-6 col-lg-2 col-md-3">
+              <select class="form-select" formControlName="status">
+                <option value="all">Todos os status</option>
+                <option value="active">Apenas ativos</option>
+                <option value="inactive">Apenas inativos</option>
+              </select>
+            </div>
+            <div class="col-6 col-lg-2 col-md-3 d-flex justify-content-end">
+              <button
+                type="button"
+                class="btn btn-soft-secondary w-100"
+                (click)="resetFilters()"
+                [disabled]="!hasFiltersActive"
+              >
+                <i class="ri-filter-off-line align-middle me-1"></i>
+                Limpar filtros
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
       <div class="card-body p-0">
         @if (loading) {
         <div class="p-5 text-center text-muted">
@@ -34,19 +94,49 @@
         </div>
         } @else if (!users.length) {
         <div class="p-5 text-center text-muted">
-          <i class="ri-user-line display-6 mb-3 d-block"></i>
+          <i class="ri-user-search-line display-6 mb-3 d-block"></i>
           <p class="fs-6 mb-1">Nenhum usuario encontrado.</p>
-          <p class="mb-0">Utilize o botao acima para cadastrar o primeiro usuario.</p>
+          <p class="mb-2">Ajuste os filtros ou cadastre um novo usuario.</p>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="createUser()"
+            *appHasPermission="'user:write'"
+          >
+            <i class="ri-user-add-line align-middle me-1"></i>
+            Cadastrar usuario
+          </button>
         </div>
         } @else {
+        @if (selectedCount) {
+        <div class="selection-summary px-4 py-3 border-bottom d-flex flex-wrap gap-2 align-items-center justify-content-between">
+          <span class="text-muted">
+            {{ selectedCount }} {{ selectedCount === 1 ? 'usuario selecionado' : 'usuarios selecionados' }}
+          </span>
+          <button type="button" class="btn btn-link btn-sm text-decoration-none" (click)="toggleSelectAll(false)">
+            Limpar selecao
+          </button>
+        </div>
+        }
+
         <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
+          <table class="table align-middle table-nowrap mb-0">
             <thead class="table-light">
               <tr>
-                <th>Nome</th>
+                <th style="width: 55px;">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input" #selectAll
+                      type="checkbox"
+                      [checked]="isAllVisibleSelected"
+                      (change)="toggleSelectAll(selectAll.checked)"
+                    >
+                  </div>
+                </th>
+                <th>Usuario</th>
                 <th>E-mail</th>
-                <th class="text-center">Status</th>
                 <th>Perfis</th>
+                <th>Status</th>
                 <th class="text-end">Acoes</th>
               </tr>
             </thead>
@@ -54,32 +144,57 @@
               @for (user of users; track trackByUserId($index, user)) {
               <tr>
                 <td>
-                  <div class="fw-semibold">{{ user.name || 'Sem nome' }}</div>
-                  <div class="text-muted small">ID: {{ user.id }}</div>
+                  <div class="form-check">
+                    <input
+                      class="form-check-input" #rowCheckbox
+                      type="checkbox"
+                      [checked]="isUserSelected(user)"
+                      (change)="toggleUserSelection(user, rowCheckbox.checked)"
+                    >
+                  </div>
                 </td>
-                <td>{{ user.email }}</td>
-                <td class="text-center">
-                  <span class="badge" [ngClass]="user.active ? 'badge-soft-success' : 'badge-soft-secondary'">
-                    {{ user.active ? 'Ativo' : 'Inativo' }}
-                  </span>
+                <td>
+                  <div class="d-flex align-items-center gap-3">
+                    <span class="avatar-initial">{{ getInitials(user) || 'US' }}</span>
+                    <div>
+                      <div class="fw-semibold text-body">{{ user.name || 'Sem nome' }}</div>
+                      <div class="text-muted small">ID: {{ user.id || 'N/A' }}</div>
+                      @if (user.createdAt) {
+                      <div class="text-muted small">Criado em {{ user.createdAt | date: 'dd/MM/yyyy' }}</div>
+                      }
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="text-body">{{ user.email || '-' }}</div>
                 </td>
                 <td>
                   @if (user.permissions.length) {
-                  {{ getRoleNames(user) }}
+                  <div class="d-flex flex-wrap gap-1">
+                    @for (role of user.permissions; track $index) {
+                    <span class="badge bg-light border role-chip">{{ role.name }}</span>
+                    }
+                  </div>
                   } @else {
                   <span class="text-muted">Sem perfis associados</span>
                   }
                 </td>
+                <td>
+                  <span class="badge status-badge" [ngClass]="user.active ? 'badge-soft-success' : 'badge-soft-secondary'">
+                    {{ user.active ? 'Ativo' : 'Inativo' }}
+                  </span>
+                </td>
                 <td class="text-end">
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-primary"
-                    (click)="editUser(user)"
-                    *appHasPermission="'user:write'"
-                  >
-                    <i class="ri-edit-line align-middle"></i>
-                    <span class="ms-1">Editar</span>
-                  </button>
+                  <div class="d-inline-flex gap-1">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      (click)="editUser(user)"
+                      *appHasPermission="'user:write'"
+                    >
+                      <i class="ri-edit-line align-middle"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
               }
@@ -88,6 +203,13 @@
         </div>
         }
       </div>
+
+      <div class="card-footer bg-light-subtle d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span class="text-muted small">Mostrando {{ users.length }} de {{ allUsers.length }} usuarios</span>
+        <span class="text-muted small" *ngIf="hasFiltersActive">Filtros ativos aprimoram a busca</span>
+      </div>
     </div>
   </div>
 </div>
+
+

@@ -6,9 +6,44 @@
       <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
         <div>
           <h5 class="card-title mb-1">Perfis de acesso</h5>
-          <p class="text-muted mb-0">A API atual apenas lista os perfis cadastrados.</p>
+          <p class="text-muted mb-0">Visualize os perfis configurados e encontre descricoes rapidamente.</p>
         </div>
       </div>
+
+      <div class="card-body border-bottom pt-0">
+        <form
+          class="filter-form"
+          [formGroup]="filterForm"
+          autocomplete="off"
+          (submit)="$event.preventDefault()"
+        >
+          <div class="row g-3 align-items-center">
+            <div class="col-12 col-md-8">
+              <div class="search-box">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Buscar por nome, descricao ou ID"
+                  formControlName="search"
+                >
+                <i class="ri-search-line search-icon"></i>
+              </div>
+            </div>
+            <div class="col-12 col-md-4 d-flex justify-content-md-end">
+              <button
+                type="button"
+                class="btn btn-soft-secondary w-100 w-md-auto"
+                (click)="resetFilters()"
+                [disabled]="!hasFiltersActive"
+              >
+                <i class="ri-filter-off-line align-middle me-1"></i>
+                Limpar filtros
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
       <div class="card-body p-0">
         @if (loading) {
         <div class="p-5 text-center text-muted">
@@ -25,29 +60,36 @@
         </div>
         } @else if (!roles.length) {
         <div class="p-5 text-center text-muted">
-          <i class="ri-shield-line display-6 mb-3 d-block"></i>
-          <p class="fs-6 mb-1">Nenhum perfil cadastrado.</p>
-          <p class="mb-0">Os perfis serao exibidos aqui assim que estiverem disponiveis na API.</p>
+          <i class="ri-shield-user-line display-6 mb-3 d-block"></i>
+          <p class="fs-6 mb-1">Nenhum perfil encontrado.</p>
+          <p class="mb-0">Os perfis cadastrados serao exibidos aqui assim que a API disponibilizar dados.</p>
         </div>
         } @else {
         <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
+          <table class="table align-middle table-nowrap mb-0">
             <thead class="table-light">
               <tr>
                 <th>Perfil</th>
                 <th>Descricao</th>
+                <th class="text-end">Identificador</th>
               </tr>
             </thead>
             <tbody>
               @for (role of roles; track trackByRoleId($index, role)) {
               <tr>
                 <td>
-                  <div class="fw-semibold">{{ role.name }}</div>
-                  <div class="text-muted small">ID: {{ role.id }}</div>
+                  <div class="fw-semibold text-body">{{ role.name || 'Sem nome' }}</div>
+                  <div class="text-muted small">ID interno: {{ role.id || 'N/A' }}</div>
                 </td>
                 <td>
-                  <span class="text-muted" *ngIf="!role.description">Sem descricao</span>
-                  <span *ngIf="role.description">{{ role.description }}</span>
+                  @if (role.description) {
+                  <span class="text-body">{{ role.description }}</span>
+                  } @else {
+                  <span class="text-muted">Sem descricao</span>
+                  }
+                </td>
+                <td class="text-end">
+                  <span class="badge bg-light border role-badge">{{ role.id || 'N/A' }}</span>
                 </td>
               </tr>
               }
@@ -55,6 +97,11 @@
           </table>
         </div>
         }
+      </div>
+
+      <div class="card-footer bg-light-subtle d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span class="text-muted small">Mostrando {{ roles.length }} de {{ allRoles.length }} perfis</span>
+        <span class="text-muted small" *ngIf="hasFiltersActive">Filtro de busca aplicado</span>
       </div>
     </div>
   </div>
