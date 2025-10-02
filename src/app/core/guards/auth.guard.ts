@@ -1,48 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
-// Auth Services
-import { AuthenticationService } from '../services/auth.service';
-import { AuthfakeauthenticationService } from '../services/authfake.service';
-import { environment } from '../../../environments/environment';
 import { KeycloakService } from '../services/keycloak.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard  {
     constructor(
         private router: Router,
-        private authenticationService: AuthenticationService,
-        private authFackservice: AuthfakeauthenticationService,
         private keycloakService: KeycloakService
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-        if (environment.defaultauth === 'keycloak') {
-            if (this.keycloakService.isLoggedIn()) {
-                return true;
-            }
-            this.keycloakService.login({ redirectUri: window.location.origin + state.url });
-            return false;
+        if (this.keycloakService.isLoggedIn()) {
+            return true;
         }
-        if (environment.defaultauth === 'firebase') {
-            const currentUser = this.authenticationService.currentUser();
-            if (currentUser) {
-                // logged in so return true
-                return true;
-            }
-        } else {
-            const currentUser = this.authFackservice.currentUserValue;
-            if (currentUser) {
-                // logged in so return true
-                return true;
-            }
-            // check if user data is in storage is logged in via API.
-            if(sessionStorage.getItem('currentUser')) {
-                return true;
-            }
-        }
-        // not logged in so redirect to login page with the return url
-        this.router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
+
+        this.keycloakService.login({ redirectUri: window.location.origin + state.url }).catch(() => {
+            this.router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
+        });
         return false;
     }
 }

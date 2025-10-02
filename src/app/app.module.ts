@@ -13,8 +13,6 @@ import { LayoutsModule } from "./layouts/layouts.module";
 import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { environment } from '../environments/environment';
-import { initFirebaseBackend } from './authUtils';
-import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { JwtInterceptor } from './core/helpers/jwt.interceptor';
 import { KeycloakService } from './core/services/keycloak.service';
@@ -54,12 +52,6 @@ export function initializeKeycloak(keycloakService: KeycloakService) {
     };
 }
 
-if (environment.defaultauth === 'firebase') {
-  initFirebaseBackend(environment.firebaseConfig);
-} else {
-  FakeBackendInterceptor;
-}
-
 @NgModule({ declarations: [
         AppComponent
     ],
@@ -97,7 +89,6 @@ if (environment.defaultauth === 'firebase') {
         NgPipesModule], providers: [
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true },
         {
             provide: APP_INITIALIZER,
             useFactory: initializeKeycloak,

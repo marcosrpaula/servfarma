@@ -1,11 +1,11 @@
-import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+﻿import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from 'src/environments/environment';
-import { PermissionDictionary, PermissionService } from '../../core/services/permission.service';
+import { PermissionService } from '../../core/services/permission.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -55,7 +55,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  private filterMenuItems(items: MenuItem[], permissions: PermissionDictionary | null): MenuItem[] {
+  private filterMenuItems(items: MenuItem[], permissions: any): MenuItem[] {
     const filtered: MenuItem[] = [];
     for (const item of items) {
       if (!this.canDisplayMenuItem(item, permissions)) {
@@ -78,7 +78,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     return filtered;
   }
 
-  private canDisplayMenuItem(item: MenuItem, permissions: PermissionDictionary | null): boolean {
+  private canDisplayMenuItem(item: MenuItem, permissions: any): boolean {
     if (!item.permission) {
       return true;
     }

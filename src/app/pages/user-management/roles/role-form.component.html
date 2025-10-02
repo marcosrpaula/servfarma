@@ -1,109 +1,20 @@
-<app-breadcrumbs [title]="title" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+﻿<app-breadcrumbs title="Perfis" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-12">
-    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <div class="card">
-        <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
-          <div>
-            <h5 class="card-title mb-1">{{ title }}</h5>
-            <p class="text-muted mb-0">Monte um conjunto de permissões para reutilizar em múltiplos usuários.</p>
-          </div>
-          <div class="d-flex gap-2">
-            <button type="button" class="btn btn-soft-secondary" (click)="cancel()" [disabled]="disabled">Voltar</button>
-            <button type="submit" class="btn btn-primary" [disabled]="disabled">
-              <span *ngIf="saving" class="spinner-border spinner-border-sm me-2" role="status"></span>
-              {{ submitLabel }}
-            </button>
-          </div>
+    <div class="card">
+      <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div>
+          <h5 class="card-title mb-1">Gestao de perfis</h5>
+          <p class="text-muted mb-0">A API ainda nao expoe endpoints para criar ou atualizar perfis.</p>
         </div>
-
-        @if (loading) {
-        <div class="card-body text-center text-muted py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Carregando...</span>
-          </div>
-          <p class="mt-3 mb-0">Carregando dados do perfil...</p>
-        </div>
-        } @else {
-        <div class="card-body">
-          @if (feedback) {
-          <div class="alert alert-warning" role="alert">
-            {{ feedback }}
-          </div>
-          }
-
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="roleName" class="form-label">Nome do perfil <span class="text-danger">*</span></label>
-              <input id="roleName" type="text" class="form-control" formControlName="name" placeholder="Ex.: Financeiro">
-              @if (form.get('name')?.invalid && form.get('name')?.touched) {
-              <div class="invalid-feedback d-block">
-                Informe um nome para o perfil.
-              </div>
-              }
-            </div>
-            <div class="col-md-6">
-              <label for="description" class="form-label">Descrição</label>
-              <input id="description" type="text" class="form-control" formControlName="description"
-                placeholder="Descreva o objetivo deste perfil">
-            </div>
-          </div>
-
-          <hr class="my-4">
-
-          <div class="d-flex align-items-center justify-content-between mb-3">
-            <div>
-              <h6 class="mb-1">Permissões por módulo</h6>
-              <p class="text-muted mb-0">Escolha os módulos contemplados por este perfil e o nível de acesso correspondente.</p>
-            </div>
-          </div>
-
-          <div class="table-responsive permission-matrix">
-            <table class="table table-nowrap align-middle mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Módulo</th>
-                  <th class="text-center">Acesso</th>
-                  <th class="text-end">Nível de acesso</th>
-                </tr>
-              </thead>
-              <tbody formArrayName="permissions">
-                @for (permissionGroup of permissionsArray.controls; track $index; let i = $index) {
-                <tr [formGroupName]="i">
-                  <td>
-                    <div class="fw-semibold">{{ permissionGroup.get('moduleName')?.value || permissionGroup.get('moduleKey')?.value }}</div>
-                    <div class="text-muted small">Chave: {{ permissionGroup.get('moduleKey')?.value }}</div>
-                  </td>
-                  <td class="text-center">
-                    <div class="form-check form-switch justify-content-center d-inline-flex">
-                      <input class="form-check-input" type="checkbox" formControlName="hasAccess" (change)="toggleAccess(i)">
-                    </div>
-                  </td>
-                  <td class="text-end">
-                    <div class="btn-group" role="group">
-                      @for (option of accessOptions; track option.value) {
-                      <button type="button" class="btn btn-outline-secondary"
-                        [ngClass]="{
-                          'active': permissionGroup.get('accessLevel')?.value === option.value,
-                          'disabled': !permissionGroup.get('hasAccess')?.value
-                        }"
-                        [disabled]="!permissionGroup.get('hasAccess')?.value"
-                        [ngbTooltip]="option.description"
-                        (click)="setAccessLevel(i, option.value)">
-                        {{ option.label }}
-                      </button>
-                      }
-                    </div>
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-        </div>
-        }
       </div>
-    </form>
+      <div class="card-body text-center py-5">
+        <i class="ri-lock-line display-6 text-muted d-block mb-3"></i>
+        <p class="fs-6 mb-2">Funcionalidade indisponivel</p>
+        <p class="text-muted mb-4">Assim que a API disponibilizar os recursos necessarios, esta tela sera habilitada para cadastro e edicao.</p>
+        <button type="button" class="btn btn-outline-primary" (click)="back()">Voltar para a lista</button>
+      </div>
+    </div>
   </div>
 </div>

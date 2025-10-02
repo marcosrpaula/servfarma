@@ -1,27 +1,7 @@
-export type AccessLevel = 'none' | 'read' | 'write' | 'admin';
-
-export interface ModuleDefinition {
-  key: string;
-  name: string;
-  description?: string;
-  category?: string;
-}
-
-export interface ModulePermissionState {
-  module: ModuleDefinition;
-  hasAccess: boolean;
-  level: AccessLevel;
-  canRead: boolean;
-  canWrite: boolean;
-  isAdmin: boolean;
-}
-
-export interface RoleSummary {
+﻿export interface RoleSummary {
   id: string;
   name: string;
   description?: string;
-  permissions: ModulePermissionState[];
-  isSystem?: boolean;
 }
 
 export interface UserSummary {
@@ -29,14 +9,18 @@ export interface UserSummary {
   name: string;
   email: string;
   active: boolean;
-  roles: RoleSummary[];
-  permissions: ModulePermissionState[];
+  permissions: RoleSummary[];
+  createdAt?: string;
+  createdBy?: string;
+  updatedAt?: string | null;
+  updatedBy?: string | null;
 }
 
-export interface SavePermissionPayload {
-  moduleKey: string;
-  accessLevel: AccessLevel;
-  hasAccess: boolean;
+export interface PaginatedResponse<T> {
+  items: T[];
+  totalCount: number;
+  currentPage: number;
+  pageSize: number;
 }
 
 export interface SaveUserPayload {
@@ -44,24 +28,11 @@ export interface SaveUserPayload {
   name: string;
   email: string;
   active: boolean;
-  roleIds: string[];
-  permissions: SavePermissionPayload[];
+  permissionIds: string[];
 }
 
 export interface SaveRolePayload {
   id?: string;
   name: string;
   description?: string;
-  permissions: SavePermissionPayload[];
 }
-
-export interface PaginatedResponse<T> {
-  items: T[];
-  totalCount?: number;
-  page?: number;
-  pageSize?: number;
-}
-
-export type RawPermission = any;
-export type RawUser = any;
-export type RawRole = any;

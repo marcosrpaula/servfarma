@@ -5,16 +5,6 @@
 export const environment = {
   production: false,
   defaultauth: 'keycloak',
-  firebaseConfig: {
-    apiKey: '',
-    authDomain: '',
-    databaseURL: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: '',
-    measurementId: ''
-  },
   keycloak: {
     url: 'http://localhost:8080',
     realm: 'servfarma',
@@ -24,15 +14,9 @@ export const environment = {
       checkLoginIframe: false,
       pkceMethod: 'S256'
     }
-    },
-    apiBaseUrl: 'https://hml-api.servfarma.com.br',
-    userManagement: {
-      users: '/api/v1/users',
-      roles: '/api/v1/roles',
-      modules: '/api/v1/modules',
-      currentPermissions: '/api/v1/users/current/permissions'
-    }
-  };
+  },
+  apiBaseUrl: 'http://localhost:5164'
+};
 
 /*
  * For easier debugging in development mode, you can import the following file

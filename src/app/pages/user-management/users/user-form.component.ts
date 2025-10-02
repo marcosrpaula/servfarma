@@ -1,26 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+﻿import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import {
-  AccessLevel,
-  ModuleDefinition,
-  ModulePermissionState,
   RoleSummary,
-  SavePermissionPayload,
   SaveUserPayload,
   UserSummary
 } from '../../../core/models/user-management.models';
 import { PermissionService } from '../../../core/services/permission.service';
 import { UserManagementService } from '../../../core/services/user-management.service';
-
-interface PermissionGroupValue {
-  moduleKey: string;
-  moduleName: string;
-  hasAccess: boolean;
-  accessLevel: AccessLevel;
-}
 
 @Component({
   selector: 'app-user-form',
@@ -30,13 +19,12 @@ interface PermissionGroupValue {
 })
 export class UserFormComponent implements OnInit, OnDestroy {
   breadCrumbItems = [
-    { label: 'Gestão' },
-    { label: 'Usuários' },
-    { label: 'Novo usuário', active: true }
+    { label: 'Gestao' },
+    { label: 'Usuarios' },
+    { label: 'Novo usuario', active: true }
   ];
 
   form: FormGroup;
-  modules: ModuleDefinition[] = [];
   roles: RoleSummary[] = [];
   isEdit = false;
   loading = false;
@@ -44,12 +32,6 @@ export class UserFormComponent implements OnInit, OnDestroy {
   feedback?: string;
   private userId?: string;
   private subscriptions: Subscription[] = [];
-
-  readonly accessOptions: { label: string; value: AccessLevel; description: string }[] = [
-    { label: 'Leitura', value: 'read', description: 'Pode visualizar informações.' },
-    { label: 'Escrita', value: 'write', description: 'Pode criar e editar registros.' },
-    { label: 'Admin', value: 'admin', description: 'Controle total do módulo.' }
-  ];
 
   constructor(
     private readonly fb: FormBuilder,
@@ -62,8 +44,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       name: ['', [Validators.required, Validators.maxLength(150)]],
       email: ['', [Validators.required, Validators.email]],
       active: [true],
-      roleIds: [[] as string[]],
-      permissions: this.fb.array([])
+      permissionIds: [[] as string[]]
     });
   }
 
@@ -73,6 +54,11 @@ export class UserFormComponent implements OnInit, OnDestroy {
       this.route.paramMap.subscribe(params => {
         this.userId = params.get('id') ?? undefined;
         this.isEdit = !!this.userId && this.userId !== 'novo';
+        if (this.isEdit) {
+          this.form.get('email')?.disable();
+        } else {
+          this.form.get('email')?.enable();
+        }
         this.initializeForm();
       })
     );
@@ -82,16 +68,12 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  get permissionsArray(): FormArray<FormGroup> {
-    return this.form.get('permissions') as FormArray<FormGroup>;
-  }
-
   get title(): string {
-    return this.isEdit ? 'Editar usuário' : 'Novo usuário';
+    return this.isEdit ? 'Editar usuario' : 'Novo usuario';
   }
 
   get submitLabel(): string {
-    return this.isEdit ? 'Atualizar usuário' : 'Cadastrar usuário';
+    return this.isEdit ? 'Atualizar usuario' : 'Cadastrar usuario';
   }
 
   get disabled(): boolean {
@@ -101,19 +83,15 @@ export class UserFormComponent implements OnInit, OnDestroy {
   private initializeForm(): void {
     this.loading = true;
     const roles$ = this.userManagementService.listRoles().pipe(catchError(() => of({ items: [] as RoleSummary[] })));
-    const modules$ = this.userManagementService.getModules().pipe(catchError(() => of([] as ModuleDefinition[])));
 
     let user$ = of<UserSummary | null>(null);
     if (this.isEdit && this.userId) {
       user$ = this.userManagementService.getUser(this.userId).pipe(catchError(() => of(null)));
     }
 
-    forkJoin({ roles: roles$, modules: modules$, user: user$ }).subscribe({
-      next: ({ roles, modules, user }) => {
-        this.roles = roles.items ?? roles ?? [];
-        this.modules = this.mergeModuleDefinitions(modules ?? [], user?.permissions ?? []);
-        this.buildPermissionControls(this.modules, user?.permissions ?? []);
-
+    forkJoin({ roles: roles$, user: user$ }).subscribe({
+      next: ({ roles, user }) => {
+        this.roles = roles.items ?? [];
         if (user) {
           this.patchForm(user);
           this.updateBreadcrumb(user);
@@ -123,86 +101,30 @@ export class UserFormComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: () => {
-        this.feedback = 'Não foi possível carregar os dados. Atualize a página e tente novamente.';
+        this.feedback = 'Nao foi possivel carregar os dados. Atualize a pagina e tente novamente.';
         this.loading = false;
       }
     });
   }
 
-  private mergeModuleDefinitions(modules: ModuleDefinition[], permissions: ModulePermissionState[]): ModuleDefinition[] {
-    const map = new Map<string, ModuleDefinition>();
-    modules?.forEach(module => {
-      if (module?.key) {
-        map.set(module.key.toLowerCase(), module);
-      }
-    });
-    permissions?.forEach(permission => {
-      const moduleKey = permission?.module?.key?.toLowerCase();
-      if (moduleKey && !map.has(moduleKey)) {
-        map.set(moduleKey, permission.module);
-      }
-    });
-    return Array.from(map.values()).sort((a, b) => {
-      const nameA = (a.name || a.key || '').toString().toLowerCase();
-      const nameB = (b.name || b.key || '').toString().toLowerCase();
-      return nameA.localeCompare(nameB);
-    });
-  }
-
-  private buildPermissionControls(modules: ModuleDefinition[], permissions: ModulePermissionState[]): void {
-    const controls = modules.map(module => {
-      const existing = permissions.find(item => item.module?.key?.toLowerCase() === module.key?.toLowerCase());
-      return this.fb.group({
-        moduleKey: [module.key],
-        moduleName: [module.name],
-        hasAccess: [existing?.hasAccess ?? false],
-        accessLevel: [existing?.hasAccess ? existing?.level ?? 'read' : 'none']
-      });
-    });
-    this.form.setControl('permissions', this.fb.array(controls));
-  }
-
   private patchForm(user: UserSummary): void {
+    const permissionIds = (user.permissions ?? []).map(role => role.id).filter(id => !!id);
     this.form.patchValue({
       name: user.name,
       email: user.email,
       active: user.active,
-      roleIds: user.roles?.map(role => role.id) ?? []
+      permissionIds
     });
   }
 
   private updateBreadcrumb(user?: UserSummary): void {
-    const current = this.isEdit ? 'Editar usuário' : 'Novo usuário';
+    const current = this.isEdit ? 'Editar usuario' : 'Novo usuario';
     const suffix = user?.name ? `${current}: ${user.name}` : current;
     this.breadCrumbItems = [
-      { label: 'Gestão' },
-      { label: 'Usuários' },
+      { label: 'Gestao' },
+      { label: 'Usuarios' },
       { label: suffix, active: true }
     ];
-  }
-
-  toggleAccess(index: number): void {
-    const control = this.permissionsArray.at(index);
-    if (!control) {
-      return;
-    }
-    const hasAccess = control.get('hasAccess')?.value;
-    if (hasAccess) {
-      const accessLevelControl = control.get('accessLevel');
-      if (!accessLevelControl?.value || accessLevelControl.value === 'none') {
-        accessLevelControl?.setValue('read');
-      }
-    } else {
-      control.get('accessLevel')?.setValue('none');
-    }
-  }
-
-  setAccessLevel(index: number, level: AccessLevel): void {
-    const control = this.permissionsArray.at(index);
-    if (!control || !control.get('hasAccess')?.value) {
-      return;
-    }
-    control.get('accessLevel')?.setValue(level);
   }
 
   submit(): void {
@@ -220,7 +142,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       : this.userManagementService.createUser(payload);
 
     request$.pipe(catchError(error => {
-      this.feedback = error?.error?.message ?? 'Não foi possível salvar as informações. Verifique os dados e tente novamente.';
+      this.feedback = error?.error?.message ?? 'Nao foi possivel salvar as informacoes. Verifique os dados e tente novamente.';
       this.saving = false;
       return of(null);
     })).subscribe(result => {
@@ -238,20 +160,13 @@ export class UserFormComponent implements OnInit, OnDestroy {
   }
 
   private buildPayload(): SaveUserPayload {
-    const value = this.form.value as { name: string; email: string; active: boolean; roleIds: string[]; permissions: PermissionGroupValue[]; };
-    const permissions: SavePermissionPayload[] = (value.permissions ?? []).map(permission => ({
-      moduleKey: permission.moduleKey,
-      hasAccess: permission.hasAccess,
-      accessLevel: permission.hasAccess ? permission.accessLevel ?? 'read' : 'none'
-    }));
-
+    const value = this.form.getRawValue() as { name: string; email: string; active: boolean; permissionIds: string[]; };
     return {
       id: this.userId,
       name: value.name,
       email: value.email,
       active: value.active,
-      roleIds: value.roleIds ?? [],
-      permissions
+      permissionIds: value.permissionIds ?? []
     };
   }
 }

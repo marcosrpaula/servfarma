@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserSummary } from '../../../core/models/user-management.models';
 import { UserManagementService } from '../../../core/services/user-management.service';
@@ -12,8 +12,8 @@ import { PermissionService } from '../../../core/services/permission.service';
 })
 export class UserListComponent implements OnInit {
   breadCrumbItems = [
-    { label: 'Gestão' },
-    { label: 'Usuários', active: true }
+    { label: 'Gestao' },
+    { label: 'Usuarios', active: true }
   ];
   users: UserSummary[] = [];
   loading = false;
@@ -38,10 +38,6 @@ export class UserListComponent implements OnInit {
     return this.permissionService.hasAccess('user', 'write');
   }
 
-  get canViewRoles(): boolean {
-    return this.permissionService.hasAccess('role', 'read');
-  }
-
   loadUsers(): void {
     this.loading = true;
     this.error = undefined;
@@ -51,7 +47,7 @@ export class UserListComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.error = 'Não foi possível carregar a lista de usuários. Tente novamente mais tarde.';
+        this.error = 'Nao foi possivel carregar a lista de usuarios. Tente novamente mais tarde.';
         this.loading = false;
       }
     });
@@ -62,10 +58,10 @@ export class UserListComponent implements OnInit {
   }
 
   getRoleNames(user: UserSummary): string {
-    if (!user?.roles?.length) {
+    if (!user?.permissions?.length) {
       return '';
     }
-    return user.roles
+    return user.permissions
       .map(role => role?.name)
       .filter((name): name is string => !!name)
       .join(', ');
