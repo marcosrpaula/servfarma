@@ -8,7 +8,12 @@
           <h5 class="card-title mb-1">Usuarios</h5>
           <p class="text-muted mb-0">Gerencie o acesso dos usuarios e seus perfis.</p>
         </div>
-        <button type="button" class="btn btn-primary" (click)="createUser()" appHasPermission="user:write">
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="createUser()"
+          *appHasPermission="'user:write'"
+        >
           <i class="ri-user-add-line align-middle me-1"></i>
           Novo usuario
         </button>
@@ -66,7 +71,12 @@
                   }
                 </td>
                 <td class="text-end">
-                  <button type="button" class="btn btn-sm btn-outline-primary" (click)="editUser(user)" appHasPermission="user:write">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="editUser(user)"
+                    *appHasPermission="'user:write'"
+                  >
                     <i class="ri-edit-line align-middle"></i>
                     <span class="ms-1">Editar</span>
                   </button>
