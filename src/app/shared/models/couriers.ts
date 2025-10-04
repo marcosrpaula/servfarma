@@ -73,7 +73,7 @@ export interface CourierListFilters {
 
 export type ListCouriersParams = ListRequestParams<CourierSortableField> & CourierListFilters;
 
-export interface CourierListFilterState {
+export interface CourierListFilterState extends Record<string, unknown> {
   name: string;
   courierCompanyId: string;
   servedCityId: string;

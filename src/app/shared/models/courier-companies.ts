@@ -46,7 +46,7 @@ export interface CourierCompanyListFilters {
 
 export type ListCourierCompaniesParams = ListRequestParams<CourierCompanySortableField> & CourierCompanyListFilters;
 
-export interface CourierCompanyListFilterState {
+export interface CourierCompanyListFilterState extends Record<string, unknown> {
   name: string;
   isActive: '' | 'true' | 'false';
 }
