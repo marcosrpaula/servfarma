@@ -17,15 +17,13 @@ import {
 import { ValidationErrorsBannerComponent } from '../../../../core/notifications/validation-errors-banner.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { applyServerValidationErrors } from '../../../../shared/common/server-validation.util';
-import {
-  BanksApiService,
-  CreateBankDto,
-  UpdateBankDto,
-} from '../services/banks.api.service';
+import { BanksApiService } from '../services/banks.api.service';
 import { BanksStateService } from '../services/banks-state.service';
 import {
   BankDetailsViewModel,
   BankViewModel,
+  CreateBankPayload,
+  UpdateBankPayload,
 } from '../../../../shared/models/banks';
 
 @Component({
@@ -129,7 +127,7 @@ export class BankUpsertComponent implements OnInit {
     this.isSaving.set(true);
 
     if (this.id()) {
-      const dto: UpdateBankDto = {
+      const dto: UpdateBankPayload = {
         name: value.name,
         bankCode: value.bankCode,
         isActive: value.isActive,
@@ -143,7 +141,7 @@ export class BankUpsertComponent implements OnInit {
         error: failure,
       });
     } else {
-      const dto: CreateBankDto = {
+      const dto: CreateBankPayload = {
         name: value.name,
         bankCode: value.bankCode,
         isActive: value.isActive,
