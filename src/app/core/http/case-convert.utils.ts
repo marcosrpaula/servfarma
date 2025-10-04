@@ -1,10 +1,9 @@
-
 /** Simple helpers to convert between camelCase <-> snake_case recursively */
 
 const toCamel = (s: string) =>
   s.replace(/[_-](\w)/g, (_, c) => (c ? c.toUpperCase() : ''));
 
-const toSnake = (s: string) =>
+export const toSnakeCase = (s: string) =>
   s
     .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
     .replace(/[-\s]+/g, '_')
@@ -29,7 +28,7 @@ export function keysToSnakeCase<T = any>(input: any): T {
     const result: any = {};
     Object.keys(input).forEach((k) => {
       const v = (input as any)[k];
-      result[toSnake(k)] = keysToSnakeCase(v);
+      result[toSnakeCase(k)] = keysToSnakeCase(v);
     });
     return result;
   }

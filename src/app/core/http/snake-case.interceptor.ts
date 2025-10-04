@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import {
   HttpEvent,
@@ -9,7 +8,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { keysToCamelCase, keysToSnakeCase } from './case-convert.utils';
+import { keysToCamelCase, keysToSnakeCase, toSnakeCase } from './case-convert.utils';
 
 /**
  * Transforma:
@@ -19,6 +18,15 @@ import { keysToCamelCase, keysToSnakeCase } from './case-convert.utils';
  */
 @Injectable()
 export class SnakeCaseInterceptor implements HttpInterceptor {
+  private readonly snakeCaseQueryValueKeys = new Set([
+    'orderBy',
+    'order_by',
+    'sortBy',
+    'sort_by',
+    'orderField',
+    'order_field',
+  ]);
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (req.headers.get('X-Case-Transform') === 'skip') {
       return next.handle(req);
@@ -37,12 +45,14 @@ export class SnakeCaseInterceptor implements HttpInterceptor {
         let params = new HttpParams();
         for (const k of keys) {
           const values = req.params.getAll(k) || [];
-          const snakeKey = k
-            .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
-            .replace(/[-\s]+/g, '_')
-            .toLowerCase();
+          const snakeKey = toSnakeCase(k);
+          const shouldSnakeCaseValue =
+            this.snakeCaseQueryValueKeys.has(k) || this.snakeCaseQueryValueKeys.has(snakeKey);
+
           for (const v of values) {
-            params = params.append(snakeKey, v as string);
+            const normalizedValue =
+              shouldSnakeCaseValue && typeof v === 'string' ? toSnakeCase(v) : v;
+            params = params.append(snakeKey, String(normalizedValue));
           }
         }
         newReq = newReq.clone({ params });
