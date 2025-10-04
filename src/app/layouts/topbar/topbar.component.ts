@@ -1,8 +1,16 @@
-import { Component, EventEmitter, Inject, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  OnDestroy,
+  OnInit,
+  Output,
+} from "@angular/core";
 import { DOCUMENT } from "@angular/common";
 import { AuthenticationService } from "../../core/services/auth.service";
 import { Router } from "@angular/router";
 import { TokenStorageService } from "../../core/services/token-storage.service";
+import { KeycloakAuthService } from "../../auth/keycloak/keycloak.service";
 
 @Component({
     selector: "app-topbar",
@@ -10,26 +18,70 @@ import { TokenStorageService } from "../../core/services/token-storage.service";
     styleUrls: ["./topbar.component.scss"],
     standalone: false
 })
-export class TopbarComponent implements OnInit {
+export class TopbarComponent implements OnInit, OnDestroy {
   @Output() mobileMenuButtonClicked = new EventEmitter<void>();
   element: HTMLElement | null = null;
   userName = '';
   userInitial = '?';
   userRoleLabel = 'User';
+  userAvatarUrl: string | null = null;
+  showInitials = false;
+  readonly defaultAvatarUrl = 'assets/images/users/avatar-1.jpg';
+  private detachAuthListener?: () => void;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private authService: AuthenticationService,
     private router: Router,
-    private tokenStorage: TokenStorageService
+    private tokenStorage: TokenStorageService,
+    private keycloak: KeycloakAuthService
   ) {}
 
   ngOnInit(): void {
     this.element = this.document.documentElement;
+    this.updateFromStoredUser();
+    this.detachAuthListener = this.keycloak.onAuthStateChanged(() =>
+      this.updateFromKeycloak()
+    );
+    this.updateFromKeycloak();
+  }
+
+  ngOnDestroy(): void {
+    this.detachAuthListener?.();
+  }
+
+  private updateFromStoredUser(): void {
     const user = this.tokenStorage.getUser();
-    this.userName = this.resolveUserName(user);
-    this.userInitial = this.resolveUserInitial(this.userName);
+    this.applyUserProfile(user);
+  }
+
+  private updateFromKeycloak(): void {
+    const payload = this.keycloak.getTokenPayload();
+    if (!payload) {
+      this.updateFromStoredUser();
+      return;
+    }
+    const roles = this.keycloak.getRoles();
+    const compositeUser = { ...payload, roles };
+    this.applyUserProfile(compositeUser);
+  }
+
+  private applyUserProfile(user: any): void {
+    const resolvedName = this.resolveUserName(user);
+    const resolvedAvatar = this.resolveUserAvatar(user);
+    this.userName = resolvedName;
     this.userRoleLabel = this.resolveUserRole(user);
+    if (resolvedAvatar) {
+      this.userAvatarUrl = resolvedAvatar;
+      this.showInitials = false;
+    } else if (resolvedName) {
+      this.userAvatarUrl = null;
+      this.showInitials = true;
+    } else {
+      this.userAvatarUrl = this.defaultAvatarUrl;
+      this.showInitials = false;
+    }
+    this.userInitial = this.resolveUserInitial(resolvedName);
   }
 
   private resolveUserName(user: any): string {
@@ -101,6 +153,55 @@ export class TopbarComponent implements OnInit {
       }
     }
     return 'User';
+  }
+
+  private resolveUserAvatar(user: any): string | null {
+    if (!user) {
+      return null;
+    }
+
+    const directCandidates = [
+      user.avatar,
+      user.avatarUrl,
+      user.avatarURL,
+      user.photo,
+      user.photoUrl,
+      user.photoURL,
+      user.picture,
+      user.profilePicture,
+      user.profile_picture,
+      user.image,
+      user.imageUrl,
+      user.imageURL,
+    ];
+
+    for (const candidate of directCandidates) {
+      if (typeof candidate === 'string' && candidate.trim().length) {
+        return candidate.trim();
+      }
+    }
+
+    const attributes = user.attributes;
+    if (attributes) {
+      const attributeCandidates = [
+        attributes.picture,
+        attributes.avatar,
+        attributes.photo,
+        attributes.photoUrl,
+        attributes.photoURL,
+      ];
+
+      for (const attr of attributeCandidates) {
+        if (Array.isArray(attr) && attr.length && typeof attr[0] === 'string' && attr[0].trim().length) {
+          return attr[0].trim();
+        }
+        if (typeof attr === 'string' && attr.trim().length) {
+          return attr.trim();
+        }
+      }
+    }
+
+    return null;
   }
 
   toggleMobileMenu(event: Event): void {
