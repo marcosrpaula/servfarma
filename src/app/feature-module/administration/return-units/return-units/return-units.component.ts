@@ -29,7 +29,7 @@ export class ReturnUnitsComponent implements OnInit {
   filtroLaboratorio = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'created_at';
+  orderBy = 'createdAt';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -120,10 +120,10 @@ export class ReturnUnitsComponent implements OnInit {
       case 'Name':
         return 'name';
       case 'Status':
-        return 'active';
+        return 'isActive';
       case 'CreatedDate':
       default:
-        return 'created_at';
+        return 'createdAt';
     }
   }
 
@@ -156,7 +156,7 @@ export class ReturnUnitsComponent implements OnInit {
 
   private loadLaboratories() {
     this.labsApi
-      .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
+      .list({ page: 1, pageSize: 100, orderBy: 'tradeName', ascending: true })
       .subscribe((res) => {
         this.labs = res.items || [];
       });

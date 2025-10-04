@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { environment } from "../../config/environment";
@@ -13,6 +13,7 @@ import {
   RawPagedResult,
   mapRawPaged,
 } from "../../shared/models/pagination";
+import { buildHttpParams } from "../../shared/utils/http-params";
 
 export interface ListStatesParams {
   page?: number;
@@ -35,13 +36,11 @@ export class LocationsApiService {
   constructor(private http: HttpClient) {}
 
   listStates(params: ListStatesParams = {}): Observable<PagedResult<StateSimpleViewModel>> {
-    const httpParams = new HttpParams({
-      fromObject: {
-        page: params.page?.toString() ?? "1",
-        page_size: params.pageSize?.toString() ?? "10",
-        ...(params.orderBy ? { order_by: params.orderBy } : {}),
-        ...(params.ascending !== undefined ? { ascending: String(params.ascending) } : {}),
-      },
+    const httpParams = buildHttpParams({
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 10,
+      orderBy: params.orderBy,
+      ascending: params.ascending,
     });
 
     return this.http
@@ -55,13 +54,11 @@ export class LocationsApiService {
     stateUf: string,
     params: ListCitiesParams = {}
   ): Observable<PagedResult<CitySimpleViewModel>> {
-    const httpParams = new HttpParams({
-      fromObject: {
-        page: params.page?.toString() ?? "1",
-        page_size: params.pageSize?.toString() ?? "10",
-        ...(params.orderBy ? { order_by: params.orderBy } : {}),
-        ...(params.ascending !== undefined ? { ascending: String(params.ascending) } : {}),
-      },
+    const httpParams = buildHttpParams({
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 10,
+      orderBy: params.orderBy,
+      ascending: params.ascending,
     });
 
     return this.http

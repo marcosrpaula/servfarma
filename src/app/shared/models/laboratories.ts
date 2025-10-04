@@ -1,3 +1,5 @@
+import { ListRequestParams } from "./api/base-view.model";
+
 export interface LaboratorySimpleViewModel {
   id: string;
   legalName: string;
@@ -18,3 +20,20 @@ export interface LaboratoryViewModel {
 }
 
 export interface LaboratoryDetailsViewModel extends LaboratoryViewModel {}
+
+export type LaboratorySortableField =
+  | "createdAt"
+  | "tradeName"
+  | "legalName"
+  | "document"
+  | "isActive";
+
+export interface LaboratoryListFilters {
+  tradeName?: string;
+  legalName?: string;
+  document?: string;
+  isActive?: boolean;
+}
+
+export type ListLaboratoriesParams =
+  ListRequestParams<LaboratorySortableField> & LaboratoryListFilters;

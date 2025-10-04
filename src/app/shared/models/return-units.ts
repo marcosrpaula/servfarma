@@ -1,5 +1,6 @@
 import { AddressViewModel } from "./addresses";
 import { LaboratorySimpleViewModel } from "./laboratories";
+import { ListRequestParams } from "./api/base-view.model";
 
 export interface ReturnUnitViewModel {
   id: string;
@@ -41,3 +42,14 @@ export interface ReturnUnitInput {
   observation?: string | null;
   isActive: boolean;
 }
+
+export type ReturnUnitSortableField = "createdAt" | "name" | "isActive";
+
+export interface ReturnUnitListFilters {
+  laboratoryId?: string;
+  name?: string;
+  isActive?: boolean;
+}
+
+export type ListReturnUnitsParams =
+  ListRequestParams<ReturnUnitSortableField> & ReturnUnitListFilters;

@@ -1,3 +1,5 @@
+import { ListRequestParams } from "./api/base-view.model";
+
 export type SimpleItemType = "Label" | "Receipt" | "SecurityEnvelope";
 
 export enum SupplyType {
@@ -57,3 +59,13 @@ export interface DryPackageInput {
 export interface RefrigeratedPackageInput extends DryPackageInput {
   coolingDurationHours: number;
 }
+
+export type SupplySortableField = "createdAt" | "name" | "isActive";
+
+export interface SupplyListFilters {
+  name?: string;
+  isActive?: boolean;
+}
+
+export type ListSuppliesParams =
+  ListRequestParams<SupplySortableField> & SupplyListFilters;

@@ -1,19 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
-import { PharmaceuticalFormViewModel } from '../../../../shared/models/pharmaceutical-forms';
+import {
+  ListPharmaceuticalFormsParams,
+  PharmaceuticalFormViewModel,
+} from '../../../../shared/models/pharmaceutical-forms';
 import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
-
-export interface ListPharmaceuticalFormsParams {
-  page?: number;
-  pageSize?: number;
-  name?: string;
-  isActive?: boolean;
-  orderBy?: string;
-  ascending?: boolean;
-}
+import { buildHttpParams } from '../../../../shared/utils/http-params';
 
 export interface CreatePharmaceuticalFormDto {
   name: string;
@@ -32,15 +27,13 @@ export class PharmaceuticalFormsApiService {
   constructor(private http: HttpClient) {}
 
   list(params: ListPharmaceuticalFormsParams = {}): Observable<PagedResult<PharmaceuticalFormViewModel>> {
-    const httpParams = new HttpParams({
-      fromObject: {
-        page: params.page?.toString() ?? '1',
-        page_size: params.pageSize?.toString() ?? '10',
-        ...(params.name ? { name: params.name } : {}),
-        ...(params.isActive !== undefined ? { is_active: String(params.isActive) } : {}),
-        ...(params.orderBy ? { order_by: params.orderBy } : {}),
-        ...(params.ascending !== undefined ? { ascending: String(params.ascending) } : {}),
-      },
+    const httpParams = buildHttpParams({
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 10,
+      name: params.name,
+      isActive: params.isActive,
+      orderBy: params.orderBy,
+      ascending: params.ascending,
     });
 
     return this.http
@@ -53,17 +46,17 @@ export class PharmaceuticalFormsApiService {
   }
 
   create(dto: CreatePharmaceuticalFormDto): Observable<PharmaceuticalFormViewModel> {
-    const payload = {
+    const payload: CreatePharmaceuticalFormDto = {
       name: dto.name,
-      is_active: dto.isActive,
+      isActive: dto.isActive,
     };
     return this.http.post<PharmaceuticalFormViewModel>(this.baseUrl, payload);
   }
 
   update(id: string, dto: UpdatePharmaceuticalFormDto): Observable<PharmaceuticalFormViewModel> {
-    const payload = {
+    const payload: UpdatePharmaceuticalFormDto = {
       name: dto.name,
-      is_active: dto.isActive,
+      isActive: dto.isActive,
     };
     return this.http.put<PharmaceuticalFormViewModel>(`${this.baseUrl}/${id}`, payload);
   }

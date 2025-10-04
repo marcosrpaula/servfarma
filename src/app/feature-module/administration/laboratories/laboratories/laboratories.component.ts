@@ -27,7 +27,7 @@ export class LaboratoriesComponent implements OnInit {
   filtroDocumento = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy: string = 'created_at';
+  orderBy: string = 'createdAt';
   ascending = false;
   orderLabel: 'CreatedDate' | 'TradeName' | 'LegalName' | 'Document' | 'Status' = 'CreatedDate';
 
@@ -102,15 +102,15 @@ export class LaboratoriesComponent implements OnInit {
   private mapOrderField(field: 'CreatedDate' | 'TradeName' | 'LegalName' | 'Document' | 'Status'): string {
     switch (field) {
       case 'TradeName':
-        return 'trade_name';
+        return 'tradeName';
       case 'LegalName':
-        return 'legal_name';
+        return 'legalName';
       case 'Document':
         return 'document';
       case 'Status':
-        return 'active';
+        return 'isActive';
       default:
-        return 'created_at';
+        return 'createdAt';
     }
   }
 

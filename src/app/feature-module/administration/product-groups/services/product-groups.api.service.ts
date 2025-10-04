@@ -1,19 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
-import { ProductGroupViewModel } from '../../../../shared/models/product-groups';
+import {
+  ListProductGroupsParams,
+  ProductGroupViewModel,
+} from '../../../../shared/models/product-groups';
 import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
-
-export interface ListProductGroupsParams {
-  page?: number;
-  pageSize?: number;
-  name?: string;
-  isActive?: boolean;
-  orderBy?: string;
-  ascending?: boolean;
-}
+import { buildHttpParams } from '../../../../shared/utils/http-params';
 
 export interface CreateProductGroupDto {
   name: string;
@@ -32,15 +27,13 @@ export class ProductGroupsApiService {
   constructor(private http: HttpClient) {}
 
   list(params: ListProductGroupsParams = {}): Observable<PagedResult<ProductGroupViewModel>> {
-    const httpParams = new HttpParams({
-      fromObject: {
-        page: params.page?.toString() ?? '1',
-        page_size: params.pageSize?.toString() ?? '10',
-        ...(params.name ? { name: params.name } : {}),
-        ...(params.isActive !== undefined ? { is_active: String(params.isActive) } : {}),
-        ...(params.orderBy ? { order_by: params.orderBy } : {}),
-        ...(params.ascending !== undefined ? { ascending: String(params.ascending) } : {}),
-      },
+    const httpParams = buildHttpParams({
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 10,
+      name: params.name,
+      isActive: params.isActive,
+      orderBy: params.orderBy,
+      ascending: params.ascending,
     });
 
     return this.http
@@ -53,17 +46,17 @@ export class ProductGroupsApiService {
   }
 
   create(dto: CreateProductGroupDto): Observable<ProductGroupViewModel> {
-    const payload = {
+    const payload: CreateProductGroupDto = {
       name: dto.name,
-      is_active: dto.isActive,
+      isActive: dto.isActive,
     };
     return this.http.post<ProductGroupViewModel>(this.baseUrl, payload);
   }
 
   update(id: string, dto: UpdateProductGroupDto): Observable<ProductGroupViewModel> {
-    const payload = {
+    const payload: UpdateProductGroupDto = {
       name: dto.name,
-      is_active: dto.isActive,
+      isActive: dto.isActive,
     };
     return this.http.put<ProductGroupViewModel>(`${this.baseUrl}/${id}`, payload);
   }
