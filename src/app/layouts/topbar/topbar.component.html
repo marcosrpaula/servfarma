@@ -45,12 +45,21 @@
                       ngbDropdownToggle
                     >
                         <span class="d-flex align-items-center">
-                            <span class="header-profile-user bg-primary-subtle text-primary fw-semibold rounded-circle">
-                                {{ userInitial }}
-                            </span>
+                            <ng-container *ngIf="!showInitials; else initialsAvatar">
+                                <img
+                                  [src]="userAvatarUrl || defaultAvatarUrl"
+                                  class="rounded-circle header-profile-user"
+                                  [alt]="userName || 'Usuario'"
+                                />
+                            </ng-container>
+                            <ng-template #initialsAvatar>
+                                <span class="avatar-title rounded-circle header-profile-user bg-primary-subtle text-primary fw-semibold">
+                                    {{ userInitial }}
+                                </span>
+                            </ng-template>
                             <span class="text-start ms-2 d-none d-xl-block">
-                                <span class="d-block fw-medium text-body">{{ userName || 'Usuario' }}</span>
-                                <span class="d-block text-muted fs-12">{{ userRoleLabel }}</span>
+                                <span class="d-block fw-medium text-body user-name-text">{{ userName || 'Usuario' }}</span>
+                                <span class="d-block text-muted fs-12 user-name-sub-text">{{ userRoleLabel }}</span>
                             </span>
                         </span>
                     </button>
