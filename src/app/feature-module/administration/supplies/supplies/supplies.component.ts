@@ -4,7 +4,11 @@ import {
   SuppliesApiService,
   ListSuppliesParams,
 } from '../services/supplies.api.service';
-import { SimpleItemViewModel, SupplyType } from '../../../../shared/models/supplies';
+import {
+  SimpleItemViewModel,
+  SupplySortableField,
+  SupplyType,
+} from '../../../../shared/models/supplies';
 import { SuppliesStateService } from '../services/supplies-state.service';
 
 function supplyTypeLabel(type: SupplyType): string {
@@ -60,7 +64,7 @@ export class SuppliesComponent implements OnInit {
   filtroNome = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'createdAt';
+  orderBy: SupplySortableField = 'createdAt';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -140,7 +144,7 @@ export class SuppliesComponent implements OnInit {
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): string {
+  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): SupplySortableField {
     switch (field) {
       case 'Name':
         return 'name';

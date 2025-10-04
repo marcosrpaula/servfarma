@@ -18,11 +18,11 @@ export interface BankListFilters {
 
 export type ListBanksParams = ListRequestParams<BankSortableField> & BankListFilters;
 
-export type BankListFilterState = {
+export interface BankListFilterState extends Record<string, unknown> {
   name: string;
   bankCode: string;
   isActive: '' | 'true' | 'false';
-};
+}
 
 export const defaultBankListFilterState: BankListFilterState = {
   name: '',

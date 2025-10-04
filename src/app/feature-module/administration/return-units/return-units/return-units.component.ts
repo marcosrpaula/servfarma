@@ -4,7 +4,10 @@ import {
   ReturnUnitsApiService,
   ListReturnUnitsParams,
 } from '../services/return-units.api.service';
-import { ReturnUnitViewModel } from '../../../../shared/models/return-units';
+import {
+  ReturnUnitSortableField,
+  ReturnUnitViewModel,
+} from '../../../../shared/models/return-units';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ReturnUnitsStateService } from '../services/return-units-state.service';
@@ -29,7 +32,7 @@ export class ReturnUnitsComponent implements OnInit {
   filtroLaboratorio = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'createdAt';
+  orderBy: ReturnUnitSortableField = 'createdAt';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -115,7 +118,7 @@ export class ReturnUnitsComponent implements OnInit {
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): string {
+  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): ReturnUnitSortableField {
     switch (field) {
       case 'Name':
         return 'name';

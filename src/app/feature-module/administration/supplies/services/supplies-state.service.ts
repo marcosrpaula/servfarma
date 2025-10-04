@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { SimpleItemViewModel } from '../../../../shared/models/supplies';
+import {
+  SimpleItemViewModel,
+  SupplySortableField,
+} from '../../../../shared/models/supplies';
 
 interface SuppliesListState {
   tableData: SimpleItemViewModel[];
@@ -8,7 +11,7 @@ interface SuppliesListState {
   backendPage: number;
   filtroNome: string;
   filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
+  orderBy: SupplySortableField;
   ascending: boolean;
   orderLabel: 'CreatedDate' | 'Name' | 'Status';
   lastRequestSignature?: string;

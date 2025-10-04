@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ReturnUnitViewModel } from '../../../../shared/models/return-units';
+import {
+  ReturnUnitSortableField,
+  ReturnUnitViewModel,
+} from '../../../../shared/models/return-units';
 
 interface ReturnUnitsListState {
   tableData: ReturnUnitViewModel[];
@@ -9,7 +12,7 @@ interface ReturnUnitsListState {
   filtroNome: string;
   filtroLaboratorio: string;
   filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
+  orderBy: ReturnUnitSortableField;
   ascending: boolean;
   orderLabel: 'CreatedDate' | 'Name' | 'Status';
   lastRequestSignature?: string;
