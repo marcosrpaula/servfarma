@@ -1,226 +1,160 @@
-import { Component, OnInit, EventEmitter, Output, Inject, ViewChild, TemplateRef } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { EventService } from '../../core/services/event.service';
-import { AuthenticationService } from '../../core/services/auth.service';
-import { TokenStorageService } from '../../core/services/token-storage.service';
-import { allNotification, messages } from './data';
+import { Component, EventEmitter, Inject, OnInit, Output } from "@angular/core";
+import { DOCUMENT } from "@angular/common";
+import { AuthenticationService } from "../../core/services/auth.service";
+import { Router } from "@angular/router";
+import { TokenStorageService } from "../../core/services/token-storage.service";
 
 @Component({
-    selector: 'app-topbar',
-    templateUrl: './topbar.component.html',
-    styleUrls: ['./topbar.component.scss'],
+    selector: "app-topbar",
+    templateUrl: "./topbar.component.html",
+    styleUrls: ["./topbar.component.scss"],
     standalone: false
 })
 export class TopbarComponent implements OnInit {
-  messages: any;
-  element: any;
-  mode: string | undefined;
-  @Output() mobileMenuButtonClicked = new EventEmitter();
-  allnotifications: any;
-  userData: any;
-  userDisplayName = '';
-  userRoleLabel = '';
-  totalNotify: number = 0;
-  @ViewChild('removenotification') removenotification!: TemplateRef<any>;
-  notifyId: any;
+  @Output() mobileMenuButtonClicked = new EventEmitter<void>();
+  element: HTMLElement | null = null;
+  userName = '';
+  userInitial = '?';
+  userRoleLabel = 'User';
 
-  constructor(@Inject(DOCUMENT) private document: any, private eventService: EventService, private modalService: NgbModal,
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
     private authService: AuthenticationService,
-    private router: Router, private TokenStorageService: TokenStorageService) { }
+    private router: Router,
+    private tokenStorage: TokenStorageService
+  ) {}
 
   ngOnInit(): void {
-    this.userData = this.TokenStorageService.getUser();
-    this.userDisplayName = this.resolveUserName(this.userData);
-    this.userRoleLabel = this.resolveUserRole(this.userData);
-    this.element = document.documentElement;
-
-    // Fetch Data
-    this.allnotifications = allNotification;
-
-    this.messages = messages;
+    this.element = this.document.documentElement;
+    const user = this.tokenStorage.getUser();
+    this.userName = this.resolveUserName(user);
+    this.userInitial = this.resolveUserInitial(this.userName);
+    this.userRoleLabel = this.resolveUserRole(user);
   }
 
-  /**
-   * Toggle the menu bar when having mobile screen
-   */
-  toggleMobileMenu(event: any) {
-    document.querySelector('.hamburger-icon')?.classList.toggle('open')
-    event.preventDefault();
-    this.mobileMenuButtonClicked.emit();
-  }
-
-  /**
-   * Fullscreen method
-   */
-  fullscreen() {
-    document.body.classList.toggle('fullscreen-enable');
-    if (
-      !document.fullscreenElement && !this.element.mozFullScreenElement &&
-      !this.element.webkitFullscreenElement) {
-      if (this.element.requestFullscreen) {
-        this.element.requestFullscreen();
-      } else if (this.element.mozRequestFullScreen) {
-        /* Firefox */
-        this.element.mozRequestFullScreen();
-      } else if (this.element.webkitRequestFullscreen) {
-        /* Chrome, Safari and Opera */
-        this.element.webkitRequestFullscreen();
-      } else if (this.element.msRequestFullscreen) {
-        /* IE/Edge */
-        this.element.msRequestFullscreen();
-      }
-    } else {
-      if (this.document.exitFullscreen) {
-        this.document.exitFullscreen();
-      } else if (this.document.mozCancelFullScreen) {
-        /* Firefox */
-        this.document.mozCancelFullScreen();
-      } else if (this.document.webkitExitFullscreen) {
-        /* Chrome, Safari and Opera */
-        this.document.webkitExitFullscreen();
-      } else if (this.document.msExitFullscreen) {
-        /* IE/Edge */
-        this.document.msExitFullscreen();
-      }
-    }
-  }
-  /**
-* Open modal
-* @param content modal content
-*/
-  openModal(content: any) {
-    // this.submitted = false;
-    this.modalService.open(content, { centered: true });
-  }
-
-  /**
-  * Topbar Light-Dark Mode Change
-  */
-  changeMode(mode: string) {
-    this.mode = mode;
-    this.eventService.broadcast('changeMode', mode);
-
-    switch (mode) {
-      case 'light':
-        document.documentElement.setAttribute('data-bs-theme', "light");
-        break;
-      case 'dark':
-        document.documentElement.setAttribute('data-bs-theme', "dark");
-        break;
-      default:
-        document.documentElement.setAttribute('data-bs-theme', "light");
-        break;
-    }
-  }
-
-  /**
-   * Logout the user
-   */
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
-  }
-
-  windowScroll() {
-    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-      (document.getElementById("back-to-top") as HTMLElement).style.display = "block";
-      document.getElementById('page-topbar')?.classList.add('topbar-shadow');
-    } else {
-      (document.getElementById("back-to-top") as HTMLElement).style.display = "none";
-      document.getElementById('page-topbar')?.classList.remove('topbar-shadow');
-    }
-  }
-
-  // Remove Notification
-  checkedValGet: any[] = [];
-  onCheckboxChange(event: any, id: any) {
-    this.notifyId = id
-    var result;
-    if (id == '1') {
-      var checkedVal: any[] = [];
-      for (var i = 0; i < this.allnotifications.length; i++) {
-        if (this.allnotifications[i].state == true) {
-          result = this.allnotifications[i].id;
-          checkedVal.push(result);
-        }
-      }
-      this.checkedValGet = checkedVal;
-    } else {
-      var checkedVal: any[] = [];
-      for (var i = 0; i < this.messages.length; i++) {
-        if (this.messages[i].state == true) {
-          result = this.messages[i].id;
-          checkedVal.push(result);
-        }
-      }
-      this.checkedValGet = checkedVal;
-    }
-    checkedVal.length > 0 ? (document.getElementById("notification-actions") as HTMLElement).style.display = 'block' : (document.getElementById("notification-actions") as HTMLElement).style.display = 'none';
-  }
-
-  notificationDelete() {
-    if (this.notifyId == '1') {
-      for (var i = 0; i < this.checkedValGet.length; i++) {
-        for (var j = 0; j < this.allnotifications.length; j++) {
-          if (this.allnotifications[j].id == this.checkedValGet[i]) {
-            this.allnotifications.splice(j, 1)
-          }
-        }
-      }
-    } else {
-      for (var i = 0; i < this.checkedValGet.length; i++) {
-        for (var j = 0; j < this.messages.length; j++) {
-          if (this.messages[j].id == this.checkedValGet[i]) {
-            this.messages.splice(j, 1)
-          }
-        }
-      }
-    }
-    this.calculatenotification()
-    this.modalService.dismissAll();
-  }
-
-  calculatenotification() {
-    this.totalNotify = 0;
-    this.checkedValGet = []
-
-    this.checkedValGet.length > 0 ? (document.getElementById("notification-actions") as HTMLElement).style.display = 'block' : (document.getElementById("notification-actions") as HTMLElement).style.display = 'none';
-    if (this.totalNotify == 0) {
-      document.querySelector('.empty-notification-elem')?.classList.remove('d-none')
-    }
-  }
   private resolveUserName(user: any): string {
     if (!user) {
       return '';
     }
-
-    const firstName = user.first_name ?? user.firstName ?? '';
-    const lastName = user.last_name ?? user.lastName ?? '';
-
-    const fullName = `${firstName} ${lastName}`.trim();
-
-    if (fullName) {
-      return fullName;
+    if (user.fullName) {
+      return user.fullName;
     }
+    const nameParts = [user.first_name, user.last_name].filter(Boolean);
+    if (nameParts.length) {
+      return nameParts.join(' ');
+    }
+    if (user.name) {
+      return user.name;
+    }
+    if (user.preferred_username) {
+      return user.preferred_username;
+    }
+    if (user.username) {
+      return user.username;
+    }
+    if (user.given_name) {
+      return user.given_name;
+    }
+    if (user.email) {
+      return String(user.email).split('@')[0];
+    }
+    return '';
+  }
 
-    return user.username ?? user.email ?? 'Usuário';
+  private resolveUserInitial(name: string): string {
+    const trimmed = (name ?? '').trim();
+    if (!trimmed) {
+      return '?';
+    }
+    const parts = trimmed.split(/\s+/).filter(Boolean);
+    if (!parts.length) {
+      return '?';
+    }
+    if (parts.length === 1) {
+      return parts[0].charAt(0).toUpperCase();
+    }
+    const first = parts[0].charAt(0).toUpperCase();
+    const last = parts[parts.length - 1].charAt(0).toUpperCase();
+    return `${first}${last}`;
   }
 
   private resolveUserRole(user: any): string {
     if (!user) {
-      return '';
-    }
-
-    if (user.role === 0 || user.role === '0') {
-      return 'Admin';
-    }
-
-    if (user.role === 1 || user.role === '1') {
       return 'User';
     }
+    if (user.role) {
+      return user.role;
+    }
+    if (Array.isArray(user.roles) && user.roles.length) {
+      return user.roles[0];
+    }
+    const realmRoles = user.realm_access?.roles;
+    if (Array.isArray(realmRoles) && realmRoles.length) {
+      return realmRoles[0];
+    }
+    if (user.resource_access) {
+      const entries = Object.values(user.resource_access) as any[];
+      for (const entry of entries) {
+        if (entry && Array.isArray(entry.roles) && entry.roles.length) {
+          return entry.roles[0];
+        }
+      }
+    }
+    return 'User';
+  }
 
-    return user.role ?? '';
+  toggleMobileMenu(event: Event): void {
+    event.preventDefault();
+    this.document.querySelector('.hamburger-icon')?.classList.toggle('open');
+    this.mobileMenuButtonClicked.emit();
+  }
+
+  fullscreen(): void {
+    this.document.body.classList.toggle('fullscreen-enable');
+    const docEl: any = this.element;
+
+    if (!this.document.fullscreenElement && !docEl?.mozFullScreenElement && !docEl?.webkitFullscreenElement) {
+      if (docEl?.requestFullscreen) {
+        docEl.requestFullscreen();
+      } else if (docEl?.mozRequestFullScreen) {
+        docEl.mozRequestFullScreen();
+      } else if (docEl?.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      } else if (docEl?.msRequestFullscreen) {
+        docEl.msRequestFullscreen();
+      }
+    } else {
+      if (this.document.exitFullscreen) {
+        this.document.exitFullscreen();
+      } else if ((this.document as any).mozCancelFullScreen) {
+        (this.document as any).mozCancelFullScreen();
+      } else if ((this.document as any).webkitExitFullscreen) {
+        (this.document as any).webkitExitFullscreen();
+      } else if ((this.document as any).msExitFullscreen) {
+        (this.document as any).msExitFullscreen();
+      }
+    }
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(["/auth/login"]);
+  }
+
+  windowScroll(): void {
+    const backToTop = this.document.getElementById("back-to-top");
+    if (this.document.body.scrollTop > 100 || this.document.documentElement.scrollTop > 100) {
+      if (backToTop) {
+        backToTop.style.display = "block";
+      }
+      this.document.getElementById('page-topbar')?.classList.add('topbar-shadow');
+    } else {
+      if (backToTop) {
+        backToTop.style.display = "none";
+      }
+      this.document.getElementById('page-topbar')?.classList.remove('topbar-shadow');
+    }
   }
 }
+
+

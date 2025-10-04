@@ -1,0 +1,115 @@
+<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
+
+<div class="row">
+  <div class="col-12">
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="card">
+        <div class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <h5 class="card-title mb-1">{{ title() }}</h5>
+            <p class="text-muted mb-0">Informe os dados básicos e permissões do usuário.</p>
+          </div>
+          <div class="status-toggle form-check form-switch mb-0">
+            <input
+              id="userActive"
+              class="form-check-input"
+              type="checkbox"
+              formControlName="isActive"
+            />
+            <label for="userActive" class="status-toggle__label form-check-label">
+              Status
+              <span
+                class="status-toggle__badge"
+                [ngClass]="form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'"
+              >
+                {{ form.get('isActive')?.value ? 'Ativo' : 'Inativo' }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nome <span class="text-danger">*</span></label>
+              <input formControlName="name" type="text" class="form-control" placeholder="Nome completo" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email <span class="text-danger">*</span></label>
+              <input formControlName="email" type="email" class="form-control" placeholder="email@empresa.com" [readonly]="id()" />
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header border-bottom-dashed">
+              <h6 class="mb-0">Permissões</h6>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>Módulo</th>
+                      <th>Acesso</th>
+                      <th>Admin</th>
+                      <th>Leitura</th>
+                    </tr>
+                  </thead>
+                  <tbody formArrayName="permissions">
+                    <tr *ngFor="let pg of permissionGroups; let i = index; trackBy: trackByIdx" [formGroupName]="i">
+                      <td>
+                        <h6 class="fs-14 fw-normal text-gray-9 mb-0">{{ pg.module }}</h6>
+                      </td>
+                      <td>
+                        <div class="form-check form-switch">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            [checked]="isEnabled(i)"
+                            (change)="toggleEnabled(i, $any($event.target).checked)"
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          [attr.name]="'perm-' + i"
+                          value="write"
+                          formControlName="level"
+                          [disabled]="!pg.writeId || !isEnabled(i)"
+                        />
+                      </td>
+                      <td>
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          [attr.name]="'perm-' + i"
+                          value="read"
+                          formControlName="level"
+                          [disabled]="!pg.readId || !isEnabled(i)"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="text-danger px-3 pb-3" *ngIf="form.get('permissions')?.touched && form.get('permissions')?.invalid">
+                Selecione ao menos uma permissão.
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-danger mt-3" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2 flex-wrap">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Voltar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="isSaving() || form.invalid">
+            Salvar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

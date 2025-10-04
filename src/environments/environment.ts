@@ -1,21 +1,26 @@
-// This file can be replaced during build by using the `fileReplacements` array.
+﻿// This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
   production: false,
   defaultauth: 'keycloak',
+  apiBaseUrl: 'http://localhost:5164',
   keycloak: {
     url: 'http://localhost:8080',
     realm: 'servfarma',
     clientId: 'frontend',
-    initOptions: {
-      onLoad: 'login-required',
-      checkLoginIframe: false,
-      pkceMethod: 'S256'
-    }
   },
-  apiBaseUrl: 'http://localhost:5164'
+  firebaseConfig: {
+    apiKey: '',
+    authDomain: '',
+    databaseURL: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
+    appId: '',
+    measurementId: ''
+  }
 };
 
 /*

@@ -1,35 +1,42 @@
-import { MenuItem } from './menu.model';
+﻿import { MenuItem } from './menu.model';
 
 export const MENU: MenuItem[] = [
   {
     id: 1,
-    label: 'Menu',
-    isTitle: true
+    label: 'Navegação',
+    isTitle: true,
   },
   {
     id: 2,
-    label: 'Starter',
-    link: '/starter'
+    label: 'Dashboard',
+    icon: 'ri-dashboard-2-line',
+    link: '/',
   },
   {
     id: 3,
-    label: 'Gestão',
-    icon: 'ri-settings-4-line',
+    label: 'Administração',
+    icon: 'ri-settings-3-line',
     isCollapsed: true,
-    permission: 'user:read',
     subItems: [
-      {
-        id: 31,
-        label: 'Usuários',
-        link: '/gestao/usuarios',
-        permission: 'user:read'
-      },
-      {
-        id: 32,
-        label: 'Perfis',
-        link: '/gestao/roles',
-        permission: 'role:read'
-      }
-    ]
-  }
+      { id: 301, label: 'Bancos', link: '/banks', parentId: 3 },
+      { id: 302, label: 'Laboratórios', link: '/laboratories', parentId: 3 },
+      { id: 303, label: 'Transportadoras', link: '/courier-companies', parentId: 3 },
+      { id: 304, label: 'Entregadores', link: '/couriers', parentId: 3 },
+      { id: 305, label: 'Unidades de Devolução', link: '/return-units', parentId: 3 },
+      { id: 306, label: 'Projetos', link: '/projects', parentId: 3 },
+      { id: 307, label: 'Insumos', link: '/supplies', parentId: 3 },
+      { id: 308, label: 'Formas Farmacêuticas', link: '/pharmaceutical-forms', parentId: 3 },
+      { id: 309, label: 'Unidades de Medida', link: '/units', parentId: 3 },
+    ],
+  },
+  {
+    id: 4,
+    label: 'Usuários',
+    icon: 'ri-user-settings-line',
+    isCollapsed: true,
+    subItems: [
+      { id: 401, label: 'Usuários', link: '/user-management/users', parentId: 4 },
+      { id: 402, label: 'Perfis & Permissões', link: '/user-management/roles-permissions', parentId: 4 },
+    ],
+  },
 ];

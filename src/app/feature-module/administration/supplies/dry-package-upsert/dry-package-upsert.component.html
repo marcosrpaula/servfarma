@@ -1,0 +1,72 @@
+﻿<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
+
+<div class="row">
+  <div class="col-12">
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="card">
+        <div class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <h5 class="card-title mb-1">{{ title() }}</h5>
+            <p class="text-muted mb-0">Informe os dados do pacote seco.</p>
+          </div>
+          <div class="status-toggle form-check form-switch mb-0">
+            <input
+              id="dryPackageActive"
+              class="form-check-input"
+              type="checkbox"
+              formControlName="isActive"
+              [disabled]="isReadOnly()"
+            />
+            <label for="dryPackageActive" class="status-toggle__label form-check-label">
+              Status
+              <span
+                class="status-toggle__badge"
+                [ngClass]="form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'"
+              >
+                {{ form.get('isActive')?.value ? 'Ativo' : 'Inativo' }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nome <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="name" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Preço <span class="text-danger">*</span></label>
+              <input type="number" min="0" step="0.01" class="form-control" formControlName="price" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Código de barras <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="barcode" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Altura (cm) <span class="text-danger">*</span></label>
+              <input type="number" min="0" step="0.01" class="form-control" formControlName="height" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Largura (cm) <span class="text-danger">*</span></label>
+              <input type="number" min="0" step="0.01" class="form-control" formControlName="width" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Profundidade (cm) <span class="text-danger">*</span></label>
+              <input type="number" min="0" step="0.01" class="form-control" formControlName="depth" [readonly]="isReadOnly()" />
+            </div>
+          </div>
+
+          <div class="alert alert-danger mt-3" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2 flex-wrap">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancelar</button>
+          <button *ngIf="!isReadOnly()" type="submit" class="btn btn-primary" [disabled]="isReadOnly() || isSaving()">
+            {{ isSaving() ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

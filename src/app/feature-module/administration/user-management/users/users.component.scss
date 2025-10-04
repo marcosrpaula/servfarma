@@ -1,0 +1,7 @@
+/* Hide Funções column (4th column) */
+.users-table {
+  thead tr th:nth-child(4),
+  tbody tr td:nth-child(4) {
+    display: none;
+  }
+}

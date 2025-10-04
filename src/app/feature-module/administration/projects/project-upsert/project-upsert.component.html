@@ -1,0 +1,143 @@
+﻿<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
+
+<div class="row">
+  <div class="col-12">
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="card">
+        <div class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <h5 class="card-title mb-1">{{ title() }}</h5>
+            <p class="text-muted mb-0">Cadastre ou edite informações do projeto.</p>
+          </div>
+          <div class="status-toggle form-check form-switch mb-0">
+            <input
+              id="projectActive"
+              class="form-check-input"
+              type="checkbox"
+              formControlName="isActive"
+              [disabled]="isReadOnly()"
+            />
+            <label for="projectActive" class="status-toggle__label form-check-label">
+              Status
+              <span
+                class="status-toggle__badge"
+                [ngClass]="form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'"
+              >
+                {{ form.get('isActive')?.value ? 'Ativo' : 'Inativo' }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nome <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="name" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Laboratorio <span class="text-danger">*</span></label>
+              <select class="form-select" formControlName="laboratoryId" [disabled]="isReadOnly()">
+                <option value="">Selecione</option>
+                @for (lab of labs; track lab.id) {
+                  <option [value]="lab.id">{{ lab.tradeName }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Observacoes</label>
+              <textarea class="form-control" rows="3" formControlName="observation" [readonly]="isReadOnly()"></textarea>
+            </div>
+          </div>
+
+          <div class="row g-3 mt-3">
+            <div class="col-md-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  formControlName="emitReturnInvoice"
+                  [disabled]="isReadOnly()"
+                  id="emitReturnInvoice"
+                />
+                <label class="form-check-label" for="emitReturnInvoice">Emitir nota de retorno</label>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  formControlName="emitInvoice"
+                  [disabled]="isReadOnly()"
+                  id="emitInvoice"
+                />
+                <label class="form-check-label" for="emitInvoice">Emitir nota fiscal</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <label class="form-label">Tipos de servico permitidos <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="allowedServiceTypes" multiple [disabled]="isReadOnly()">
+              @for (type of serviceTypeOptions; track type.id) {
+                <option [value]="type.id">{{ type.label }}</option>
+              }
+            </select>
+          </div>
+
+          <h6 class="mt-4 mb-3">Configuracao de estoque</h6>
+          <div formGroupName="stock" class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Estoque principal</label>
+              <input type="text" class="form-control" formControlName="mainStock" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Estoque kits</label>
+              <input type="text" class="form-control" formControlName="kitStock" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Estoque amostras</label>
+              <input type="text" class="form-control" formControlName="sampleStock" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Estoque bloqueado</label>
+              <input type="text" class="form-control" formControlName="blockedStock" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  formControlName="blockSimilarLot"
+                  [disabled]="isReadOnly()"
+                  id="blockSimilarLot"
+                />
+                <label class="form-check-label" for="blockSimilarLot">Bloquear lote similar</label>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Bloquear antes do vencimento (meses)</label>
+              <input
+                type="number"
+                min="0"
+                class="form-control"
+                formControlName="blockBeforeExpirationInMonths"
+                [readonly]="isReadOnly()"
+              />
+            </div>
+          </div>
+
+          <div class="alert alert-danger mt-3" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2 flex-wrap">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancelar</button>
+          <button *ngIf="!isReadOnly()" type="submit" class="btn btn-primary" [disabled]="isSaving()">
+            {{ isSaving() ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

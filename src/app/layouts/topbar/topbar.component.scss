@@ -1,0 +1,24 @@
+.topbar-user .header-profile-user {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+}
+
+.topbar-user .dropdown-toggle {
+  padding: 0.25rem 0.5rem;
+}
+
+.topbar-user .dropdown-menu {
+  min-width: 12rem;
+}
+
+.topbar-user .dropdown-item i {
+  transition: color 0.2s ease;
+}
+
+.topbar-user .dropdown-item:hover i {
+  color: var(--vz-primary);
+}

@@ -1,25 +1,25 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+﻿import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
-// search module
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { NgPipesModule } from 'ngx-pipes';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { LayoutsModule } from './layouts/layouts.module';
+import { PagesModule } from './pages/pages.module';
 
-import { LayoutsModule } from "./layouts/layouts.module";
-
-// Auth
-import { HttpClient, HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { KeycloakAuthService } from './auth/keycloak/keycloak.service';
+import { TokenInterceptor } from './auth/keycloak/token.interceptor';
+import { AccessControlInterceptor } from './core/access-control/access-control.interceptor';
+import { SnakeCaseInterceptor } from './core/http/snake-case.interceptor';
+import { ApiFeedbackInterceptor } from './core/http/api-feedback.interceptor';
 import { environment } from '../environments/environment';
-import { ErrorInterceptor } from './core/helpers/error.interceptor';
-import { JwtInterceptor } from './core/helpers/jwt.interceptor';
-import { KeycloakService } from './core/services/keycloak.service';
-
-// Language
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 
 // Store
 import { rootReducer } from './store';
@@ -39,62 +39,66 @@ import { ApplicationEffects } from './store/Jobs/jobs_effect';
 import { ApikeyEffects } from './store/APIKey/apikey_effect';
 import { AuthenticationEffects } from './store/Authentication/authentication.effects';
 
-export function createTranslateLoader(http: HttpClient): any {
+export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
-export function initializeKeycloak(keycloakService: KeycloakService) {
-    return () => {
-        if (environment.defaultauth === 'keycloak') {
-            return keycloakService.init();
-        }
-        return Promise.resolve(true);
-    };
+export function initializeKeycloak(auth: KeycloakAuthService): () => Promise<boolean> {
+  return () => auth.init();
 }
 
-@NgModule({ declarations: [
-        AppComponent
-    ],
-    bootstrap: [AppComponent], imports: [TranslateModule.forRoot({
-            defaultLanguage: 'en',
-            loader: {
-                provide: TranslateLoader,
-                useFactory: (createTranslateLoader),
-                deps: [HttpClient]
-            }
-        }),
-        BrowserAnimationsModule,
-        BrowserModule,
-        AppRoutingModule,
-        LayoutsModule,
-        StoreModule.forRoot(rootReducer),
-        StoreDevtoolsModule.instrument({
-            maxAge: 25, // Retains last 25 states
-            logOnly: environment.production, // Restrict extension to log-only mode
-        }),
-        EffectsModule.forRoot([
-            AuthenticationEffects,
-            EcommerceEffects,
-            ProjectEffects,
-            TaskEffects,
-            CRMEffects,
-            CryptoEffects,
-            InvoiceEffects,
-            TicketEffects,
-            FileManagerEffects,
-            TodoEffects,
-            ApplicationEffects,
-            ApikeyEffects
-        ]),
-        NgPipesModule], providers: [
-        { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        {
-            provide: APP_INITIALIZER,
-            useFactory: initializeKeycloak,
-            deps: [KeycloakService],
-            multi: true
-        },
-        provideHttpClient(withInterceptorsFromDi()),
-    ] })
-export class AppModule { }
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient],
+      },
+    }),
+    BrowserAnimationsModule,
+    BrowserModule,
+    AppRoutingModule,
+    LayoutsModule,
+    StoreModule.forRoot(rootReducer),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
+    EffectsModule.forRoot([
+      AuthenticationEffects,
+      EcommerceEffects,
+      ProjectEffects,
+      TaskEffects,
+      CRMEffects,
+      CryptoEffects,
+      InvoiceEffects,
+      TicketEffects,
+      FileManagerEffects,
+      TodoEffects,
+      ApplicationEffects,
+      ApikeyEffects,
+    ]),
+    PagesModule,
+    ToastModule,
+    NgPipesModule,
+  ],
+  providers: [
+    MessageService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeKeycloak,
+      deps: [KeycloakAuthService],
+      multi: true,
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: AccessControlInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: SnakeCaseInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ApiFeedbackInterceptor, multi: true },
+    provideHttpClient(withInterceptorsFromDi()),
+  ],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}

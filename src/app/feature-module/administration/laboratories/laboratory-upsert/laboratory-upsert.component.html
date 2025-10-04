@@ -1,0 +1,65 @@
+﻿<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
+
+<div class="row">
+  <div class="col-12">
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <div class="card">
+        <div class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <h5 class="card-title mb-1">{{ title() }}</h5>
+            <p class="text-muted mb-0">Informe os dados básicos do laboratório.</p>
+          </div>
+          <div class="status-toggle form-check form-switch mb-0">
+            <input
+              id="isActive"
+              class="form-check-input"
+              type="checkbox"
+              formControlName="isActive"
+              [disabled]="isReadOnly()"
+            />
+            <label for="isActive" class="status-toggle__label form-check-label">
+              Status
+              <span
+                class="status-toggle__badge"
+                [ngClass]="form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'"
+              >
+                {{ form.get('isActive')?.value ? 'Ativo' : 'Inativo' }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nome fantasia <span class="text-danger">*</span></label>
+              <input formControlName="tradeName" type="text" class="form-control" placeholder="Nome fantasia" [readonly]="isReadOnly()" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Razao social <span class="text-danger">*</span></label>
+              <input formControlName="legalName" type="text" class="form-control" placeholder="Razao social" [readonly]="isReadOnly()" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Documento <span class="text-danger">*</span></label>
+              <input formControlName="document" type="text" class="form-control" placeholder="CNPJ ou CPF" [readonly]="isReadOnly()" />
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Observacao</label>
+              <input formControlName="observation" type="text" class="form-control" placeholder="Observacoes (opcional)" [readonly]="isReadOnly()" />
+            </div>
+          </div>
+
+          <div class="alert alert-danger mt-3" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2 flex-wrap">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Voltar</button>
+          <button *ngIf="!isReadOnly()" type="submit" class="btn btn-primary" [disabled]="isSaving() || form.invalid">Salvar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

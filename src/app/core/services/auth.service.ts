@@ -1,60 +1,127 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Store } from '@ngrx/store';
+import { getFirebaseBackend } from '../../authUtils';
 import { User } from 'src/app/store/Authentication/auth.models';
-import { KeycloakService } from './keycloak.service';
-import { logout } from 'src/app/store/Authentication/authentication.actions';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { GlobalComponent } from "../../global-component";
+import { Store } from '@ngrx/store';
+import { RegisterSuccess, loginFailure, loginSuccess, logout, logoutSuccess } from 'src/app/store/Authentication/authentication.actions';
+
+const AUTH_API = GlobalComponent.AUTH_API;
+
+const httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
+  
 
 @Injectable({ providedIn: 'root' })
+
+/**
+ * Auth-service Component
+ */
 export class AuthenticationService {
 
-    private readonly currentUserSubject = new BehaviorSubject<User | null>(this.readStoredUser());
-    readonly currentUser$ = this.currentUserSubject.asObservable();
+    user!: User;
+    currentUserValue: any;
 
-    constructor(private store: Store, private keycloakService: KeycloakService) { }
+    private currentUserSubject: BehaviorSubject<User>;
+    // public currentUser: Observable<User>;
 
-    get currentUserValue(): User | null {
-        return this.currentUserSubject.value;
+    constructor(private http: HttpClient, private store: Store) {
+        this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(sessionStorage.getItem('currentUser')!));
+        // this.currentUser = this.currentUserSubject.asObservable();
+     }
+
+    /**
+     * Performs the register
+     * @param email email
+     * @param password password
+     */
+    register(email: string, first_name: string, password: string) {        
+        // return getFirebaseBackend()!.registerUser(email, password).then((response: any) => {
+        //     const user = response;
+        //     return user;
+        // });
+
+        // Register Api
+        return this.http.post(AUTH_API + 'signup', {
+            email,
+            first_name,
+            password,
+          }, httpOptions).pipe(
+            map((response: any) => {
+                const user = response;
+                return user;
+            }),
+            catchError((error: any) => {
+                const errorMessage = 'Login failed'; // Customize the error message as needed
+                this.store.dispatch(loginFailure({ error: errorMessage }));
+                return throwError(errorMessage);
+            })
+        );
     }
 
-    register(): never {
-        throw new Error('User registration is handled directly in Keycloak.');
+    /**
+     * Performs the auth
+     * @param email email of user
+     * @param password password of user
+     */
+    login(email: string, password: string) {
+        // return getFirebaseBackend()!.loginUser(email, password).then((response: any) => {
+        //     const user = response;
+        //     return user;
+        // });
+
+        return this.http.post(AUTH_API + 'signin', {
+            email,
+            password
+          }, httpOptions).pipe(
+              map((response: any) => {
+                const user = response;
+                return user;
+            }),
+            catchError((error: any) => {
+                const errorMessage = 'Login failed'; // Customize the error message as needed
+                return throwError(errorMessage);
+            })
+        );
     }
 
-    login(): never {
-        throw new Error('Authentication is handled directly via Keycloak.');
+    /**
+     * Returns the current user
+     */
+    public currentUser(): any {
+        return getFirebaseBackend()!.getAuthenticatedUser();
     }
 
-    public currentUser(): User | null {
-        return this.currentUserSubject.value;
-    }
-
-    synchronizeSession(): void {
-        const storedUser = this.readStoredUser();
-        this.currentUserSubject.next(storedUser);
-    }
-
-    logout(): void {
+    /**
+     * Logout the user
+     */
+    logout() {
         this.store.dispatch(logout());
+        // logout the user
+        // return getFirebaseBackend()!.logout();
         sessionStorage.removeItem('currentUser');
         sessionStorage.removeItem('token');
-        this.currentUserSubject.next(null);
-        this.keycloakService.logout(window.location.origin).catch((error) => {
-            console.error('Keycloak logout failed', error);
+        this.currentUserSubject.next(null!);
+
+        return of(undefined).pipe(
+        
+        );
+
+    }
+
+    /**
+     * Reset password
+     * @param email email
+     */
+    resetPassword(email: string) {
+        return getFirebaseBackend()!.forgetPassword(email).then((response: any) => {
+            const message = response.data;
+            return message;
         });
     }
 
-    private readStoredUser(): User | null {
-        const raw = sessionStorage.getItem('currentUser');
-        if (!raw) {
-            return null;
-        }
-        try {
-            return JSON.parse(raw) as User;
-        } catch (error) {
-            console.warn('Failed to parse stored user session', error);
-            return null;
-        }
-    }
 }
 

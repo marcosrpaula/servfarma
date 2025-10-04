@@ -1,15 +1,20 @@
-export const environment = {
+﻿export const environment = {
   production: true,
   defaultauth: 'keycloak',
+  apiBaseUrl: 'http://localhost:5164',
   keycloak: {
-    url: 'https://keycloak.example.com',
+    url: 'http://localhost:8080',
     realm: 'servfarma',
-    clientId: 'servfarma-frontend',
-    initOptions: {
-      onLoad: 'login-required',
-      checkLoginIframe: false,
-      pkceMethod: 'S256'
-    }
+    clientId: 'frontend',
   },
-  apiBaseUrl: 'https://hml-api.servfarma.com.br'
+  firebaseConfig: {
+    apiKey: '',
+    authDomain: '',
+    databaseURL: '',
+    projectId: '',
+    storageBucket: '',
+    messagingSenderId: '',
+    appId: '',
+    measurementId: ''
+  }
 };

@@ -289,3 +289,46 @@ code {
         opacity: 0;
     }
 }
+// status toggle control
+.status-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .form-check-input {
+    width: 3rem;
+    height: 1.5rem;
+    margin-top: 0;
+    cursor: pointer;
+  }
+
+  .status-toggle__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 0;
+  }
+
+  .status-toggle__badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .badge-status-active {
+    background-color: rgba(25, 135, 84, 0.15);
+    color: #198754;
+  }
+
+  .badge-status-inactive {
+    background-color: rgba(220, 53, 69, 0.15);
+    color: #dc3545;
+  }
+
+  &.form-check .form-check-input:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}

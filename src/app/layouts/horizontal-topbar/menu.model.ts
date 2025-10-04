@@ -8,5 +8,4 @@ export interface MenuItem {
     badge?: any;
     parentId?: number;
     isLayout?: boolean;
-    permission?: string | string[];
   }

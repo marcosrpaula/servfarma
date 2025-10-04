@@ -1,0 +1,145 @@
+﻿<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
+
+<div class="row">
+  <div class="col-12">
+    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <div class="card">
+        <div class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div>
+            <h5 class="card-title mb-1">{{ title() }}</h5>
+            <p class="text-muted mb-0">Informe os dados básicos da transportadora.</p>
+          </div>
+          <div class="status-toggle form-check form-switch mb-0">
+            <input
+              id="isActive"
+              class="form-check-input"
+              type="checkbox"
+              formControlName="isActive"
+              [disabled]="isReadOnly()"
+            />
+            <label for="isActive" class="status-toggle__label form-check-label">
+              Status
+              <span
+                class="status-toggle__badge"
+                [ngClass]="form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'"
+              >
+                {{ form.get('isActive')?.value ? 'Ativo' : 'Inativo' }}
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Nome <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="name" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Razao social</label>
+              <input type="text" class="form-control" formControlName="legalName" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Documento</label>
+              <input type="text" class="form-control" formControlName="document" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Inscricao estadual</label>
+              <input type="text" class="form-control" formControlName="stateRegistration" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" formControlName="email" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Observacoes</label>
+              <textarea class="form-control" rows="3" formControlName="observation" [readonly]="isReadOnly()"></textarea>
+            </div>
+          </div>
+
+          <h6 class="mt-4 mb-3">Endereco</h6>
+          <div formGroupName="address" class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">CEP</label>
+              <input type="text" class="form-control" formControlName="zipCode" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">Logradouro</label>
+              <input type="text" class="form-control" formControlName="street" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Numero</label>
+              <input type="text" class="form-control" formControlName="number" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Complemento</label>
+              <input type="text" class="form-control" formControlName="additionalDetails" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Ponto de referencia</label>
+              <input type="text" class="form-control" formControlName="referencePoint" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Bairro</label>
+              <input type="text" class="form-control" formControlName="neighborhood" [readonly]="isReadOnly()" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Estado</label>
+              <select
+                class="form-select"
+                formControlName="stateId"
+                [disabled]="isReadOnly()"
+                (change)="onStateChange($any($event.target).value)"
+              >
+                <option value="">Selecione</option>
+                @for (state of states; track state.id) {
+                  <option [value]="state.id">{{ state.abbreviation }} - {{ state.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Cidade</label>
+              <select class="form-select" formControlName="cityId" [disabled]="isReadOnly()">
+                <option value="">Selecione</option>
+                @for (city of cities; track city.id) {
+                  <option [value]="city.id">{{ city.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-3 mt-3">
+            <div class="col-md-3">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  formControlName="printOnInvoice"
+                  [disabled]="isReadOnly()"
+                  id="printInvoice"
+                />
+                <label class="form-check-label" for="printInvoice">Imprimir em NF</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-danger mt-3" *ngIf="errorMessage()">{{ errorMessage() }}</div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2 flex-wrap">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancelar</button>
+          <button
+            *ngIf="!isReadOnly()"
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="isReadOnly() || isSaving()"
+          >
+            {{ isSaving() ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+

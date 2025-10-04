@@ -1,70 +1,83 @@
-import { NgModule } from '@angular/core';
+﻿import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-// Component pages
-import { DashboardComponent } from "./dashboards/dashboard/dashboard.component";
+import { DashboardComponent } from './dashboards/dashboard/dashboard.component';
+import { PermissionGuard } from '../core/access-control/permission.guard';
 
 const routes: Routes = [
-    {
-        path: "",
-        component: DashboardComponent
-    },
-    {
-      path: '', loadChildren: () => import('./dashboards/dashboards.module').then(m => m.DashboardsModule)
-    },
-    {
-      path: 'apps', loadChildren: () => import('./apps/apps.module').then(m => m.AppsModule)
-    },
-    {
-      path: 'ecommerce', loadChildren: () => import('./ecommerce/ecommerce.module').then(m => m.EcommerceModule)
-    },
-    {
-      path: 'projects', loadChildren: () => import('./projects/projects.module').then(m => m.ProjectsModule)
-    },
-    {
-      path: 'tasks', loadChildren: () => import('./tasks/tasks.module').then(m => m.TasksModule)
-    },
-    {
-      path: 'crm', loadChildren: () => import('./crm/crm.module').then(m => m.CrmModule)
-    },
-    {
-      path: 'crypto', loadChildren: () => import('./crypto/crypto.module').then(m => m.CryptoModule)
-    },
-    {
-      path: 'invoices', loadChildren: () => import('./invoices/invoices.module').then(m => m.InvoicesModule)
-    },
-    {
-      path: 'tickets', loadChildren: () => import('./tickets/tickets.module').then(m => m.TicketsModule)
-    },
-    {
-      path: 'pages', loadChildren: () => import('./extrapages/extraspages.module').then(m => m.ExtraspagesModule)
-    },
-    { path: 'ui', loadChildren: () => import('./ui/ui.module').then(m => m.UiModule) },
-    {
-      path: 'advance-ui', loadChildren: () => import('./advance-ui/advance-ui.module').then(m => m.AdvanceUiModule)
-    },
-    {
-      path: 'forms', loadChildren: () => import('./form/form.module').then(m => m.FormModule)
-    },
-    {
-      path: 'tables', loadChildren: () => import('./tables/tables.module').then(m => m.TablesModule)
-    },
-    {
-      path: 'charts', loadChildren: () => import('./charts/charts.module').then(m => m.ChartsModule)
-    },
-    {
-      path: 'icons', loadChildren: () => import('./icons/icons.module').then(m => m.IconsModule)
-    },
-    {
-      path: 'maps', loadChildren: () => import('./maps/maps.module').then(m => m.MapsModule)
-    },
-    {
-      path: 'marletplace', loadChildren: () => import('./nft-marketplace/nft-marketplace.module').then(m => m.NftMarketplaceModule)
-    },
+  {
+    path: '',
+    component: DashboardComponent,
+  },
+  {
+    path: 'dashboard',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
+  {
+    path: 'banks',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'banks', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/banks/banks.module').then((m) => m.BanksModule),
+  },
+  {
+    path: 'laboratories',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'laboratories', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/laboratories/laboratories.module').then((m) => m.LaboratoriesModule),
+  },
+  {
+    path: 'courier-companies',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'couriers', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/courier-companies/courier-companies.module').then((m) => m.CourierCompaniesModule),
+  },
+  {
+    path: 'couriers',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'couriers', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/couriers/couriers.module').then((m) => m.CouriersModule),
+  },
+  {
+    path: 'return-units',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'return-units', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/return-units/return-units.module').then((m) => m.ReturnUnitsModule),
+  },
+  {
+    path: 'projects',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'projects', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/projects/projects.module').then((m) => m.ProjectsModule),
+  },
+  {
+    path: 'supplies',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'supplies', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/supplies/supplies.module').then((m) => m.SuppliesModule),
+  },
+  {
+    path: 'pharmaceutical-forms',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'pharmaceutical-forms', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/pharmaceutical-forms/pharmaceutical-forms.module').then((m) => m.PharmaceuticalFormsModule),
+  },
+  {
+    path: 'units',
+    canMatch: [PermissionGuard],
+    data: { permission: { module: 'units', level: 'read' } },
+    loadChildren: () => import('../feature-module/administration/units/units.module').then((m) => m.UnitsModule),
+  },
+  {
+    path: 'user-management',
+    canMatch: [PermissionGuard],
+    data: { permission: ['users:read', 'roles:read'], permissionMode: 'any' },
+    loadChildren: () => import('../feature-module/administration/user-management/user-management.module').then((m) => m.UserManagementModule),
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PagesRoutingModule { }
+export class PagesRoutingModule {}

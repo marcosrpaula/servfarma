@@ -1,12 +1,10 @@
-﻿import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from 'src/environments/environment';
-import { PermissionService } from '../../core/services/permission.service';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-sidebar',
@@ -14,25 +12,21 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./sidebar.component.scss'],
     standalone: false
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class SidebarComponent implements OnInit {
 
   menu: any;
   toggle: any = true;
   menuItems: MenuItem[] = [];
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
-  private permissionSubscription?: Subscription;
 
-  constructor(private router: Router, public translate: TranslateService, private permissionService: PermissionService) {
+  constructor(private router: Router, public translate: TranslateService) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-    this.permissionService.ensurePermissionsLoaded();
-    this.permissionSubscription = this.permissionService.permissions$.subscribe(permissions => {
-      this.menuItems = this.filterMenuItems(MENU, permissions);
-      setTimeout(() => this.initActiveMenu(), 0);
-    });
+    // Menu Items
+    this.menuItems = MENU;
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') != "twocolumn") {
         if (event instanceof NavigationEnd) {
@@ -42,10 +36,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.permissionSubscription?.unsubscribe();
-  }
-
   /***
    * Activate droup down set
    */
@@ -53,42 +43,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.initActiveMenu();
     }, 0);
-  }
-
-  private filterMenuItems(items: MenuItem[], permissions: any): MenuItem[] {
-    const filtered: MenuItem[] = [];
-    for (const item of items) {
-      if (!this.canDisplayMenuItem(item, permissions)) {
-        continue;
-      }
-      const clone: MenuItem = { ...item };
-      if (item.subItems) {
-        const subItems = this.filterMenuItems(item.subItems, permissions);
-        if (subItems.length) {
-          clone.subItems = subItems;
-        } else {
-          delete clone.subItems;
-          if (!item.link) {
-            continue;
-          }
-        }
-      }
-      filtered.push(clone);
-    }
-    return filtered;
-  }
-
-  private canDisplayMenuItem(item: MenuItem, permissions: any): boolean {
-    if (!item.permission) {
-      return true;
-    }
-    if (!permissions) {
-      return true;
-    }
-    if (Array.isArray(item.permission)) {
-      return item.permission.every(expression => this.permissionService.can(expression));
-    }
-    return this.permissionService.can(item.permission);
   }
 
   removeActivation(items: any) {
@@ -179,23 +133,21 @@ export class SidebarComponent implements OnInit, OnDestroy {
       pathName = pathName.replace('/velzon/angular/default', '');
     }
 
-    const active = this.findMenuItem(pathName, this.menuItems)
-    this.toggleItem(active)
+    const active = this.findMenuItem(pathName, this.menuItems);
+    if (active) {
+      this.toggleItem(active);
+    }
     const ul = document.getElementById("navbar-nav");
     if (ul) {
       const items = Array.from(ul.querySelectorAll("a.nav-link"));
       let activeItems = items.filter((x: any) => x.classList.contains("active"));
       this.removeActivation(activeItems);
 
-      let matchingMenuItem = items.find((x: any) => {
-        if (environment.production) {
-          let path = x.pathname
-          path = path.replace('/velzon/angular/default', '');
-          return path === pathName;
-        } else {
-          return x.pathname === pathName;
-        }
-
+      const matchingMenuItem = items.find((x: any) => {
+        const itemPath = environment.production
+          ? x.pathname.replace('/velzon/angular/default', '')
+          : x.pathname;
+        return this.pathsMatch(itemPath, pathName);
       });
       if (matchingMenuItem) {
         this.activateParentDropdown(matchingMenuItem);
@@ -205,7 +157,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   private findMenuItem(pathname: string, menuItems: any[]): any {
     for (const menuItem of menuItems) {
-      if (menuItem.link && menuItem.link === pathname) {
+      if (menuItem.link && this.pathsMatch(menuItem.link, pathname)) {
         return menuItem;
       }
 
@@ -219,6 +171,32 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     return null;
   }
+  private pathsMatch(linkPath: string | undefined, currentPath: string): boolean {
+    if (!linkPath) {
+      return false;
+    }
+
+    const normalize = (path: string) => {
+      if (!path) {
+        return '/';
+      }
+      const trimmed = path.replace(/\/+$/, '');
+      return trimmed === '' ? '/' : trimmed;
+    };
+
+    const normalizedLink = normalize(linkPath);
+    const normalizedCurrent = normalize(currentPath);
+
+    if (normalizedLink === '/') {
+      return normalizedCurrent === '/';
+    }
+
+    return (
+      normalizedCurrent === normalizedLink ||
+      normalizedCurrent.startsWith(normalizedLink + '/')
+    );
+  }
+
   /**
    * Returns true or false if given menu item has child or not
    * @param item menuItem
@@ -248,3 +226,4 @@ export class SidebarComponent implements OnInit, OnDestroy {
     document.body.classList.remove('vertical-sidebar-enable');
   }
 }
+
