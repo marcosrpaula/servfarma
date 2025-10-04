@@ -7,14 +7,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-
 import {
   NormalizedHttpError,
   NotificationService,
-  ValidationErrorEntry,
 } from '../../../../core/notifications/notification.service';
-import { ValidationErrorsBannerComponent } from '../../../../core/notifications/validation-errors-banner.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { applyServerValidationErrors } from '../../../../shared/common/server-validation.util';
 import { BanksApiService } from '../services/banks.api.service';
@@ -32,7 +28,6 @@ import {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ValidationErrorsBannerComponent,
     SharedModule,
   ],
   templateUrl: './bank-upsert.component.html',
@@ -60,10 +55,6 @@ export class BankUpsertComponent implements OnInit {
   ]);
 
   readonly isSaving = signal(false);
-  readonly validationErrors = toSignal(this.notifications.validationErrors$, {
-    requireSync: true,
-  });
-
   readonly form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     bankCode: ['', []],
@@ -255,7 +246,6 @@ export class BankUpsertComponent implements OnInit {
     const normalized = error as NormalizedHttpError | undefined;
     const entries = normalized?.normalizedError?.validationErrors ?? [];
     applyServerValidationErrors(this.form, entries);
-    this.notifications.publishValidationErrors(entries);
     this.form.markAllAsTouched();
   }
 }

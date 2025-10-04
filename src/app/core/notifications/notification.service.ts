@@ -1,7 +1,6 @@
 ﻿import { Injectable, NgZone } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 export interface ValidationErrorEntry {
   field: string;
@@ -21,10 +20,6 @@ export type NormalizedHttpError = HttpErrorResponse & { normalizedError: Normali
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  private readonly validationErrorsSubject = new BehaviorSubject<ValidationErrorEntry[]>([]);
-
-  readonly validationErrors$: Observable<ValidationErrorEntry[]> = this.validationErrorsSubject.asObservable();
-
   constructor(private readonly messageService: MessageService, private readonly zone: NgZone) {}
 
   success(detail: string, summary = 'Operação concluída'): void {
@@ -46,11 +41,9 @@ export class NotificationService {
   }
 
   clearValidationErrors(): void {
-    this.validationErrorsSubject.next([]);
-  }
-
-  publishValidationErrors(entries: ValidationErrorEntry[]): void {
-    this.validationErrorsSubject.next(entries);
+    this.zone.run(() => {
+      this.messageService.clear('validation');
+    });
   }
 
   handleHttpError(error: HttpErrorResponse): NormalizedHttpError {
@@ -60,10 +53,17 @@ export class NotificationService {
 
     this.zone.run(() => {
       if (normalized.validationErrors.length > 0) {
+        const detail = this.composeValidationDetail(
+          normalized.message,
+          normalized.validationErrors
+        );
+        this.messageService.clear('validation');
         this.messageService.add({
           severity: 'error',
           summary: normalized.title,
+          detail,
           life: 7000,
+          key: 'validation',
         });
       } else {
         this.messageService.add({
@@ -174,5 +174,89 @@ export class NotificationService {
       default:
         return 'Erro';
     }
+  }
+
+  private composeValidationDetail(
+    message: string | undefined,
+    entries: ValidationErrorEntry[]
+  ): string {
+    const normalizedMessage =
+      message && message.trim().length > 0
+        ? message.trim()
+        : 'Existem campos que precisam ser corrigidos.';
+    const items = this.normalizeEntries(entries);
+    if (items.length === 0) {
+      return normalizedMessage;
+    }
+    const bulletList = items.map(item => `• ${item}`).join('\n');
+    return `${normalizedMessage}\n${bulletList}`;
+  }
+
+  private normalizeEntries(entries: ValidationErrorEntry[]): string[] {
+    return entries
+      .map(entry => {
+        const label = entry.field ? this.formatField(entry.field) : '';
+        const messages = this.normalizeMessages(entry);
+        const text = messages.join(' ');
+        if (!text.trim()) {
+          return '';
+        }
+        return label ? `${label}: ${text}` : text;
+      })
+      .filter(item => item.trim().length > 0);
+  }
+
+  private formatField(field: string): string {
+    return field
+      .replace(/[_-]+/g, ' ')
+      .split(' ')
+      .map(chunk => (chunk ? chunk[0].toUpperCase() + chunk.slice(1).toLowerCase() : chunk))
+      .join(' ')
+      .trim();
+  }
+
+  private normalizeMessages(error: ValidationErrorEntry): string[] {
+    if (!error.messages || error.messages.length === 0) {
+      return ['Revise os dados informados.'];
+    }
+
+    return error.messages
+      .map(message => this.normalizeMessage(message))
+      .filter(text => text.trim().length > 0);
+  }
+
+  private normalizeMessage(message: string | undefined): string {
+    if (!message) {
+      return '';
+    }
+
+    const trimmed = message.trim();
+    if (!trimmed) {
+      return '';
+    }
+
+    let cleaned = trimmed.replace(/^The\s+[\w\s]+\sfield\s+/i, '').trim();
+    cleaned = cleaned.replace(/^This\s+field\s+/i, '').trim();
+    cleaned = cleaned.replace(/\s+/g, ' ');
+
+    if (/^is required\.?$/i.test(cleaned)) {
+      return 'Este campo é obrigatório.';
+    }
+
+    const minMatch = cleaned.match(/^must be at least\s+(\d+)\s+characters?\.?$/i);
+    if (minMatch) {
+      return `Informe pelo menos ${minMatch[1]} caracteres.`;
+    }
+
+    const maxMatch = cleaned.match(/^must be at most\s+(\d+)\s+characters?\.?$/i);
+    if (maxMatch) {
+      return `Use no máximo ${maxMatch[1]} caracteres.`;
+    }
+
+    if (!cleaned.endsWith('.')) {
+      cleaned = `${cleaned}.`;
+    }
+
+    return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
   }
 }
