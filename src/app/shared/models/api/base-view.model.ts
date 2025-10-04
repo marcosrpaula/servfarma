@@ -9,7 +9,9 @@ export interface AuditMetadata {
   updatedBy?: string | null;
 }
 
-export interface AuditableViewModel extends EntityIdentifier, AuditMetadata {}
+export interface AuditableViewModel extends EntityIdentifier, AuditMetadata {
+  [key: string]: unknown;
+}
 
 export type SortableKeys<T> = Extract<keyof T, string>;
 

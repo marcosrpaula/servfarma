@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { PaginationService } from '../../../../shared/custom-pagination/pagination.service';
-import { ProjectsApiService, ListProjectsParams } from '../services/projects.api.service';
-import { ProjectViewModel } from '../../../../shared/models/projects';
+import {
+  ProjectsApiService,
+  ListProjectsParams,
+} from '../services/projects.api.service';
+import {
+  ProjectSortableField,
+  ProjectViewModel,
+} from '../../../../shared/models/projects';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ProjectsStateService } from '../services/projects-state.service';
@@ -26,7 +32,7 @@ export class ProjectsComponent implements OnInit {
   filtroLaboratorio = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'createdAt';
+  orderBy: ProjectSortableField = 'createdAt';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -112,7 +118,7 @@ export class ProjectsComponent implements OnInit {
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): string {
+  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): ProjectSortableField {
     switch (field) {
       case 'Name':
         return 'name';

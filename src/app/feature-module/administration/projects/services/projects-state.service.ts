@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { ProjectViewModel } from '../../../../shared/models/projects';
+import {
+  ProjectSortableField,
+  ProjectViewModel,
+} from '../../../../shared/models/projects';
 
 function cloneProject(project: ProjectViewModel): ProjectViewModel {
   return {
@@ -18,7 +21,7 @@ interface ProjectsListState {
   filtroNome: string;
   filtroLaboratorio: string;
   filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
+  orderBy: ProjectSortableField;
   ascending: boolean;
   orderLabel: 'CreatedDate' | 'Name' | 'Status';
   lastRequestSignature?: string;
