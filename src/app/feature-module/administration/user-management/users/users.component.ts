@@ -32,7 +32,7 @@ export class UsersComponent implements OnInit {
   // sem filtro por função na listagem
 
   // ordenação
-  orderBy: string = 'created_at';
+  orderBy: string = 'createdAt';
   ascending: boolean = false;
 
   orderLabel: string = 'CreatedDate';
@@ -74,11 +74,11 @@ export class UsersComponent implements OnInit {
 
   private mapOrderField(field: string): string {
     switch (field) {
-      case 'CreatedDate': return 'created_at';
+      case 'CreatedDate': return 'createdAt';
       case 'Name':        return 'name';
       case 'Email':       return 'email';
-      case 'Status':      return 'active';
-      default:            return 'created_at';
+      case 'Status':      return 'isActive';
+      default:            return 'createdAt';
     }
   }
 

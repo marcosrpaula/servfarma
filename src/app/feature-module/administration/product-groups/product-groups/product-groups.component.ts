@@ -19,7 +19,7 @@ export class ProductGroupsComponent implements OnInit {
   filtroNome = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'created_at';
+  orderBy = 'createdAt';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -89,10 +89,10 @@ export class ProductGroupsComponent implements OnInit {
       case 'Name':
         return 'name';
       case 'Status':
-        return 'active';
+        return 'isActive';
       case 'CreatedDate':
       default:
-        return 'created_at';
+        return 'createdAt';
     }
   }
 

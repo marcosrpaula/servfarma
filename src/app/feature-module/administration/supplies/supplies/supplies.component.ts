@@ -60,7 +60,7 @@ export class SuppliesComponent implements OnInit {
   filtroNome = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'created_at';
+  orderBy = 'createdAt';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -145,10 +145,10 @@ export class SuppliesComponent implements OnInit {
       case 'Name':
         return 'name';
       case 'Status':
-        return 'is_active';
+        return 'isActive';
       case 'CreatedDate':
       default:
-        return 'created_at';
+        return 'createdAt';
     }
   }
 

@@ -1,29 +1,23 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "../../../../config/environment";
 import {
+  ListSuppliesParams,
   DryPackageInput,
   PackageViewModel,
   RefrigeratedPackageInput,
   SimpleItemInput,
   SimpleItemViewModel,
 } from "../../../../shared/models/supplies";
+export type { ListSuppliesParams } from "../../../../shared/models/supplies";
 import {
   PagedResult,
   RawPagedResult,
   mapRawPaged,
 } from "../../../../shared/models/pagination";
-
-export interface ListSuppliesParams {
-  page?: number;
-  pageSize?: number;
-  name?: string;
-  isActive?: boolean;
-  orderBy?: string;
-  ascending?: boolean;
-}
+import { buildHttpParams } from "../../../../shared/utils/http-params";
 
 @Injectable({ providedIn: "root" })
 export class SuppliesApiService {
@@ -32,15 +26,13 @@ export class SuppliesApiService {
   constructor(private http: HttpClient) {}
 
   list(params: ListSuppliesParams = {}): Observable<PagedResult<SimpleItemViewModel>> {
-    const httpParams = new HttpParams({
-      fromObject: {
-        page: params.page?.toString() ?? "1",
-        page_size: params.pageSize?.toString() ?? "10",
-        ...(params.name ? { name: params.name } : {}),
-        ...(params.isActive !== undefined ? { is_active: String(params.isActive) } : {}),
-        ...(params.orderBy ? { order_by: params.orderBy } : {}),
-        ...(params.ascending !== undefined ? { ascending: String(params.ascending) } : {}),
-      },
+    const httpParams = buildHttpParams({
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 10,
+      name: params.name,
+      isActive: params.isActive,
+      orderBy: params.orderBy,
+      ascending: params.ascending,
     });
 
     return this.http
@@ -105,7 +97,7 @@ export class SuppliesApiService {
     return {
       name: input.name,
       price: input.price,
-      is_active: input.isActive,
+      isActive: input.isActive,
       type: input.type,
     };
   }
@@ -118,14 +110,14 @@ export class SuppliesApiService {
       width: input.width,
       depth: input.depth,
       barcode: input.barcode,
-      is_active: input.isActive,
+      isActive: input.isActive,
     };
   }
 
   private toRefrigeratedPackagePayload(input: RefrigeratedPackageInput): any {
     return {
       ...this.toDryPackagePayload(input),
-      cooling_duration_hours: input.coolingDurationHours,
+      coolingDurationHours: input.coolingDurationHours,
     };
   }
 }

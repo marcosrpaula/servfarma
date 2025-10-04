@@ -1,4 +1,4 @@
-import { AuditableViewModel } from './api/base-view.model';
+import { AuditableViewModel, ListRequestParams } from './api/base-view.model';
 
 export interface RoleViewModel {
   id: string;
@@ -18,3 +18,13 @@ export interface UserViewModel extends AuditableViewModel {
 export interface UserDetailsViewModel extends UserViewModel {
   permissions: RoleViewModel[];
 }
+
+export type UserSortableField = 'createdAt' | 'name' | 'email' | 'isActive';
+
+export interface UserListFilters {
+  name?: string;
+  email?: string;
+  isActive?: boolean;
+}
+
+export type ListUsersParams = ListRequestParams<UserSortableField> & UserListFilters;

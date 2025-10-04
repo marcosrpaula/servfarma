@@ -1,27 +1,20 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { environment } from "../../../../config/environment";
 import {
+  ListProjectsParams,
   ProjectInput,
   ProjectViewModel,
 } from "../../../../shared/models/projects";
+export type { ListProjectsParams } from "../../../../shared/models/projects";
 import {
   PagedResult,
   RawPagedResult,
   mapRawPaged,
 } from "../../../../shared/models/pagination";
-
-export interface ListProjectsParams {
-  page?: number;
-  pageSize?: number;
-  laboratoryId?: string;
-  name?: string;
-  isActive?: boolean;
-  orderBy?: string;
-  ascending?: boolean;
-}
+import { buildHttpParams } from "../../../../shared/utils/http-params";
 
 @Injectable({ providedIn: "root" })
 export class ProjectsApiService {
@@ -30,16 +23,14 @@ export class ProjectsApiService {
   constructor(private http: HttpClient) {}
 
   list(params: ListProjectsParams = {}): Observable<PagedResult<ProjectViewModel>> {
-    const httpParams = new HttpParams({
-      fromObject: {
-        page: params.page?.toString() ?? "1",
-        page_size: params.pageSize?.toString() ?? "10",
-        ...(params.laboratoryId ? { laboratory_id: params.laboratoryId } : {}),
-        ...(params.name ? { name: params.name } : {}),
-        ...(params.isActive !== undefined ? { is_active: String(params.isActive) } : {}),
-        ...(params.orderBy ? { order_by: params.orderBy } : {}),
-        ...(params.ascending !== undefined ? { ascending: String(params.ascending) } : {}),
-      },
+    const httpParams = buildHttpParams({
+      page: params.page ?? 1,
+      pageSize: params.pageSize ?? 10,
+      laboratoryId: params.laboratoryId,
+      name: params.name,
+      isActive: params.isActive,
+      orderBy: params.orderBy,
+      ascending: params.ascending,
     });
 
     return this.http
@@ -62,23 +53,23 @@ export class ProjectsApiService {
   private toPayload(input: ProjectInput): any {
     return {
       name: input.name,
-      laboratory_id: input.laboratoryId,
+      laboratoryId: input.laboratoryId,
       observation: input.observation ?? null,
-      emit_return_invoice: input.emitReturnInvoice,
-      emit_invoice: input.emitInvoice,
+      emitReturnInvoice: input.emitReturnInvoice,
+      emitInvoice: input.emitInvoice,
       stock: input.stock
         ? {
-            main_stock: input.stock.mainStock,
-            kit_stock: input.stock.kitStock,
-            sample_stock: input.stock.sampleStock,
-            blocked_stock: input.stock.blockedStock,
-            block_similar_lot: input.stock.blockSimilarLot,
-            block_before_expiration_in_months:
+            mainStock: input.stock.mainStock,
+            kitStock: input.stock.kitStock,
+            sampleStock: input.stock.sampleStock,
+            blockedStock: input.stock.blockedStock,
+            blockSimilarLot: input.stock.blockSimilarLot,
+            blockBeforeExpirationInMonths:
               input.stock.blockBeforeExpirationInMonths,
           }
         : null,
-      allowed_service_types: input.allowedServiceTypes,
-      is_active: input.isActive,
+      allowedServiceTypes: input.allowedServiceTypes,
+      isActive: input.isActive,
     };
   }
 }

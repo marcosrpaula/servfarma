@@ -259,7 +259,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
 
   private loadLabs() {
     this.labsApi
-      .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
+      .list({ page: 1, pageSize: 100, orderBy: 'tradeName', ascending: true })
       .subscribe((res) => {
         this.labs = res.items || [];
       });
