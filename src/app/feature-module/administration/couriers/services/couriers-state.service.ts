@@ -1,25 +1,21 @@
 import { Injectable } from '@angular/core';
-import { CourierViewModel } from '../../../../shared/models/couriers';
+import {
+  CourierListFilterState,
+  CourierSortableField,
+  CourierViewModel,
+} from '../../../../shared/models/couriers';
+import { ListViewState, cloneListViewState } from '../../../../shared/models/api/list-state';
 
-interface CouriersListState {
-  tableData: CourierViewModel[];
-  totalItems: number;
-  pageSize: number;
-  backendPage: number;
-  filtroNome: string;
-  filtroEmpresa: string;
-  filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
-  ascending: boolean;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status';
-  lastRequestSignature?: string;
-  lastPagerKey?: string;
-}
+export type CouriersListViewState = ListViewState<
+  CourierViewModel,
+  CourierSortableField,
+  CourierListFilterState
+>;
 
 @Injectable({ providedIn: 'root' })
 export class CouriersStateService {
   private readonly cache = new Map<string, CourierViewModel>();
-  private listState: CouriersListState | null = null;
+  private listState: CouriersListViewState | null = null;
 
   setMany(couriers: CourierViewModel[]): void {
     couriers.forEach((courier) => this.upsert(courier));
@@ -37,21 +33,15 @@ export class CouriersStateService {
     return courier ? { ...courier } : undefined;
   }
 
-  setListState(state: CouriersListState): void {
-    this.listState = {
-      ...state,
-      tableData: state.tableData.map(courier => ({ ...courier })),
-    };
+  setListState(state: CouriersListViewState): void {
+    this.listState = cloneListViewState(state);
   }
 
-  getListState(): CouriersListState | null {
+  getListState(): CouriersListViewState | null {
     if (!this.listState) {
       return null;
     }
-    return {
-      ...this.listState,
-      tableData: this.listState.tableData.map(courier => ({ ...courier })),
-    };
+    return cloneListViewState(this.listState);
   }
 
   updateListItem(updated: CourierViewModel): void {
@@ -59,12 +49,12 @@ export class CouriersStateService {
     if (!this.listState) {
       return;
     }
-    if (!this.listState.tableData.some(courier => courier.id === updated.id)) {
+    if (!this.listState.items.some(courier => courier.id === updated.id)) {
       return;
     }
     this.listState = {
       ...this.listState,
-      tableData: this.listState.tableData.map(courier =>
+      items: this.listState.items.map(courier =>
         courier.id === updated.id ? { ...updated } : { ...courier }
       ),
     };

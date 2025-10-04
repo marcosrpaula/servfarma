@@ -1,25 +1,24 @@
 import { Injectable } from '@angular/core';
-import { BankViewModel } from '../../../../shared/models/banks';
+import {
+  BankListFilterState,
+  BankSortableField,
+  BankViewModel,
+} from '../../../../shared/models/banks';
+import {
+  ListViewState,
+  cloneListViewState,
+} from '../../../../shared/models/api/list-state';
 
-interface BanksListState {
-  tableData: BankViewModel[];
-  totalItems: number;
-  pageSize: number;
-  backendPage: number;
-  filtroNome: string;
-  filtroCodigo: string;
-  filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
-  ascending: boolean;
-  orderLabel: 'CreatedDate' | 'Name' | 'BankCode' | 'Status';
-  lastRequestSignature?: string;
-  lastPagerKey?: string;
-}
+export type BanksListViewState = ListViewState<
+  BankViewModel,
+  BankSortableField,
+  BankListFilterState
+>;
 
 @Injectable({ providedIn: 'root' })
 export class BanksStateService {
   private readonly cache = new Map<string, BankViewModel>();
-  private listState: BanksListState | null = null;
+  private listState: BanksListViewState | null = null;
 
   upsert(bank: BankViewModel): void {
     this.cache.set(bank.id, { ...bank });
@@ -37,21 +36,15 @@ export class BanksStateService {
     return found ? { ...found } : undefined;
   }
 
-  setListState(state: BanksListState): void {
-    this.listState = {
-      ...state,
-      tableData: state.tableData.map(bank => ({ ...bank })),
-    };
+  setListState(state: BanksListViewState): void {
+    this.listState = cloneListViewState(state);
   }
 
-  getListState(): BanksListState | null {
+  getListState(): BanksListViewState | null {
     if (!this.listState) {
       return null;
     }
-    return {
-      ...this.listState,
-      tableData: this.listState.tableData.map(bank => ({ ...bank })),
-    };
+    return cloneListViewState(this.listState);
   }
 
   updateListItem(updated: BankViewModel): void {
@@ -59,12 +52,12 @@ export class BanksStateService {
     if (!this.listState) {
       return;
     }
-    if (!this.listState.tableData.some(bank => bank.id === updated.id)) {
+    if (!this.listState.items.some(bank => bank.id === updated.id)) {
       return;
     }
     this.listState = {
       ...this.listState,
-      tableData: this.listState.tableData.map(bank =>
+      items: this.listState.items.map(bank =>
         bank.id === updated.id ? { ...updated } : { ...bank }
       ),
     };
