@@ -1,24 +1,21 @@
 import { Injectable } from '@angular/core';
-import { CourierCompanyViewModel } from '../../../../shared/models/courier-companies';
+import {
+  CourierCompanyListFilterState,
+  CourierCompanySortableField,
+  CourierCompanyViewModel,
+} from '../../../../shared/models/courier-companies';
+import { ListViewState, cloneListViewState } from '../../../../shared/models/api/list-state';
 
-interface CourierCompaniesListState {
-  tableData: CourierCompanyViewModel[];
-  totalItems: number;
-  pageSize: number;
-  backendPage: number;
-  filtroNome: string;
-  filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
-  ascending: boolean;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status';
-  lastRequestSignature?: string;
-  lastPagerKey?: string;
-}
+export type CourierCompaniesListViewState = ListViewState<
+  CourierCompanyViewModel,
+  CourierCompanySortableField,
+  CourierCompanyListFilterState
+>;
 
 @Injectable({ providedIn: 'root' })
 export class CourierCompaniesStateService {
   private readonly cache = new Map<string, CourierCompanyViewModel>();
-  private listState: CourierCompaniesListState | null = null;
+  private listState: CourierCompaniesListViewState | null = null;
 
   setMany(companies: CourierCompanyViewModel[]): void {
     companies.forEach((company) => this.upsert(company));
@@ -36,21 +33,15 @@ export class CourierCompaniesStateService {
     return company ? { ...company } : undefined;
   }
 
-  setListState(state: CourierCompaniesListState): void {
-    this.listState = {
-      ...state,
-      tableData: state.tableData.map(company => ({ ...company })),
-    };
+  setListState(state: CourierCompaniesListViewState): void {
+    this.listState = cloneListViewState(state);
   }
 
-  getListState(): CourierCompaniesListState | null {
+  getListState(): CourierCompaniesListViewState | null {
     if (!this.listState) {
       return null;
     }
-    return {
-      ...this.listState,
-      tableData: this.listState.tableData.map(company => ({ ...company })),
-    };
+    return cloneListViewState(this.listState);
   }
 
   updateListItem(updated: CourierCompanyViewModel): void {
@@ -58,12 +49,12 @@ export class CourierCompaniesStateService {
     if (!this.listState) {
       return;
     }
-    if (!this.listState.tableData.some(company => company.id === updated.id)) {
+    if (!this.listState.items.some(company => company.id === updated.id)) {
       return;
     }
     this.listState = {
       ...this.listState,
-      tableData: this.listState.tableData.map(company =>
+      items: this.listState.items.map(company =>
         company.id === updated.id ? { ...updated } : { ...company }
       ),
     };

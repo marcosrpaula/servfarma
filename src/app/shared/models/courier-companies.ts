@@ -1,11 +1,12 @@
-import { AddressViewModel } from "./addresses";
+import { AuditableViewModel, ListRequestParams } from './api/base-view.model';
+import { AddressViewModel } from './addresses';
 
 export interface CourierCompanySimpleViewModel {
   id: string;
   name: string;
 }
 
-export interface CourierCompanyViewModel extends CourierCompanySimpleViewModel {
+export interface CourierCompanyViewModel extends CourierCompanySimpleViewModel, AuditableViewModel {
   document?: string | null;
   legalName?: string | null;
   stateRegistration?: string | null;
@@ -14,10 +15,6 @@ export interface CourierCompanyViewModel extends CourierCompanySimpleViewModel {
   observation?: string | null;
   printOnInvoice: boolean;
   isActive: boolean;
-  createdAt: string;
-  createdBy: string;
-  updatedAt?: string | null;
-  updatedBy?: string | null;
 }
 
 export interface CourierCompanyInput {
@@ -38,4 +35,40 @@ export interface CourierCompanyInput {
   observation?: string | null;
   printOnInvoice: boolean;
   isActive: boolean;
+}
+
+export type CourierCompanySortableField = 'createdAt' | 'name' | 'isActive';
+
+export interface CourierCompanyListFilters {
+  name?: string;
+  isActive?: boolean;
+}
+
+export type ListCourierCompaniesParams = ListRequestParams<CourierCompanySortableField> & CourierCompanyListFilters;
+
+export interface CourierCompanyListFilterState {
+  name: string;
+  isActive: '' | 'true' | 'false';
+}
+
+export const defaultCourierCompanyListFilterState: CourierCompanyListFilterState = {
+  name: '',
+  isActive: '',
+};
+
+export function normalizeCourierCompanyFilters(
+  filters: CourierCompanyListFilterState,
+): CourierCompanyListFilters {
+  const normalized: CourierCompanyListFilters = {};
+
+  const trimmedName = filters.name.trim();
+  if (trimmedName) {
+    normalized.name = trimmedName;
+  }
+
+  if (filters.isActive !== '') {
+    normalized.isActive = filters.isActive === 'true';
+  }
+
+  return normalized;
 }

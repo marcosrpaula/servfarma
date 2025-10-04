@@ -1,11 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs/operators';
 import { PaginationService } from '../../../../shared/custom-pagination/pagination.service';
+import { CourierCompaniesApiService } from '../services/courier-companies.api.service';
+import { CourierCompaniesStateService, CourierCompaniesListViewState } from '../services/courier-companies-state.service';
 import {
-  CourierCompaniesApiService,
+  CourierCompanyListFilterState,
+  CourierCompanySortableField,
+  CourierCompanyViewModel,
   ListCourierCompaniesParams,
-} from '../services/courier-companies.api.service';
-import { CourierCompaniesStateService } from '../services/courier-companies-state.service';
-import { CourierCompanyViewModel } from '../../../../shared/models/courier-companies';
+  defaultCourierCompanyListFilterState,
+  normalizeCourierCompanyFilters,
+} from '../../../../shared/models/courier-companies';
+
+type CourierCompanySortLabel = 'CreatedDate' | 'Name' | 'Status';
+
+const SORT_LABEL_TO_FIELD: Record<CourierCompanySortLabel, CourierCompanySortableField> = {
+  CreatedDate: 'createdAt',
+  Name: 'name',
+  Status: 'isActive',
+};
 
 @Component({
   selector: 'app-courier-companies',
@@ -18,146 +32,111 @@ export class CourierCompaniesComponent implements OnInit {
     { label: 'Administracao' },
     { label: 'Transportadoras', active: true },
   ];
+
   tableData: CourierCompanyViewModel[] = [];
+
   pageSize = 10;
-  backendPage = 1;
+  currentPage = 1;
   totalItems = 0;
 
   filtroNome = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'created_at';
+  orderBy: CourierCompanySortableField = 'createdAt';
   ascending = false;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
+  orderLabel: CourierCompanySortLabel = 'CreatedDate';
 
   carregando = false;
   private lastPagerKey = '';
   private lastRequestSignature = '';
-  private allowPagerUpdates = false;
+  private suppressPagerSync = true;
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
-    private api: CourierCompaniesApiService,
-    private pagination: PaginationService,
-    private state: CourierCompaniesStateService,
+    private readonly api: CourierCompaniesApiService,
+    private readonly pagination: PaginationService,
+    private readonly state: CourierCompaniesStateService,
   ) {
-    this.pagination.tablePageSize.subscribe(({ skip, limit, pageSize }) => {
-      if (!this.allowPagerUpdates) {
-        return;
-      }
-      const size = typeof pageSize === 'number' && pageSize > 0 ? pageSize : this.pageSize || 10;
-      const newPage = Math.floor((typeof skip === 'number' ? skip : 0) / size) + 1;
-      const pagerKey = `${newPage}|${size}`;
-      if (pagerKey === this.lastPagerKey) {
-        return;
-      }
-      this.lastPagerKey = pagerKey;
-      this.pageSize = size;
-      this.backendPage = newPage;
-      this.loadPage();
-    });
+    this.pagination.tablePageSize
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ skip, pageSize }) => {
+        if (this.suppressPagerSync) {
+          return;
+        }
+
+        const normalizedPageSize =
+          typeof pageSize === 'number' && pageSize > 0 ? pageSize : this.pageSize || 10;
+        const normalizedSkip = typeof skip === 'number' && skip >= 0 ? skip : 0;
+        const newPage = Math.floor(normalizedSkip / normalizedPageSize) + 1;
+        const pagerKey = `${newPage}|${normalizedPageSize}`;
+        if (pagerKey === this.lastPagerKey) {
+          return;
+        }
+
+        this.applyPaginationChange(newPage, normalizedPageSize);
+        this.loadPage();
+      });
   }
 
   ngOnInit(): void {
     const savedState = this.state.getListState();
+
+    this.suppressPagerSync = true;
     if (savedState) {
-      this.totalItems = savedState.totalItems;
-      this.pageSize = savedState.pageSize;
-      this.backendPage = savedState.backendPage;
-      this.filtroNome = savedState.filtroNome;
-      this.filtroAtivo = savedState.filtroAtivo;
-      this.orderBy = savedState.orderBy;
-      this.ascending = savedState.ascending;
-      this.orderLabel = savedState.orderLabel;
-      this.tableData = savedState.tableData;
-      this.lastRequestSignature = savedState.lastRequestSignature ?? '';
-      this.lastPagerKey = savedState.lastPagerKey ?? `${this.backendPage}|${this.pageSize}`;
-      this.pagination.calculatePageSize.next({
-        totalData: this.totalItems,
-        pageSize: this.pageSize,
-        tableData: this.tableData,
-        serialNumberArray: [],
-      });
-      this.pagination.tablePageSize.next({
-        skip: (this.backendPage - 1) * this.pageSize,
-        limit: this.backendPage * this.pageSize,
-        pageSize: this.pageSize,
-      });
-      this.allowPagerUpdates = true;
-      return;
-    }
-
-    this.allowPagerUpdates = true;
-    this.pagination.calculatePageSize.next({
-      totalData: this.totalItems,
-      pageSize: this.pageSize,
-      tableData: [],
-      serialNumberArray: [],
-    });
-    this.loadPage();
-  }
-
-  toggleSort(field: 'CreatedDate' | 'Name' | 'Status') {
-    if (this.orderLabel === field) {
-      this.ascending = !this.ascending;
+      this.applyPersistedState(savedState);
     } else {
-      this.orderLabel = field;
-      this.ascending = true;
+      this.resetFilters();
+      this.emitPaginationSnapshot();
     }
-    this.orderBy = this.mapOrderField(field);
-    this.backendPage = 1;
+    this.suppressPagerSync = false;
+
+    if (!savedState) {
+      this.loadPage();
+    }
+  }
+
+  toggleSort(label: CourierCompanySortLabel): void {
+    const nextField = SORT_LABEL_TO_FIELD[label];
+    this.ascending = this.orderBy === nextField ? !this.ascending : true;
+    this.orderBy = nextField;
+    this.orderLabel = label;
+    this.currentPage = 1;
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): string {
-    switch (field) {
-      case 'Name':
-        return 'name';
-      case 'Status':
-        return 'active';
-      case 'CreatedDate':
-      default:
-        return 'created_at';
-    }
-  }
-
-  changePageSize(size: number) {
+  changePageSize(size: number): void {
     this.pageSize = Number(size) || 10;
-    this.backendPage = 1;
+    this.currentPage = 1;
     this.pagination.tablePageSize.next({
-      skip: (this.backendPage - 1) * this.pageSize,
-      limit: this.backendPage * this.pageSize,
+      skip: (this.currentPage - 1) * this.pageSize,
+      limit: this.currentPage * this.pageSize,
       pageSize: this.pageSize,
     });
   }
 
-  aplicarFiltros() {
-    this.backendPage = 1;
+  aplicarFiltros(): void {
+    this.currentPage = 1;
     this.loadPage();
   }
 
-  limparFiltros() {
-    this.filtroNome = '';
-    this.filtroAtivo = '';
-    this.backendPage = 1;
+  limparFiltros(): void {
+    this.setFilters({ ...defaultCourierCompanyListFilterState });
+    this.currentPage = 1;
     this.loadPage();
   }
 
-  private loadPage() {
+  private loadPage(): void {
     this.carregando = true;
-    this.lastPagerKey = `${this.backendPage}|${this.pageSize}`;
+    this.lastPagerKey = `${this.currentPage}|${this.pageSize}`;
+
+    const filterState = this.captureFilters();
     const params: ListCourierCompaniesParams = {
-      page: this.backendPage,
+      page: this.currentPage,
       pageSize: this.pageSize,
       orderBy: this.orderBy,
       ascending: this.ascending,
+      ...normalizeCourierCompanyFilters(filterState),
     };
-
-    if (this.filtroNome) {
-      params.name = this.filtroNome;
-    }
-    if (this.filtroAtivo !== '') {
-      params.isActive = this.filtroAtivo === 'true';
-    }
 
     const signature = JSON.stringify(params);
     if (signature === this.lastRequestSignature) {
@@ -167,36 +146,86 @@ export class CourierCompaniesComponent implements OnInit {
 
     this.lastRequestSignature = signature;
 
-    this.api.list(params).subscribe({
-      next: (res) => {
-        this.totalItems = res.totalCount ?? 0;
-        this.tableData = res.items || [];
-        this.state.setMany(this.tableData);
-        this.state.setListState({
-          tableData: this.tableData,
-          totalItems: this.totalItems,
-          pageSize: this.pageSize,
-          backendPage: this.backendPage,
-          filtroNome: this.filtroNome,
-          filtroAtivo: this.filtroAtivo,
-          orderBy: this.orderBy,
-          ascending: this.ascending,
-          orderLabel: this.orderLabel,
-          lastRequestSignature: this.lastRequestSignature,
-          lastPagerKey: this.lastPagerKey,
-        });
-        this.pagination.calculatePageSize.next({
-          totalData: this.totalItems,
-          pageSize: this.pageSize,
-          tableData: this.tableData,
-          serialNumberArray: [],
-        });
-        this.carregando = false;
-      },
-      error: () => {
-        this.carregando = false;
-      },
+    this.api
+      .list(params)
+      .pipe(finalize(() => (this.carregando = false)))
+      .subscribe({
+        next: (res) => {
+          this.totalItems = res.totalCount ?? 0;
+          this.tableData = res.items || [];
+          this.state.setMany(this.tableData);
+          this.persistListState(filterState);
+          this.emitPaginationSnapshot();
+        },
+        error: () => {
+          this.lastRequestSignature = '';
+        },
+      });
+  }
+
+  private applyPersistedState(state: CourierCompaniesListViewState): void {
+    this.tableData = state.items;
+    this.totalItems = state.totalItems;
+    this.pageSize = state.pageSize;
+    this.currentPage = state.page;
+    this.orderBy = state.orderBy;
+    this.ascending = state.ascending;
+    this.lastRequestSignature = state.lastRequestSignature ?? '';
+    this.lastPagerKey = state.lastPagerKey ?? `${state.page}|${state.pageSize}`;
+    this.setFilters(state.filters);
+    this.orderLabel = (Object.entries(SORT_LABEL_TO_FIELD).find(([, field]) => field === state.orderBy)?.[0] as CourierCompanySortLabel) ?? this.orderLabel;
+    this.emitPaginationSnapshot();
+    this.pagination.tablePageSize.next({
+      skip: (this.currentPage - 1) * this.pageSize,
+      limit: this.currentPage * this.pageSize,
+      pageSize: this.pageSize,
     });
   }
-}
 
+  private applyPaginationChange(page: number, size: number): void {
+    this.currentPage = page;
+    this.pageSize = size;
+    this.lastPagerKey = `${page}|${size}`;
+  }
+
+  private captureFilters(): CourierCompanyListFilterState {
+    return {
+      name: this.filtroNome,
+      isActive: this.filtroAtivo,
+    };
+  }
+
+  private setFilters(filters: CourierCompanyListFilterState): void {
+    this.filtroNome = filters.name;
+    this.filtroAtivo = filters.isActive;
+  }
+
+  private resetFilters(): void {
+    this.setFilters({ ...defaultCourierCompanyListFilterState });
+  }
+
+  private emitPaginationSnapshot(): void {
+    this.pagination.calculatePageSize.next({
+      totalData: this.totalItems,
+      pageSize: this.pageSize,
+      tableData: this.tableData,
+      serialNumberArray: [],
+    });
+  }
+
+  private persistListState(filterState: CourierCompanyListFilterState): void {
+    const state: CourierCompaniesListViewState = {
+      items: this.tableData,
+      totalItems: this.totalItems,
+      page: this.currentPage,
+      pageSize: this.pageSize,
+      orderBy: this.orderBy,
+      ascending: this.ascending,
+      filters: filterState,
+      lastRequestSignature: this.lastRequestSignature,
+      lastPagerKey: this.lastPagerKey,
+    };
+
+    this.state.setListState(state);
+  }
+}
