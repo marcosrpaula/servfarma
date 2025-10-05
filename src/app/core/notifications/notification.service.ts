@@ -194,9 +194,25 @@ export class NotificationService {
 
   private normalizeEntries(entries: ValidationErrorEntry[]): string[] {
     return entries
-      .flatMap(entry => this.normalizeMessages(entry))
-      .map(text => text.trim())
-      .filter(text => text.length > 0);
+      .map(entry => {
+        const label = entry.field ? this.formatField(entry.field) : '';
+        const messages = this.normalizeMessages(entry);
+        const text = messages.join(' ');
+        if (!text.trim()) {
+          return '';
+        }
+        return label ? `${label}: ${text}` : text;
+      })
+      .filter(item => item.trim().length > 0);
+  }
+
+  private formatField(field: string): string {
+    return field
+      .replace(/[_-]+/g, ' ')
+      .split(' ')
+      .map(chunk => (chunk ? chunk[0].toUpperCase() + chunk.slice(1).toLowerCase() : chunk))
+      .join(' ')
+      .trim();
   }
 
   private normalizeMessages(error: ValidationErrorEntry): string[] {
