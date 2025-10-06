@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UnitsApiService } from '../services/units.api.service';
-import { UnitViewModel } from '../../../../shared/models/units';
+import { UnitSortableField, UnitViewModel } from '../../../../shared/models/units';
 import { PaginationService } from '../../../../shared/custom-pagination/pagination.service';
 import { UnitsStateService } from '../services/units-state.service';
 
@@ -24,7 +24,7 @@ export class UnitsComponent implements OnInit {
   filtroNome = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'createdAt';
+  orderBy: UnitSortableField = 'created_at';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -89,15 +89,15 @@ export class UnitsComponent implements OnInit {
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): string {
+  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): UnitSortableField {
     switch (field) {
       case 'Name':
         return 'name';
       case 'Status':
-        return 'isActive';
+        return 'is_active';
       case 'CreatedDate':
       default:
-        return 'createdAt';
+        return 'created_at';
     }
   }
 
@@ -182,6 +182,3 @@ export class UnitsComponent implements OnInit {
     });
   }
 }
-
-
-

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
+import { LaboratorySortableField, LaboratoryViewModel } from '../../../../shared/models/laboratories';
 
 interface LaboratoriesListState {
   tableData: LaboratoryViewModel[];
@@ -10,7 +10,7 @@ interface LaboratoriesListState {
   filtroLegalName: string;
   filtroDocumento: string;
   filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
+  orderBy: LaboratorySortableField;
   ascending: boolean;
   orderLabel: 'CreatedDate' | 'TradeName' | 'LegalName' | 'Document' | 'Status';
   lastRequestSignature?: string;

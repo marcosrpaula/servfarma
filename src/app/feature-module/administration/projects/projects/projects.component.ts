@@ -154,12 +154,12 @@ export class ProjectsComponent implements OnInit {
   }
 
   labName(row: ProjectViewModel): string {
-    return row.laboratory?.tradeName ?? '—';
+    return row.laboratory?.tradeName ?? 'N/A';
   }
 
   private loadLaboratories() {
     this.labsApi
-      .list({ page: 1, pageSize: 100, orderBy: 'tradeName', ascending: true })
+      .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
       .subscribe((res) => {
         this.labs = res.items || [];
       });

@@ -48,7 +48,7 @@ export class UnitUpsertComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   form: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(50)]],
+    name: ['', [Validators.required, Validators.maxLength(100)]],
     isActive: [true],
   });
 

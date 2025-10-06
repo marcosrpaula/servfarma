@@ -62,22 +62,22 @@ export class ReturnUnitUpsertComponent implements OnInit {
 
   form: FormGroup = this.fb.group({
     laboratoryId: ['', [Validators.required]],
-    name: ['', [Validators.required, Validators.maxLength(120)]],
-    legalName: ['', [Validators.required, Validators.maxLength(120)]],
-    tradeName: ['', [Validators.required, Validators.maxLength(120)]],
+    name: ['', [Validators.required, Validators.maxLength(100)]],
+    legalName: ['', [Validators.required, Validators.maxLength(100)]],
+    tradeName: ['', [Validators.required, Validators.maxLength(100)]],
     document: ['', [Validators.required, Validators.maxLength(20)]],
-    stateRegistration: ['', [Validators.maxLength(50)]],
+    stateRegistration: ['', [Validators.maxLength(30)]],
     phone: ['', [Validators.maxLength(20)]],
     email: ['', [Validators.email, Validators.maxLength(120)]],
-    observation: ['', [Validators.maxLength(500)]],
+    observation: ['', [Validators.maxLength(1000)]],
     isActive: [true],
     address: this.fb.group({
       zipCode: ['', [Validators.required, Validators.maxLength(10)]],
       street: ['', [Validators.required, Validators.maxLength(150)]],
-      number: ['', [Validators.required, Validators.maxLength(30)]],
-      additionalDetails: ['', [Validators.maxLength(120)]],
-      referencePoint: ['', [Validators.maxLength(120)]],
-      neighborhood: ['', [Validators.required, Validators.maxLength(120)]],
+      number: ['', [Validators.required, Validators.maxLength(80)]],
+      additionalDetails: ['', [Validators.maxLength(150)]],
+      referencePoint: ['', [Validators.maxLength(150)]],
+      neighborhood: ['', [Validators.required, Validators.maxLength(100)]],
       stateId: ['', [Validators.required]],
       cityId: ['', [Validators.required]],
     }),
@@ -259,7 +259,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
 
   private loadLabs() {
     this.labsApi
-      .list({ page: 1, pageSize: 100, orderBy: 'tradeName', ascending: true })
+      .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
       .subscribe((res) => {
         this.labs = res.items || [];
       });

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UnitViewModel } from '../../../../shared/models/units';
+import { UnitSortableField, UnitViewModel } from '../../../../shared/models/units';
 
 interface UnitsListState {
   tableData: UnitViewModel[];
@@ -8,7 +8,7 @@ interface UnitsListState {
   backendPage: number;
   filtroNome: string;
   filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
+  orderBy: UnitSortableField;
   ascending: boolean;
   orderLabel: 'CreatedDate' | 'Name' | 'Status';
   lastRequestSignature?: string;

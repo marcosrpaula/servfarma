@@ -22,11 +22,11 @@ export interface LaboratoryViewModel {
 export interface LaboratoryDetailsViewModel extends LaboratoryViewModel {}
 
 export type LaboratorySortableField =
-  | "createdAt"
-  | "tradeName"
-  | "legalName"
+  | "created_at"
+  | "trade_name"
+  | "legal_name"
   | "document"
-  | "isActive";
+  | "is_active";
 
 export interface LaboratoryListFilters {
   tradeName?: string;

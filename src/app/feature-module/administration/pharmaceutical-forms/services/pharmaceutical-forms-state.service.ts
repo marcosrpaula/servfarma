@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PharmaceuticalFormViewModel } from '../../../../shared/models/pharmaceutical-forms';
+import { PharmaceuticalFormSortableField, PharmaceuticalFormViewModel } from '../../../../shared/models/pharmaceutical-forms';
 
 interface PharmaceuticalFormsListState {
   tableData: PharmaceuticalFormViewModel[];
@@ -8,7 +8,7 @@ interface PharmaceuticalFormsListState {
   backendPage: number;
   filtroNome: string;
   filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
+  orderBy: PharmaceuticalFormSortableField;
   ascending: boolean;
   orderLabel: 'CreatedDate' | 'Name' | 'Status';
   lastRequestSignature?: string;

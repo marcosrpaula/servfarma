@@ -51,7 +51,7 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   form: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.maxLength(150)]],
+    name: ['', [Validators.required, Validators.maxLength(100)]],
     isActive: [true],
   });
 

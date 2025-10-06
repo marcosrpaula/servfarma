@@ -12,7 +12,7 @@ export interface PharmaceuticalFormViewModel {
 
 export interface PharmaceuticalFormDetailsViewModel extends PharmaceuticalFormViewModel {}
 
-export type PharmaceuticalFormSortableField = "createdAt" | "name" | "isActive";
+export type PharmaceuticalFormSortableField = "created_at" | "name" | "is_active";
 
 export interface PharmaceuticalFormListFilters {
   name?: string;

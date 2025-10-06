@@ -35,7 +35,7 @@ export class BanksComponent implements OnInit {
   filtroCodigo = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy: BankSortableField = 'createdAt';
+  orderBy: BankSortableField = 'created_at';
   ascending = false;
 
   carregando = false;
@@ -217,5 +217,3 @@ export class BanksComponent implements OnInit {
     });
   }
 }
-
-

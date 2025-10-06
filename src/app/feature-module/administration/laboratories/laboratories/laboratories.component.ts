@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LaboratoriesApiService } from '../services/laboratories.api.service';
-import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
+import { LaboratorySortableField, LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { PaginationService } from '../../../../shared/custom-pagination/pagination.service';
 import { LaboratoriesStateService } from '../services/laboratories-state.service';
 
@@ -27,7 +27,7 @@ export class LaboratoriesComponent implements OnInit {
   filtroDocumento = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy: string = 'createdAt';
+  orderBy: LaboratorySortableField = 'created_at';
   ascending = false;
   orderLabel: 'CreatedDate' | 'TradeName' | 'LegalName' | 'Document' | 'Status' = 'CreatedDate';
 
@@ -99,18 +99,18 @@ export class LaboratoriesComponent implements OnInit {
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'TradeName' | 'LegalName' | 'Document' | 'Status'): string {
+  private mapOrderField(field: 'CreatedDate' | 'TradeName' | 'LegalName' | 'Document' | 'Status'): LaboratorySortableField {
     switch (field) {
       case 'TradeName':
-        return 'tradeName';
+        return 'trade_name';
       case 'LegalName':
-        return 'legalName';
+        return 'legal_name';
       case 'Document':
         return 'document';
       case 'Status':
-        return 'isActive';
+        return 'is_active';
       default:
-        return 'createdAt';
+        return 'created_at';
     }
   }
 

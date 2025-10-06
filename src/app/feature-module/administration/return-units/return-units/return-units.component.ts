@@ -32,7 +32,7 @@ export class ReturnUnitsComponent implements OnInit {
   filtroLaboratorio = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy: ReturnUnitSortableField = 'createdAt';
+  orderBy: ReturnUnitSortableField = 'created_at';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -123,10 +123,10 @@ export class ReturnUnitsComponent implements OnInit {
       case 'Name':
         return 'name';
       case 'Status':
-        return 'isActive';
+        return 'is_active';
       case 'CreatedDate':
       default:
-        return 'createdAt';
+        return 'created_at';
     }
   }
 
@@ -154,12 +154,12 @@ export class ReturnUnitsComponent implements OnInit {
   }
 
   labName(row: ReturnUnitViewModel): string {
-    return row.laboratory?.tradeName ?? '—';
+    return row.laboratory?.tradeName ?? 'N/A';
   }
 
   private loadLaboratories() {
     this.labsApi
-      .list({ page: 1, pageSize: 100, orderBy: 'tradeName', ascending: true })
+      .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
       .subscribe((res) => {
         this.labs = res.items || [];
       });
@@ -168,16 +168,49 @@ export class ReturnUnitsComponent implements OnInit {
   private loadPage() {
     this.carregando = true;
     this.lastPagerKey = `${this.backendPage}|${this.pageSize}`;
+
+    if (!this.filtroLaboratorio) {
+      this.lastRequestSignature = '';
+      this.tableData = [];
+      this.totalItems = 0;
+      this.returnUnitsState.setListState({
+        tableData: [],
+        totalItems: this.totalItems,
+        pageSize: this.pageSize,
+        backendPage: this.backendPage,
+        filtroNome: this.filtroNome,
+        filtroLaboratorio: this.filtroLaboratorio,
+        filtroAtivo: this.filtroAtivo,
+        orderBy: this.orderBy,
+        ascending: this.ascending,
+        orderLabel: this.orderLabel,
+        lastRequestSignature: this.lastRequestSignature,
+        lastPagerKey: this.lastPagerKey,
+      });
+      this.pagination.calculatePageSize.next({
+        totalData: 0,
+        pageSize: this.pageSize,
+        tableData: [],
+        serialNumberArray: [],
+      });
+      this.carregando = false;
+      return;
+    }
+
     const params: ListReturnUnitsParams = {
       page: this.backendPage,
       pageSize: this.pageSize,
       orderBy: this.orderBy,
       ascending: this.ascending,
+      laboratoryId: this.filtroLaboratorio,
     };
 
-    if (this.filtroNome) params.name = this.filtroNome;
-    if (this.filtroLaboratorio) params.laboratoryId = this.filtroLaboratorio;
-    if (this.filtroAtivo !== '') params.isActive = this.filtroAtivo === 'true';
+    if (this.filtroNome) {
+      params.name = this.filtroNome;
+    }
+    if (this.filtroAtivo !== '') {
+      params.isActive = this.filtroAtivo === 'true';
+    }
 
     const signature = JSON.stringify(params);
     if (signature === this.lastRequestSignature) {

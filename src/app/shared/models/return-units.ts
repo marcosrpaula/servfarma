@@ -43,7 +43,7 @@ export interface ReturnUnitInput {
   isActive: boolean;
 }
 
-export type ReturnUnitSortableField = "createdAt" | "name" | "isActive";
+export type ReturnUnitSortableField = "created_at" | "name" | "is_active";
 
 export interface ReturnUnitListFilters {
   laboratoryId?: string;

@@ -56,8 +56,8 @@ export class BankUpsertComponent implements OnInit {
 
   readonly isSaving = signal(false);
   readonly form: FormGroup = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(2)]],
-    bankCode: ['', []],
+    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
+    bankCode: ['', [Validators.required, Validators.maxLength(10)]],
     isActive: [true],
   });
 
@@ -167,7 +167,7 @@ export class BankUpsertComponent implements OnInit {
     const errors = control.errors;
 
     if (errors['required']) {
-      messages.push('Este campo � obrigat�rio.');
+      messages.push('Este campo e obrigatorio.');
     }
     if (errors['minlength']) {
       const requiredLength =
@@ -177,7 +177,7 @@ export class BankUpsertComponent implements OnInit {
     if (errors['maxlength']) {
       const maxLength =
         errors['maxlength'].requiredLength ?? errors['maxlength'].max;
-      messages.push(`Use no m�ximo ${maxLength} caracteres.`);
+      messages.push(`Use no maximo ${maxLength} caracteres.`);
     }
     if (errors['server']) {
       const serverMessage = Array.isArray(errors['server'])
@@ -188,7 +188,6 @@ export class BankUpsertComponent implements OnInit {
 
     return [...new Set(messages.filter(Boolean))];
   }
-
   formLevelMessages(): string[] {
     const errors = this.form.errors;
     if (!errors) {

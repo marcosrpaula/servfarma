@@ -8,7 +8,7 @@ export interface BankViewModel extends AuditableViewModel {
 
 export interface BankDetailsViewModel extends BankViewModel {}
 
-export type BankSortableField = 'createdAt' | 'name' | 'bankCode' | 'isActive';
+export type BankSortableField = 'created_at' | 'name' | 'bank_code' | 'is_active';
 
 export interface BankListFilters {
   name?: string;

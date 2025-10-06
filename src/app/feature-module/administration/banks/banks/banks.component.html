@@ -1,4 +1,4 @@
-﻿<app-breadcrumbs title="Bancos" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs title="Bancos" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-12">
@@ -114,35 +114,35 @@
                 <th
                   scope="col"
                   class="sort"
-                  (click)="toggleSort('bankCode')"
-                  (keydown.enter)="toggleSort('bankCode')"
+                  (click)="toggleSort('bank_code')"
+                  (keydown.enter)="toggleSort('bank_code')"
                   role="button"
                   tabindex="0"
                 >
                   Codigo
-                  <span class="sort-icon"><i *ngIf="orderBy === 'bankCode'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon"><i *ngIf="orderBy === 'bank_code'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
                 </th>
                 <th
                   scope="col"
                   class="sort"
-                  (click)="toggleSort('createdAt')"
-                  (keydown.enter)="toggleSort('createdAt')"
+                  (click)="toggleSort('created_at')"
+                  (keydown.enter)="toggleSort('created_at')"
                   role="button"
                   tabindex="0"
                 >
                   Criado em
-                  <span class="sort-icon"><i *ngIf="orderBy === 'createdAt'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon"><i *ngIf="orderBy === 'created_at'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
                 </th>
                 <th
                   scope="col"
                   class="sort"
-                  (click)="toggleSort('isActive')"
-                  (keydown.enter)="toggleSort('isActive')"
+                  (click)="toggleSort('is_active')"
+                  (keydown.enter)="toggleSort('is_active')"
                   role="button"
                   tabindex="0"
                 >
                   Status
-                  <span class="sort-icon"><i *ngIf="orderBy === 'isActive'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon"><i *ngIf="orderBy === 'is_active'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
                 </th>
                 <th scope="col" class="text-end">Acoes</th>
               </tr>
@@ -217,4 +217,3 @@
     </div>
   </div>
 </div>
-

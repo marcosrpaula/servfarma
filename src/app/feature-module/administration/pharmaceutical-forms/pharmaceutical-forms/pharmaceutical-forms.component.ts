@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PharmaceuticalFormsApiService } from '../services/pharmaceutical-forms.api.service';
-import { PharmaceuticalFormViewModel } from '../../../../shared/models/pharmaceutical-forms';
+import { PharmaceuticalFormSortableField, PharmaceuticalFormViewModel } from '../../../../shared/models/pharmaceutical-forms';
 import { PaginationService } from '../../../../shared/custom-pagination/pagination.service';
 import { PharmaceuticalFormsStateService } from '../services/pharmaceutical-forms-state.service';
 
@@ -24,7 +24,7 @@ export class PharmaceuticalFormsComponent implements OnInit {
   filtroNome = '';
   filtroAtivo: '' | 'true' | 'false' = '';
 
-  orderBy = 'createdAt';
+  orderBy: PharmaceuticalFormSortableField = 'created_at';
   ascending = false;
   orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
 
@@ -94,15 +94,15 @@ export class PharmaceuticalFormsComponent implements OnInit {
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): string {
+  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): PharmaceuticalFormSortableField {
     switch (field) {
       case 'Name':
         return 'name';
       case 'Status':
-        return 'isActive';
+        return 'is_active';
       case 'CreatedDate':
       default:
-        return 'createdAt';
+        return 'created_at';
     }
   }
 
