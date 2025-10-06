@@ -1,375 +1,373 @@
-# Plano de Padronização Angular 19
+# Plano de padronização e refatoração Angular 19
 
-## 1) **Diagnóstico resumido**
-| Tela / Domínio | Principais divergências |
+## 1) Diagnóstico resumido
+| Tela / Feature | Divergências principais |
 | --- | --- |
-| `account/register` (Cadastro de usuário) | Usa `UntypedFormGroup` e `UntypedFormBuilder`; sem standalone; campos sem máscaras/validações coerentes; mensagens duplicadas e em inglês; submissão ignora estado inválido. 【F:src/app/account/register/register.component.ts†L1-L96】 |
-| `pages/ecommerce/add-product` (Cadastro de produto) | Template extensivo com inputs soltos, sem formulário reativo, sem acessibilidade ou i18n; mistura `ngbNav` e componentes externos sem lazy; campos e textos em inglês. 【F:src/app/pages/ecommerce/add-product/add-product.component.html†L1-L200】 |
-| `feature/administration/laboratories/laboratory-upsert` | Apesar de standalone, mantém strings sem acento ("Laboratorio"), validação duplicada e sem tipos estritos; falta componetização para estados e mensagens. 【F:src/app/feature-module/administration/laboratories/laboratory-upsert/laboratory-upsert.component.ts†L1-L170】 |
-| `feature/administration/projects/project-upsert` | Estrutura semelhante, porém textos divergentes e sem i18n; ausência de máscaras e validações específicas por campo; ordenação de campos difere de laboratórios. 【F:src/app/feature-module/administration/projects/project-upsert/project-upsert.component.ts†L1-L200】 |
-| `feature/administration/return-units/return-unit-upsert` | Campos endereços sem máscaras, estados carregados manualmente, mensagens hardcoded; ordem de campos difere das demais telas; títulos sem acentuação. 【F:src/app/feature-module/administration/return-units/return-unit-upsert/return-unit-upsert.component.ts†L1-L200】 |
-| Listagens relacionadas (`projects`, `return-units`) | Filtros `[(ngModel)]` misturados com forms reativos; duplicação de select de laboratórios; colunas com acentuação incorreta ("Laboratorio"). 【F:src/app/feature-module/administration/projects/projects/projects.component.html†L43-L113】【F:src/app/feature-module/administration/return-units/return-units/return-units.component.html†L43-L113】 |
-| Global (`styles.scss`, roteamento, interceptors) | SCSS com estilos soltos, sem tokens; `AppModule` ainda presente; interceptors classe-based com DI tradicional; ausência de `provideRouter` com rotas tipadas; problemas de acentuação em breadcrumbs ("Laboratrios"). 【F:src/styles.scss†L1-L76】【F:src/app/app.module.ts†L1-L104】【F:src/app/layouts/sidebar/menu.ts†L22-L35】【F:src/app/feature-module/administration/laboratories/laboratories/laboratories.component.html†L1-L9】
+| Bancos – Cadastro (`bank-upsert`)| Formulário não tipado (`FormGroup` genérico), mensagens de validação duplicadas por campo, uso de `*ngIf/*ngFor`, ausência de máscaras e tokens de estilo compartilhados. | 
+| Transportadoras – Cadastro (`courier-company-upsert`)| Estrutura de endereço diferente das demais telas (campos opcionais obrigatórios na prática), validações inconsistentes (CEP sem máscara, ausência de mensagens), mistura de controle de fluxo novo/antigo, carregamento de listas sem estados de loading.| 
+| Laboratórios – Cadastro (`laboratory-upsert`)| Sem reaproveitamento de componente de erros, não utiliza `formControlName` camelCase alinhado, faltam máscaras de documento e mensagens padrão.| 
+| Unidades – Cadastro (`unit-upsert`)| Apenas validação requerida, sem feedback de erro, não aplica helpers de acessibilidade (`aria-*`), mantém layout distinto (sem grid 12 colunas nos campos secundários).| 
+| App shell (`main.ts`, `app.module.ts`, `app-routing.module.ts`)| Arquitetura baseada em NgModule, roteamento sem `provideRouter`/view transitions, interceptors orientados a classe, ausência de SSR/hidratação e form shell reutilizável.| 
+| Styles globais (`styles.scss`)| Não há design tokens centralizados (cores, tipografia, espaçamento), mix de estilos específicos com bootstrap puro, ausência de convenção BEM/utilitários.| 
 
-## 2) **Padrões propostos**
-1. **Arquitetura standalone**: migrar `AppModule`/`feature-module` para `app.config.ts` com `provideRouter`, `withComponentInputBinding`, `withViewTransitions`, SSR (`provideClientHydration`) e `provideHttpClient(withInterceptors([...]))` com interceptors funcionais.
-2. **Camada de formulários**: adotar `FormBuilder.nonNullable`, `FormGroup` tipados (`type FormModel = ReturnType<...>`), validações centralizadas e mensagens via `FormFieldErrorComponent` reutilizável.
-3. **Fluxo de template**: substituir `*ngIf/*ngFor` por `@if/@for`, usar `@defer` para grids, centralizar estados (loading/empty/error) em `LoadingStateComponent`.
-4. **Design tokens**: definir `tokens.scss` com cores/tipografia/spacing; componentes usam BEM (`.form-shell__actions`).
-5. **i18n e acentuação**: textos em pt-BR via `i18n` pipe (`{{ 'cadastro.produto.titulo' | i18n }}`) e correção de caracteres.
-6. **Serviços/HTTP**: converter interceptors para funções (`export const httpErrorInterceptor = (req, next) => ...`), consolidar `useCrudResource<T>()` com sinais e `HttpClient` tipado.
-7. **Padronização de cadastros**: componentes `FormShellComponent` e `FormFieldComponent` (label + input + hint + erro), ações fixas (Salvar/Cancelar) com ícones.
-8. **Testes mínimos**: `*.spec.ts` com `TestBed` standalone, validando formulários e interceptors.
+## 2) Padrões propostos
+1. **Arquitetura Angular 19** – Migrar bootstrap para `bootstrapApplication` com `provideRouter` (rotas tipadas, `withComponentInputBinding`, `withViewTransitions`) e `provideClientHydration`.
+2. **Form Shell Standalone** – Criar `FormShellComponent` com header, estado `@if (isSaving())`, slots para ações e uso uniforme em cadastros.
+3. **Forms Reativos Tipados** – Usar `FormBuilder.nonNullable` + tipos inferidos (`type BankForm = ReturnType<typeof bankFormFactory>`), máscaras via directives dedicadas.
+4. **Controle de Fluxo Moderno** – Substituir `*ngIf/*ngFor` por `@if/@for` e `@switch`; aplicar `@defer` para tabelas e combos pesados.
+5. **Estado & Mensagens** – Centralizar mensagens (erro, sucesso, vazio) em componente `FormFieldErrorComponent` + serviço `NotificationService` com sinais.
+6. **Design Tokens SCSS** – Definir mapa de cores, tipografia, espaçamentos e radius em `_tokens.scss`, usar mixins/utilitários BEM (ex.: `.form-shell__footer`).
+7. **HTTP Funcional** – Converter interceptors para funções (`provideHttpClient(withInterceptors([...]))`), incluir `HttpErrorInterceptor` com normalização.
+8. **A11y & i18n** – Labels com `for/id`, `aria-invalid`, `aria-describedby`, textos via `i18n` pipe e assets `pt-BR`.
+9. **Testes** – Implementar testes unitários para forms (validadores), services (HTTP + interceptores) e rotas (guards/resolvers) usando `TestBed` standalone.
 
-## 3) **Plano de refatoração por feature**
-1. **Base do app (Grande)**
-   - Criar `app.config.ts` com `provideRouter`, interceptors funcionais e `provideClientHydration`.
-   - Remover `AppModule`, migrar providers e bootstrap via `bootstrapApplication`.
-   - Configurar `prettier` + `lint-staged` e scripts (`format`, `lint`).
-2. **Design System (Médio)**
-   - Criar `src/app/shared/ui/form-shell` com tokens SCSS e componentes reutilizáveis.
-   - Normalizar `styles.scss` para importar tokens/utilitários.
-3. **Cadastros Administração (Grande)**
-   - `Laboratory`, `Project`, `ReturnUnit`: alinhar estrutura de formulário (ordem, labels, validações), i18n e uso de `FormShellComponent`; extrair selects compartilhados (laboratory combo) para componente.
-   - Ajustar listagens para usar componentes de estado e `@defer`.
-4. **Cadastros Ecommerce/Account (Médio)**
-   - Reescrever `register`, `add-product` com forms reativos tipados, i18n e padronização de mensagens.
-   - Criar máscara directives (CPF/CNPJ, CEP, telefone) reutilizáveis.
-5. **Services/Interceptors (Médio)**
-   - Converter interceptors para funções, eliminar `HTTP_INTERCEPTORS` array.
-   - Implementar `useCrudResource<T>()` para encapsular chamadas e sinais (loading/error/data).
-6. **Automação/Testes (Pequeno)**
-   - Adicionar testes unitários para formulários (validadores) e interceptors funcionais.
-   - Configurar Git hooks via Husky (opcional) para format/lint.
+## 3) Plano de refatoração por feature
+### 3.1 Administração / Bancos (Esforço: Médio)
+1. Criar `bank.routes.ts` com `provideState` e lazy `@defer` para listagem.
+2. Extrair `bankFormFactory` tipado com `FormBuilder.nonNullable`.
+3. Substituir mensagens inline por `<app-form-field-error>`, aplicar máscaras (código numérico) e tokens de layout.
+4. Cobrir com testes de validação e service mockado.
 
-## 4) **Exemplos “antes → depois”**
-### Template (`laboratory-upsert`)
-- **Antes**
-  ```html
-  <h5 class="card-title mb-0">Lista de Laboratrios</h5>
-  <button type="button" class="btn btn-success" (click)="save()">Salvar</button>
-  ```
-- **Depois**
-  ```html
-  <app-form-shell title="{{ 'laboratory.form.title' | i18n }}" [loading]="loading()">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      @for (field of fields; track field.controlName) {
-        <app-form-field [config]="field"></app-form-field>
-      }
-      <app-form-shell-actions (cancel)="onCancel()"></app-form-shell-actions>
-    </form>
-  </app-form-shell>
-  ```
+### 3.2 Administração / Transportadoras (Esforço: Grande)
+1. Normalizar endereço com `AddressFormGroup` compartilhado.
+2. Implementar carregamento de estados/cidades com `@defer` + `LoadingState` skeleton.
+3. Padronizar ações (Salvar/Cancelar) no `FormShellComponent` e mensagens centralizadas.
+4. Adicionar máscaras para CEP e documento, diretrizes `aria-live` para erros.
+5. Testes para resolver dependências (`locations` fetcher) e comportamento do formulário.
 
-### Form (`register.component.ts`)
-- **Antes**
-  ```ts
-  this.signupForm = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    name: ['', [Validators.required]],
-    password: ['', Validators.required],
-  });
-  ```
-- **Depois**
-  ```ts
-  type RegisterFormModel = {
-    name: FormControl<string>;
-    email: FormControl<string>;
-    password: FormControl<string>;
-  };
+### 3.3 Administração / Laboratórios (Esforço: Médio)
+1. Aplicar form tipado e máscara de CNPJ/CPF via directive.
+2. Reutilizar `FormShellComponent` com tokens.
+3. Adotar mensagens padronizadas e `@if` no template.
+4. Criar testes para validar campos obrigatórios e interceptar HTTP.
 
-  readonly form = this.fb.nonNullable.group<RegisterFormModel>({
-    name: this.fb.nonNullable.control('', {
-      validators: [Validators.required, Validators.maxLength(120)],
-    }),
-    email: this.fb.nonNullable.control('', {
-      validators: [Validators.required, Validators.email],
-    }),
-    password: this.fb.nonNullable.control('', {
-      validators: [Validators.required, Validators.minLength(8)],
-    }),
-  });
-  ```
+### 3.4 Administração / Unidades (Esforço: Pequeno)
+1. Reutilizar form shell com grid 12 colunas.
+2. Adicionar mensagens de erro e validação mínima/máxima.
+3. Garantir acessibilidade (`aria-invalid`, foco em erro).
+4. Teste simples de formulário.
 
-### CSS / Tokens
-- **Antes**
-  ```scss
-  .card-title {
-    color: #3577f1;
-  }
-  ```
-- **Depois**
-  ```scss
-  @use 'src/styles/tokens' as tokens;
+### 3.5 App Shell e Core (Esforço: Grande)
+1. Migrar `main.ts` para `bootstrapApplication`, remover `AppModule`.
+2. Definir `app.config.ts` com providers: `provideRouter`, `provideHttpClient(withInterceptors([...]))`, `provideClientHydration`, guards funcionais.
+3. Converter interceptors (`TokenInterceptor`, `AccessControlInterceptor`, `SnakeCaseInterceptor`, `ApiFeedbackInterceptor`) para funções puras.
+4. Criar roteamento por feature (`feature/administration/banks/routes.ts`, etc.) com `withComponentInputBinding`.
+5. Configurar SSR (Angular Universal) e avaliar modo zoneless + sinais.
 
-  .form-shell {
-    &__title {
-      color: tokens.$color-primary-600;
-      margin-bottom: tokens.$space-6;
-    }
-  }
-  ```
+### 3.6 Design System (Esforço: Médio)
+1. Criar pasta `src/styles/tokens/` com `_colors.scss`, `_spacing.scss`, `_typography.scss`.
+2. Implementar utilitários (mixins BEM) e substituir classes custom inline.
+3. Padronizar `status-toggle` como componente com tokens.
+4. Testar contraste (WCAG AA) e ajustar.
 
-### Router / Providers
-- **Antes**
-  ```ts
-  @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule],
-  })
-  export class AppRoutingModule {}
-  ```
-- **Depois**
-  ```ts
-  export const appConfig: ApplicationConfig = {
-    providers: [
-      provideRouter(appRoutes, withComponentInputBinding(), withViewTransitions()),
-      provideClientHydration(),
-      provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
-    ],
-  };
-  ```
-
-### Interceptor funcional
-- **Antes**
-  ```ts
-  @Injectable()
-  export class ApiFeedbackInterceptor implements HttpInterceptor {
-    intercept(req: HttpRequest<unknown>, next: HttpHandler) {
-      return next.handle(req).pipe(tap({ error: (err) => notify(err) }));
-    }
-  }
-  ```
-- **Depois**
-  ```ts
-  export const apiFeedbackInterceptor: HttpInterceptorFn = (req, next) =>
-    next(req).pipe(
-      tap({
-        error: (error) => inject(NotificationService).error(mapHttpError(error)),
-      })
-    );
-  ```
-
-## 5) **Diffs sugeridos**
+## 4) Exemplos “antes → depois”
+### 4.1 Template (`bank-upsert.component.html`)
 ```patch
-*** a/src/app/account/register/register.component.ts
---- b/src/app/account/register/register.component.ts
 @@
--import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+-        <div class="card-body">
+-          <div class="row g-3">
+-            <div class="col-md-6">
+-              <label class="form-label">Nome <span class="text-danger">*</span></label>
+-              <input
+-                formControlName="name"
+-                type="text"
+-                class="form-control"
+-                placeholder="Nome do banco"
+-                [readonly]="isReadOnly()"
+-                [class.is-invalid]="showInvalid('name')"
+-              />
+-              <div class="invalid-feedback d-block" *ngFor="let message of controlMessages('name')">
+-                {{ message }}
+-              </div>
+-            </div>
++        <div class="card-body form-shell__body">
++          <div class="row g-3">
++            <div class="col-12 col-md-6">
++              <app-form-field
++                fieldId="bank-name"
++                label="{{ 'administration.banks.fields.name' | i18n }}"
++                required
++                [control]="form.controls.name"
++                [readonly]="isReadOnly()"
++              />
+             </div>
 @@
--  signupForm!: UntypedFormGroup;
-+  readonly form = this.fb.nonNullable.group({
-+    name: this.fb.nonNullable.control('', {
-+      validators: [Validators.required, Validators.maxLength(120)],
-+    }),
-+    email: this.fb.nonNullable.control('', {
-+      validators: [Validators.required, Validators.email],
-+    }),
-+    password: this.fb.nonNullable.control('', {
-+      validators: [Validators.required, Validators.minLength(8)],
-+    }),
+-            <div class="alert alert-danger mt-3" *ngIf="formLevelMessages().length">
+-              <ul class="mb-0 ps-3">
+-                <li *ngFor="let message of formLevelMessages()">{{ message }}</li>
+-              </ul>
+-            </div>
++            @if (formShellState.formErrors().length) {
++              <app-form-messages [messages]="formShellState.formErrors()" tone="error" />
++            }
+         </div>
+@@
+-        <div class="card-footer d-flex justify-content-end gap-2 flex-wrap">
+-          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Voltar</button>
+-          <button
+-            *ngIf="!isReadOnly()"
+-            type="submit"
+-            class="btn btn-primary"
+-            [disabled]="isSaving() || form.invalid"
+-          >
+-            Salvar
+-          </button>
+-        </div>
++        <app-form-shell-footer
++          primaryLabel="{{ 'common.save' | i18n }}"
++          secondaryLabel="{{ 'common.cancel' | i18n }}"
++          [isPrimaryDisabled]="form.invalid || isSaving()"
++          [isReadOnly]="isReadOnly()"
++          (secondaryAction)="cancel()"
++        />
+```
+
+### 4.2 Form tipado (`bank-upsert.component.ts`)
+```patch
+@@
+-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
++import { Component, OnInit, computed, inject, signal } from '@angular/core';
++import { FormBuilder, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+@@
+-  readonly form: FormGroup = this.fb.group({
+-    name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
+-    bankCode: ['', [Validators.required, Validators.maxLength(10)]],
+-    isActive: [true],
+-  });
++  private readonly fb = inject(NonNullableFormBuilder);
++
++  readonly form = this.fb.group({
++    name: this.fb.control('', { validators: [Validators.required, Validators.minLength(2), Validators.maxLength(80)] }),
++    bankCode: this.fb.control('', { validators: [Validators.required, Validators.maxLength(10)] }),
++    isActive: this.fb.control(true),
 +  });
++
++  readonly formShellState = injectFormShellState(this.form);
 @@
--    this.authenticationService.register(this.f['email'].value, this.f['name'].value, this.f['password'].value)
+-    if (this.form.invalid) {
+-      this.form.markAllAsTouched();
+-      return;
+-    }
 +    if (this.form.invalid) {
-+      this.form.markAllAsTouched();
++      this.formShellState.touchAll();
 +      return;
 +    }
+```
+
+### 4.3 CSS (`_form-shell.scss`)
+```patch
++@use 'sass:map';
++@use '../tokens/colors' as colors;
++@use '../tokens/spacing' as spacing;
 +
-+    const { email, name, password } = this.form.getRawValue();
-+    this.authenticationService.register(email, name, password)
-       .pipe(first())
-       .subscribe({
-         next: () => this.router.navigate(['/auth/login']),
--        error: (error: any) => {
--          this.error = error ? error : '';
--        }
-+        error: (error: any) => (this.error = error ?? ''),
-       });
++.form-shell {
++  &__body {
++    padding: map.get(spacing.$scale, md);
++  }
++
++  &__footer {
++    display: flex;
++    justify-content: flex-end;
++    gap: map.get(spacing.$scale, sm);
++    padding: map.get(spacing.$scale, md);
++    background-color: colors.token(surface-subtle);
++  }
++}
 ```
 
+### 4.4 Router / Providers (`app.config.ts`)
 ```patch
-*** a/src/app/pages/ecommerce/add-product/add-product.component.html
---- b/src/app/pages/ecommerce/add-product/add-product.component.html
-@@
--    <form>
--        <div class="card">
--            <div class="card-body">
--                <div class="mb-3">
--                    <label class="form-label" for="product-title-input">Product Title</label>
--                    <input type="text" class="form-control" id="product-title-input" placeholder="Enter product title">
--                </div>
--                <div>
--                    <label>Product Description</label>
--                    <ckeditor [editor]="Editor" data="..."></ckeditor>
--                </div>
--            </div>
--        </div>
--        <!-- ... -->
--    </form>
-+    <app-form-shell
-+      title="{{ 'ecommerce.product.create.title' | i18n }}"
-+      subtitle="{{ 'ecommerce.product.create.subtitle' | i18n }}"
-+      [loading]="loading()"
-+    >
-+      <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
-+        @for (section of sections; track section.id) {
-+          <app-form-section [config]="section"></app-form-section>
-+        }
-+        <app-form-shell-actions (cancel)="onCancel()"></app-form-shell-actions>
-+      </form>
-+    </app-form-shell>
-```
-
-```patch
-*** a/src/app/app.module.ts
---- /dev/null
-@@
--@NgModule({
--  declarations: [AppComponent],
--  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
--  providers: [
--    { provide: HTTP_INTERCEPTORS, useClass: AccessControlInterceptor, multi: true },
--    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
--    provideHttpClient(withInterceptorsFromDi()),
--  ],
--  bootstrap: [AppComponent],
--})
--export class AppModule {}
-```
-
-```patch
-*** /dev/null
---- b/src/app/app.config.ts
-@@
-+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
++import { ApplicationConfig } from '@angular/core';
 +import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
-+import { provideClientHydration } from '@angular/platform-browser';
 +import { provideHttpClient, withInterceptors } from '@angular/common/http';
 +import { appRoutes } from './app.routes';
-+import { authInterceptor } from './core/http/auth.interceptor';
-+import { apiFeedbackInterceptor } from './core/http/api-feedback.interceptor';
++import { provideClientHydration } from '@angular/platform-browser';
++import { tokenInterceptor, snakeCaseInterceptor, accessControlInterceptor, apiFeedbackInterceptor } from './core/http/interceptors';
 +
 +export const appConfig: ApplicationConfig = {
 +  providers: [
-+    provideZoneChangeDetection({ eventCoalescing: true }),
 +    provideRouter(appRoutes, withComponentInputBinding(), withViewTransitions()),
++    provideHttpClient(withInterceptors([tokenInterceptor, snakeCaseInterceptor, accessControlInterceptor, apiFeedbackInterceptor])),
 +    provideClientHydration(),
-+    provideHttpClient(withInterceptors([authInterceptor, apiFeedbackInterceptor])),
 +  ],
 +};
 ```
 
-## 6) **Snippets reutilizáveis**
+### 4.5 Interceptor funcional (`token.interceptor.ts`)
+```patch
+-import { Injectable } from '@angular/core';
+-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+-import { Observable } from 'rxjs';
+-import { AuthService } from '../auth.service';
+-
+-@Injectable()
+-export class TokenInterceptor implements HttpInterceptor {
+-  constructor(private readonly auth: AuthService) {}
+-
+-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+-    const token = this.auth.getToken();
+-    if (!token) {
+-      return next.handle(req);
+-    }
+-    const cloned = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+-    return next.handle(cloned);
+-  }
+-}
++import { HttpInterceptorFn } from '@angular/common/http';
++import { inject } from '@angular/core';
++import { AuthService } from '../auth.service';
++
++export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
++  const auth = inject(AuthService);
++  const token = auth.getToken();
++  if (!token) {
++    return next(req);
++  }
++  return next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));
++};
+```
+
+## 5) Diffs por arquivo
+- `src/app/feature-module/administration/banks/bank-upsert/bank-upsert.component.html` – ver Diff 4.1.
+- `src/app/feature-module/administration/banks/bank-upsert/bank-upsert.component.ts` – ver Diff 4.2.
+- `src/styles/components/_form-shell.scss` – ver Diff 4.3.
+- `src/app/app.config.ts` – ver Diff 4.4.
+- `src/app/auth/keycloak/token.interceptor.ts` – ver Diff 4.5.
+
+## 6) Snippets reutilizáveis
+### 6.1 `FormShellComponent`
 ```ts
-// form-shell.component.ts
+import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter, contentChildren, TemplateRef, QueryList } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-form-shell',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './form-shell.component.html',
   styleUrls: ['./form-shell.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormShellComponent {
   @Input({ required: true }) title!: string;
   @Input() subtitle?: string;
-  @Input() loading = false;
+  @Input() busy = false;
+  @Input() readOnly = false;
+  @Output() submitted = new EventEmitter<void>();
+  @Output() cancelled = new EventEmitter<void>();
 }
 ```
 
+### 6.2 `FormFieldErrorComponent`
 ```ts
-// form-field-error.component.ts
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+
 @Component({
   selector: 'app-form-field-error',
   standalone: true,
   template: `
-    @if (control.invalid && (control.dirty || control.touched)) {
-      <ul class="form-field-error" role="alert" [attr.aria-live]="'polite'">
-        @for (error of errors(); track error) {
-          <li>{{ error | i18n }}</li>
+    @if (messages().length) {
+      <ul class="form-field-error" role="alert" aria-live="assertive">
+        @for (msg of messages(); track msg) {
+          <li>{{ msg }}</li>
         }
       </ul>
     }
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormFieldErrorComponent {
-  private i18n = inject(I18nService);
-  @Input({ required: true }) control!: AbstractControl;
-  errors = computed(() => this.i18n.resolveErrors(this.control.errors));
-}
-```
-
-```ts
-// http-error.interceptor.ts
-export const httpErrorInterceptor: HttpInterceptorFn = (req, next) =>
-  next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
-      inject(NotificationService).error(mapHttpError(error));
-      return throwError(() => error);
-    })
+  @Input({ required: true }) control!: AbstractControl | null;
+  readonly messages = toSignal(
+    this.control?.statusChanges.pipe(
+      map(() => this.resolveMessages(this.control))
+    ) ?? [],
+    { initialValue: this.resolveMessages(this.control) }
   );
-```
 
-```ts
-// loading-state.component.ts
-@Component({
-  selector: 'app-loading-state',
-  standalone: true,
-  template: `
-    @switch (state()) {
-      @case ('loading') { <app-skeleton></app-skeleton> }
-      @case ('error') {
-        <div class="state state--error">
-          {{ message | i18n }}
-          <button type="button" class="btn btn-link" (click)="retry.emit()">{{ 'acoes.tentarNovamente' | i18n }}</button>
-        </div>
-      }
-      @case ('empty') { <div class="state state--empty">{{ emptyMessage | i18n }}</div> }
+  private resolveMessages(control: AbstractControl | null): string[] {
+    if (!control || !(control.dirty || control.touched) || !control.errors) {
+      return [];
     }
-  `,
-})
-export class LoadingStateComponent {
-  state = signal<'loading' | 'error' | 'empty' | 'content'>('content');
-  @Input() message = 'estado.erro.generico';
-  @Input() emptyMessage = 'estado.vazio.generico';
-  @Output() retry = new EventEmitter<void>();
+    const mapErrors: Record<string, string> = {
+      required: $localize`Campo obrigatório`,
+      email: $localize`E-mail inválido`,
+      minlength: $localize`Quantidade mínima não atendida`,
+      maxlength: $localize`Quantidade máxima excedida`,
+    };
+    return Object.entries(control.errors).map(([key, value]) => mapErrors[key] ?? value?.message ?? value);
+  }
 }
 ```
 
+### 6.3 `HttpErrorInterceptor`
 ```ts
-// use-crud-resource.ts
-export function useCrudResource<T>(source: () => Observable<T>) {
-  const data = signal<T | null>(null);
-  const loading = signal(false);
-  const error = signal<unknown>(null);
+import { HttpInterceptorFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { NotificationService } from '../notifications/notification.service';
 
-  const refresh = () => {
-    loading.set(true);
-    error.set(null);
-    source()
-      .pipe(finalize(() => loading.set(false)))
-      .subscribe({
-        next: (value) => data.set(value),
-        error: (err) => error.set(err),
-      });
+export const httpErrorInterceptor: HttpInterceptorFn = async (req, next) => {
+  try {
+    return await next(req);
+  } catch (error: any) {
+    const notifications = inject(NotificationService);
+    notifications.error(error?.message ?? $localize`Erro inesperado`);
+    throw error;
+  }
+};
+```
+
+### 6.4 `LoadingState`
+```ts
+import { signal } from '@angular/core';
+
+export function createLoadingState() {
+  const isLoading = signal(false);
+  const withLoading = async <T>(operation: () => Promise<T>) => {
+    isLoading.set(true);
+    try {
+      return await operation();
+    } finally {
+      isLoading.set(false);
+    }
   };
-
-  return { data: readonlySignal(data), loading: readonlySignal(loading), error: readonlySignal(error), refresh };
+  return { isLoading, withLoading };
 }
 ```
 
-## 7) **Riscos / observações**
-- Migração para standalone exige atualizar todos os imports/rotas; planejar sprint específica.
-- Interceptores funcionais dependem do Angular 16+; confirmar versão real do projeto antes da migração.
-- `ckeditor`, `dropzone`, `flatpickr` precisam de wrappers compatíveis com SSR e `@defer`.
-- Possível impacto nos testes E2E devido a novos componentes/layout.
-- Charsets: garantir `meta charset="utf-8"` e que arquivos estejam em UTF-8; revisar dados vindos da API (ex.: labels "Laboratórios").
+### 6.5 `useCrudResource<T>()`
+```ts
+import { computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 
-## 8) **Checklist final**
-- [ ] App configurado via `app.config.ts` com providers modernos.
-- [ ] Formulários reescritos com `FormShellComponent` + mensagens padronizadas.
-- [ ] Campos e mensagens revisados com i18n pt-BR e acentuação correta.
-- [ ] Interceptores funcionais registrados com `provideHttpClient(withInterceptors([...]))`.
-- [ ] Estados de loading/erro/vazio unificados (`LoadingStateComponent`).
-- [ ] Scripts `format`/`lint` com Prettier executando no CI.
-- [ ] Testes unitários mínimos para formulários e interceptors.
+export function useCrudResource<T>(initialValue?: T) {
+  const router = inject(Router);
+  const entity = signal<T | null>(initialValue ?? null);
+  const isNew = computed(() => !entity());
+
+  const set = (value: T | null) => entity.set(value);
+  const navigateBack = (url: string) => router.navigate([url]);
+
+  return { entity, isNew, set, navigateBack };
+}
+```
+
+## 7) Riscos e observações
+- Migração para Angular 19 exige atualização de dependências e possíveis ajustes em libs terceiras (ex.: Keycloak, componentes Bootstrap customizados).
+- Ativar SSR/hidratação implica revisar chamadas diretas ao `window/history` (presentes em diversas telas) para garantir execução apenas no browser.
+- Uso de modo zoneless requer avaliar dependências que ainda assumem Zone.js; iniciar por módulos isolados.
+- Manter compatibilidade com API atual – qualquer ajuste em payload (ex.: normalização de endereço) deve ser pactuado com backend.
+
+## 8) Checklist final
+- [ ] Form shell unificado aplicado.
+- [ ] Forms tipados com máscaras e validações padronizadas.
+- [ ] Mensagens e estados centralizados (`FormFieldError`, `LoadingState`).
+- [ ] Router configurado com `provideRouter`, `withComponentInputBinding`, `withViewTransitions`.
+- [ ] Interceptores funcionais registrados via `provideHttpClient(withInterceptors)`.
+- [ ] Tokens de design SCSS criados e aplicados.
+- [ ] Testes unitários para forms, serviços e rotas implantados.
+- [ ] SSR/hidratação e (opcional) modo zoneless avaliados.
