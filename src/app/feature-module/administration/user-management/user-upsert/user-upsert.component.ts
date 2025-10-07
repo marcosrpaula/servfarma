@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { RoleViewModel } from '../../../../shared/models/users';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';

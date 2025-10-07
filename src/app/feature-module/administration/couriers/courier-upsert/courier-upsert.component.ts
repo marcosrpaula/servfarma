@@ -70,6 +70,20 @@ export class CourierUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando entregador...' : 'Salvando entregador...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id()
+        ? 'Carregando dados do entregador...'
+        : 'Carregando recursos do entregador...';
+    }
+    return 'Processando...';
+  });
 
   states: StateSimpleViewModel[] = [];
   cities: CitySimpleViewModel[] = [];
