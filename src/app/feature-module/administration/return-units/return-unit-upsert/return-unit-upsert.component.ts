@@ -5,10 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ReturnUnitInput, ReturnUnitViewModel } from '../../../../shared/models/return-units';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
@@ -112,21 +112,20 @@ export class ReturnUnitUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getById(this.id()!))
-        .subscribe({
-          next: (unit) => {
-            this.bindUnit(unit);
-            this.returnUnitsState.upsert(unit);
-            this.loadStates();
-          },
-          error: () => {
-            const message = 'Não foi possível carregar os dados da unidade de devolução. Volte para a listagem.';
-            this.errorMessage.set(message);
-            this.notifications.error(message);
-            this.router.navigate(['/return-units']);
-          },
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.getById(this.id()!))).subscribe({
+        next: (unit) => {
+          this.bindUnit(unit);
+          this.returnUnitsState.upsert(unit);
+          this.loadStates();
+        },
+        error: () => {
+          const message =
+            'Não foi possível carregar os dados da unidade de devolução. Volte para a listagem.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+          this.router.navigate(['/return-units']);
+        },
+      });
       return;
     }
 
@@ -188,8 +187,8 @@ export class ReturnUnitUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.globalLoader
-        .track(this.api.update(this.id()!, input))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.update(this.id()!, input)))
         .subscribe({
           next: (updated) => {
             this.returnUnitsState.upsert(updated);
@@ -199,15 +198,13 @@ export class ReturnUnitUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.globalLoader
-        .track(this.api.create(input))
-        .subscribe({
-          next: () => {
-            this.returnUnitsState.clearListState();
-            navigateToList();
-          },
-          error: failure,
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.create(input))).subscribe({
+        next: () => {
+          this.returnUnitsState.clearListState();
+          navigateToList();
+        },
+        error: failure,
+      });
     }
   }
 
@@ -245,8 +242,12 @@ export class ReturnUnitUpsertComponent implements OnInit {
   }
 
   private loadStates() {
-    this.globalLoader
-      .track(this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }),
+        ),
+      )
       .subscribe({
         next: (res) => {
           this.states = res.items || [];
@@ -268,8 +269,16 @@ export class ReturnUnitUpsertComponent implements OnInit {
   }
 
   private loadCities(state: StateSimpleViewModel, preserveSelection = false) {
-    this.globalLoader
-      .track(this.locationsApi.listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.locationsApi.listCities(state.abbreviation, {
+            pageSize: 200,
+            orderBy: 'name',
+            ascending: true,
+          }),
+        ),
+      )
       .subscribe({
         next: (res) => {
           this.cities = res.items || [];
@@ -292,14 +301,19 @@ export class ReturnUnitUpsertComponent implements OnInit {
   }
 
   private loadLabs() {
-    this.globalLoader
-      .track(this.labsApi.list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.labsApi.list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true }),
+        ),
+      )
       .subscribe({
         next: (res) => {
           this.labs = res.items || [];
         },
         error: () => {
-          const message = 'Não foi possível carregar os laboratórios. Atualize a página e tente novamente.';
+          const message =
+            'Não foi possível carregar os laboratórios. Atualize a página e tente novamente.';
           this.errorMessage.set(message);
           this.notifications.error(message);
         },

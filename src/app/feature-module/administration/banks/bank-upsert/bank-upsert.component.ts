@@ -6,15 +6,15 @@ import {
   NormalizedHttpError,
   NotificationService,
 } from '../../../../core/notifications/notification.service';
-import { applyServerValidationErrors } from '../../../../shared/common/server-validation.util';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
+import { applyServerValidationErrors } from '../../../../shared/common/server-validation.util';
 import {
   BankDetailsViewModel,
   BankViewModel,
   CreateBankPayload,
   UpdateBankPayload,
 } from '../../../../shared/models/banks';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { BanksStateService } from '../services/banks-state.service';
@@ -54,7 +54,11 @@ export class BankUpsertComponent implements OnInit {
   readonly isLoading = this.loadingTracker.isLoading;
   readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
   readonly loadingMessage = computed(() =>
-    this.isSaving() ? 'Salvando banco...' : this.loadingTracker.isLoading() ? 'Carregando banco...' : 'Processando...',
+    this.isSaving()
+      ? 'Salvando banco...'
+      : this.loadingTracker.isLoading()
+        ? 'Carregando banco...'
+        : 'Processando...',
   );
   readonly form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
@@ -82,19 +86,17 @@ export class BankUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getById(this.id()!))
-        .subscribe({
-          next: (bank: BankDetailsViewModel) => {
-            this.patchForm(bank);
-            this.banksState.upsert(bank);
-          },
-          error: () => {
-            const message = 'Não foi possível carregar os dados do banco. Volte para a listagem.';
-            this.notifications.error(message);
-            this.router.navigate(['/banks']);
-          },
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.getById(this.id()!))).subscribe({
+        next: (bank: BankDetailsViewModel) => {
+          this.patchForm(bank);
+          this.banksState.upsert(bank);
+        },
+        error: () => {
+          const message = 'Não foi possível carregar os dados do banco. Volte para a listagem.';
+          this.notifications.error(message);
+          this.router.navigate(['/banks']);
+        },
+      });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -135,8 +137,8 @@ export class BankUpsertComponent implements OnInit {
         bankCode: value.bankCode,
         isActive: value.isActive,
       };
-      this.globalLoader
-        .track(this.api.update(this.id()!, dto))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.update(this.id()!, dto)))
         .subscribe({
           next: (updated) => {
             this.banksState.upsert(updated);
@@ -151,15 +153,13 @@ export class BankUpsertComponent implements OnInit {
         bankCode: value.bankCode,
         isActive: value.isActive,
       };
-      this.globalLoader
-        .track(this.api.create(dto))
-        .subscribe({
-          next: () => {
-            this.banksState.clearListState();
-            navigateToList();
-          },
-          error: failure,
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.create(dto))).subscribe({
+        next: () => {
+          this.banksState.clearListState();
+          navigateToList();
+        },
+        error: failure,
+      });
     }
   }
 

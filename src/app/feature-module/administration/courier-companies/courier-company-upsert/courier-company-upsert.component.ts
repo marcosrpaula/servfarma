@@ -5,12 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import {
   CourierCompanyInput,
   CourierCompanyViewModel,
 } from '../../../../shared/models/courier-companies';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { CourierCompaniesStateService } from '../services/courier-companies-state.service';
@@ -110,21 +110,19 @@ export class CourierCompanyUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getById(this.id()!))
-        .subscribe({
-          next: (company) => {
-            this.applyCompany(company);
-            this.state.upsert(company);
-          },
-          error: () => {
-            const message =
-              'Não foi possível carregar os dados da transportadora. Tente novamente a partir da listagem.';
-            this.errorMessage.set(message);
-            this.notifications.error(message);
-            this.router.navigate(['/courier-companies']);
-          },
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.getById(this.id()!))).subscribe({
+        next: (company) => {
+          this.applyCompany(company);
+          this.state.upsert(company);
+        },
+        error: () => {
+          const message =
+            'Não foi possível carregar os dados da transportadora. Tente novamente a partir da listagem.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+          this.router.navigate(['/courier-companies']);
+        },
+      });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -204,8 +202,8 @@ export class CourierCompanyUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.globalLoader
-        .track(this.api.update(this.id()!, input))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.update(this.id()!, input)))
         .subscribe({
           next: (updated) => {
             this.state.upsert(updated);
@@ -215,15 +213,13 @@ export class CourierCompanyUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.globalLoader
-        .track(this.api.create(input))
-        .subscribe({
-          next: () => {
-            this.state.clearListState();
-            navigateToList();
-          },
-          error: failure,
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.create(input))).subscribe({
+        next: () => {
+          this.state.clearListState();
+          navigateToList();
+        },
+        error: failure,
+      });
     }
   }
 
@@ -322,15 +318,20 @@ export class CourierCompanyUpsertComponent implements OnInit {
   }
 
   private loadStates() {
-    this.globalLoader
-      .track(this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }),
+        ),
+      )
       .subscribe({
         next: (res) => {
           this.states = res.items || [];
           this.applyPendingAddressSelection();
         },
         error: () => {
-          const message = 'Não foi possível carregar os estados. Atualize a página e tente novamente.';
+          const message =
+            'Não foi possível carregar os estados. Atualize a página e tente novamente.';
           this.errorMessage.set(message);
           this.notifications.error(message);
         },
@@ -338,13 +339,15 @@ export class CourierCompanyUpsertComponent implements OnInit {
   }
 
   private loadCities(state: StateSimpleViewModel, preserveSelection = false) {
-    this.globalLoader
+    this.loadingTracker
       .track(
-        this.locationsApi.listCities(state.abbreviation, {
-          pageSize: 200,
-          orderBy: 'name',
-          ascending: true,
-        }),
+        this.globalLoader.track(
+          this.locationsApi.listCities(state.abbreviation, {
+            pageSize: 200,
+            orderBy: 'name',
+            ascending: true,
+          }),
+        ),
       )
       .subscribe({
         next: (res) => {

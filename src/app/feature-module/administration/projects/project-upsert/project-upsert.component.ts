@@ -4,9 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ProjectInput, ProjectViewModel } from '../../../../shared/models/projects';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
@@ -113,20 +113,19 @@ export class ProjectUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getById(this.id()!))
-        .subscribe({
-          next: (project) => {
-            this.patchForm(project);
-            this.projectsState.upsert(project);
-          },
-          error: () => {
-            const message = 'Não foi possível carregar os dados do projeto. Acesse novamente a partir da listagem.';
-            this.errorMessage.set(message);
-            this.notifications.error(message);
-            this.router.navigate(['/projects']);
-          },
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.getById(this.id()!))).subscribe({
+        next: (project) => {
+          this.patchForm(project);
+          this.projectsState.upsert(project);
+        },
+        error: () => {
+          const message =
+            'Não foi possível carregar os dados do projeto. Acesse novamente a partir da listagem.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+          this.router.navigate(['/projects']);
+        },
+      });
       return;
     }
 
@@ -191,8 +190,8 @@ export class ProjectUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.globalLoader
-        .track(this.api.update(this.id()!, input))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.update(this.id()!, input)))
         .subscribe({
           next: (updated) => {
             this.projectsState.upsert(updated);
@@ -202,15 +201,13 @@ export class ProjectUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.globalLoader
-        .track(this.api.create(input))
-        .subscribe({
-          next: () => {
-            this.projectsState.clearListState();
-            navigateToList();
-          },
-          error: failure,
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.create(input))).subscribe({
+        next: () => {
+          this.projectsState.clearListState();
+          navigateToList();
+        },
+        error: failure,
+      });
     }
   }
 
@@ -242,8 +239,12 @@ export class ProjectUpsertComponent implements OnInit {
   }
 
   private loadLaboratories() {
-    this.globalLoader
-      .track(this.labsApi.list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.labsApi.list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true }),
+        ),
+      )
       .subscribe({
         next: (res) => {
           this.labs = res.items || [];
@@ -255,7 +256,8 @@ export class ProjectUpsertComponent implements OnInit {
           }
         },
         error: () => {
-          const message = 'Não foi possível carregar os laboratórios. Atualize a página e tente novamente.';
+          const message =
+            'Não foi possível carregar os laboratórios. Atualize a página e tente novamente.';
           this.errorMessage.set(message);
           this.notifications.error(message);
         },

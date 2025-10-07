@@ -92,8 +92,12 @@ export class UserUpsertComponent implements OnInit {
   ngOnInit(): void {
     this.id.set(this.route.snapshot.paramMap.get('id'));
 
-    this.globalLoader
-      .track(this.rolesApi.list({ page: 1, pageSize: 200, orderBy: 'name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.rolesApi.list({ page: 1, pageSize: 200, orderBy: 'name', ascending: true }),
+        ),
+      )
       .subscribe({
         next: ({ items }) => {
           const groups = new Map<string, { readId?: string; writeId?: string }>();
@@ -128,50 +132,50 @@ export class UserUpsertComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: () => {
-          const message = 'Não foi possível carregar as permissões. Atualize a página e tente novamente.';
+          const message =
+            'Não foi possível carregar as permissões. Atualize a página e tente novamente.';
           this.errorMessage.set(message);
         },
       });
   }
 
   private load(id: string) {
-    this.globalLoader
-      .track(this.api.getById(id))
-      .subscribe({
-        next: (u: any) => {
-          this.form.patchValue({
-            name: u.name ?? '',
-            email: u.email ?? '',
-            isActive: u.isActive ?? true,
+    this.loadingTracker.track(this.globalLoader.track(this.api.getById(id))).subscribe({
+      next: (u: any) => {
+        this.form.patchValue({
+          name: u.name ?? '',
+          email: u.email ?? '',
+          isActive: u.isActive ?? true,
+        });
+
+        // Marca checkboxes de acordo com as roles do usuário
+        if (Array.isArray(u.permissions)) {
+          const userRoleNames: string[] = u.permissions
+            .map((p: RoleViewModel) => p?.name)
+            .filter(Boolean);
+          this.permissionGroups.forEach((pg, i) => {
+            const group = this.permissionsArray.at(i) as FormGroup;
+            const hasRead = userRoleNames.some((n) => n === `${pg.module}:read`);
+            const hasWrite = userRoleNames.some(
+              (n) => n === `${pg.module}:admin` || n === `${pg.module}:write`,
+            );
+            if (hasWrite) group.get('level')?.setValue('write', { emitEvent: false });
+            else if (hasRead) group.get('level')?.setValue('read', { emitEvent: false });
+
+            const enabled = hasRead || hasWrite;
+            group.get('enabled')?.setValue(enabled, { emitEvent: false });
           });
 
-          // Marca checkboxes de acordo com as roles do usuário
-          if (Array.isArray(u.permissions)) {
-            const userRoleNames: string[] = u.permissions
-              .map((p: RoleViewModel) => p?.name)
-              .filter(Boolean);
-            this.permissionGroups.forEach((pg, i) => {
-              const group = this.permissionsArray.at(i) as FormGroup;
-              const hasRead = userRoleNames.some((n) => n === `${pg.module}:read`);
-              const hasWrite = userRoleNames.some(
-                (n) => n === `${pg.module}:admin` || n === `${pg.module}:write`,
-              );
-              if (hasWrite) group.get('level')?.setValue('write', { emitEvent: false });
-              else if (hasRead) group.get('level')?.setValue('read', { emitEvent: false });
-
-              const enabled = hasRead || hasWrite;
-              group.get('enabled')?.setValue(enabled, { emitEvent: false });
-            });
-
-            // garante atualização da marcação na view
-            this.cdr.detectChanges();
-          }
-        },
-        error: () => {
-          const message = 'Não foi possível carregar os dados do usuário. Volte para a listagem e tente novamente.';
-          this.errorMessage.set(message);
-          this.router.navigate(['/user-management/users']);
-        },
+          // garante atualização da marcação na view
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        const message =
+          'Não foi possível carregar os dados do usuário. Volte para a listagem e tente novamente.';
+        this.errorMessage.set(message);
+        this.router.navigate(['/user-management/users']);
+      },
     });
   }
 
@@ -203,7 +207,9 @@ export class UserUpsertComponent implements OnInit {
         permissions,
         isActive: v.isActive,
       };
-      this.globalLoader.track(this.api.update(this.id()!, dto)).subscribe({ next: done, error: fail });
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.update(this.id()!, dto)))
+        .subscribe({ next: done, error: fail });
     } else {
       const dto: CreateUserDto = {
         name: v.name,
@@ -211,7 +217,9 @@ export class UserUpsertComponent implements OnInit {
         permissions,
         isActive: v.isActive,
       };
-      this.globalLoader.track(this.api.create(dto)).subscribe({ next: done, error: fail });
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.create(dto)))
+        .subscribe({ next: done, error: fail });
     }
   }
 

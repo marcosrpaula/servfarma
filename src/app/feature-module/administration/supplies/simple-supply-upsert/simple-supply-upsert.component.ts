@@ -4,13 +4,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import {
   SimpleItemInput,
   SimpleItemType,
   SimpleItemViewModel,
   SupplyType,
 } from '../../../../shared/models/supplies';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SuppliesStateService } from '../services/supplies-state.service';
@@ -94,15 +94,16 @@ export class SimpleSupplyUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getSimpleItem(this.id()!))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.getSimpleItem(this.id()!)))
         .subscribe({
           next: (item) => {
             this.patchForm(item);
             this.suppliesState.upsert(item);
           },
           error: () => {
-            const message = 'Não foi possível carregar os dados do suprimento. Volte para a listagem.';
+            const message =
+              'Não foi possível carregar os dados do suprimento. Volte para a listagem.';
             this.errorMessage.set(message);
             this.notifications.error(message);
             this.router.navigate(['/supplies']);
@@ -134,8 +135,8 @@ export class SimpleSupplyUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.globalLoader
-        .track(this.api.updateSimpleItem(this.id()!, value))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.updateSimpleItem(this.id()!, value)))
         .subscribe({
           next: (updated) => {
             this.suppliesState.upsert(updated);
@@ -145,8 +146,8 @@ export class SimpleSupplyUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.globalLoader
-        .track(this.api.createSimpleItem(value))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.createSimpleItem(value)))
         .subscribe({
           next: () => {
             this.suppliesState.clearListState();
