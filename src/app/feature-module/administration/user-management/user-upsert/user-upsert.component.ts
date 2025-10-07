@@ -47,7 +47,7 @@ export class UserUpsertComponent implements OnInit {
   private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
-  title = computed(() => (this.id() ? 'Editar UsuÃ¡rio' : 'Adicionar UsuÃ¡rio'));
+  title = computed(() => (this.id() ? 'Editar Usuário' : 'Adicionar Usuário'));
   breadCrumbItems = computed(() => [
     { label: 'Administração' },
     { label: 'Usuários', link: '/user-management/users' },
