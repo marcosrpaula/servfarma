@@ -1,9 +1,9 @@
 export const environment = {
   production: true,
   defaultauth: 'keycloak',
-  apiBaseUrl: 'http://localhost:5164',
+  apiBaseUrl: 'https://api.servfarma.com.br',
   keycloak: {
-    url: 'http://localhost:8080',
+    url: 'https://accounts.servfarma.com.br',
     realm: 'servfarma',
     clientId: 'frontend',
   },

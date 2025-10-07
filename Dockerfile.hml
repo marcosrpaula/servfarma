@@ -7,7 +7,7 @@ RUN npm install --legacy-peer-deps
 
 COPY . .
 
-RUN npm run build --configuation=homolog
+RUN npm run build:hml
 
 FROM nginx:alpine
 EXPOSE 80

@@ -1,15 +1,17 @@
 # Padronização de Cadastros ServFarma
 
 ## 1) **Diagnóstico resumido**
-| Tela | Divergências principais |
-| --- | --- |
-| Laboratórios – cadastrar/editar (`laboratory-upsert`) | Uso de `*ngIf`/`*ngFor` ao invés de `@if/@for`; ausência de `novalidate`; mensagens de erro locais duplicadas; título/status sem i18n e campos sem máscara/validação específica de CPF/CNPJ; loading apenas em botão sem feedback global. |
+
+| Tela                                                          | Divergências principais                                                                                                                                                                                                                         |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Laboratórios – cadastrar/editar (`laboratory-upsert`)         | Uso de `*ngIf`/`*ngFor` ao invés de `@if/@for`; ausência de `novalidate`; mensagens de erro locais duplicadas; título/status sem i18n e campos sem máscara/validação específica de CPF/CNPJ; loading apenas em botão sem feedback global.       |
 | Transportadoras – cadastrar/editar (`courier-company-upsert`) | Tratamento manual de estados/cidades com subscribe sem `takeUntil`; botão "Salvar" alterna texto manualmente; validações opcionais inconsistentes; layout do endereço com labels diferentes; exibe mensagem de erro inline distinta das demais. |
-| Usuários – cadastrar/editar (`user-upsert`) | Mistura Bootstrap + Angular Material; tabela de permissões com `*ngFor`; ausência de read-only/view; validação custom sem mensagem centralizada; loading apenas em botão; sem `novalidate`; strings com acentuação corrompida no TS. |
+| Usuários – cadastrar/editar (`user-upsert`)                   | Mistura Bootstrap + Angular Material; tabela de permissões com `*ngFor`; ausência de read-only/view; validação custom sem mensagem centralizada; loading apenas em botão; sem `novalidate`; strings com acentuação corrompida no TS.            |
 
 Outros cadastros seguem padrões semelhantes com variação de labels, ordem de campos e estados de loading.
 
 ## 2) **Padrões propostos**
+
 1. **Arquitetura Angular 19**: migrar para `bootstrapApplication` com `provideRouter` (rotas tipadas, `withComponentInputBinding`, `withViewTransitions`) e remover NgModules.
 2. **Form Shell unificado**: componente standalone `FormShellComponent` com slots (header, body, footer) e sinais (`loading`, `readOnly`, `error`).
 3. **Controle de fluxo declarativo**: substituir `*ngIf/*ngFor` por `@if/@for/@switch`; usar `@defer` para grids/listas pesadas.
@@ -21,17 +23,21 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 9. **SSR & zoneless**: habilitar `provideClientHydration()`, avaliar `provideZoneChangeDetection({ eventCoalescing: true })`, usar sinais em vez de Subjects.
 
 ## 3) **Plano de refatoração por feature**
+
 ### Core (App bootstrap) – Esforço: Grande
+
 1. Criar `main.ts` com `bootstrapApplication(AppComponent, appConfig)`.
 2. Definir `app.config.ts` com `provideRouter(routes, withComponentInputBinding(), withViewTransitions())`, `provideHttpClient(withInterceptors([...]))`, `provideClientHydration()`.
 3. Migrar interceptors OO para funções puras.
 
 ### Shared – Esforço: Médio
+
 1. Criar `FormShellComponent`, `GlobalLoaderService`, `FormFieldErrorComponent` standalone.
 2. Extrair `useCrudResource` (signals + fetch/post/put/delete) no diretório `shared/utils`.
 3. Centralizar tokens SCSS em `styles/_tokens.scss` e mixins `styles/_form.scss`.
 
 ### Administração > Cadastros – Esforço: Grande
+
 1. Reorganizar por feature `feature/administration/laboratories/{form,list,details}` etc.
 2. Refatorar formulários para `FormBuilder.nonNullable`, tipagem (`LaboratoryFormModel`).
 3. Aplicar `FormShellComponent` com `GlobalLoaderService` e mensagens padronizadas.
@@ -40,17 +46,21 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 6. Incluir diretivas de máscara (`documentMaskDirective`, `zipCodeMaskDirective`).
 
 ### Serviços HTTP – Esforço: Médio
+
 1. Adotar `inject(HttpClient)` + `firstValueFrom` dentro de `useCrudResource` ou manter Observables convertidos para sinais.
 2. Criar adapters para DTO ↔ ViewModel (snakeCase ↔ camelCase).
 
 ### Testes – Esforço: Médio
+
 1. Criar `*.spec.ts` para `FormShellComponent` (render + slots).
 2. Tests de formulário: `LaboratoryFormComponent` – required + validators.
 3. Http: mock interceptors com `provideHttpClientTesting()`.
 4. Router: rotas com `provideRouter` + `TestBed`.
 
 ## 4) **Exemplos “antes → depois”**
+
 ### Template (`laboratory-upsert.component.html`)
+
 ```patch
 @@
 -<form [formGroup]="form" (ngSubmit)="save()">
@@ -81,6 +91,7 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 ```
 
 ### Form (`laboratory-upsert.component.ts`)
+
 ```patch
 @@
 -import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -115,6 +126,7 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 ```
 
 ### CSS (`laboratory-upsert.component.scss`)
+
 ```patch
 @@
 -.card-body .row.g-3 {
@@ -136,6 +148,7 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 ```
 
 ### Router (`app.config.ts`)
+
 ```patch
 +import { ApplicationConfig, provideHttpClient } from '@angular/core';
 +import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
@@ -154,6 +167,7 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 ```
 
 ### Interceptor funcional
+
 ```patch
 +export const httpErrorInterceptor: HttpInterceptorFn = (req, next) =>
 +  next(req).pipe(
@@ -164,16 +178,19 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 ```
 
 ## 5) **Diffs propostos por arquivo**
+
 - `src/app/feature-module/administration/laboratories/laboratory-upsert/laboratory-upsert.component.html`
 - `src/app/feature-module/administration/laboratories/laboratory-upsert/laboratory-upsert.component.ts`
 - `src/app/feature-module/administration/laboratories/laboratory-upsert/laboratory-upsert.component.scss`
 - `src/app/app.config.ts`
 - `src/app/core/http/http-error.interceptor.ts`
 
-*(Ver patches ilustrativos acima.)*
+_(Ver patches ilustrativos acima.)_
 
 ## 6) **Snippets reutilizáveis**
+
 ### FormShellComponent
+
 ```ts
 @Component({
   selector: 'app-form-shell',
@@ -193,11 +210,14 @@ export class FormShellComponent {
 ```
 
 ### FormFieldErrorComponent
+
 ```ts
 @Component({
   selector: 'app-form-field-error',
   standalone: true,
-  template: `@if (error()) { <p class="form-field-error">{{ error() | i18n }}</p> }`,
+  template: `@if (error()) {
+    <p class="form-field-error">{{ error() | i18n }}</p>
+  }`,
 })
 export class FormFieldErrorComponent {
   private control = input.required<AbstractControl>();
@@ -206,6 +226,7 @@ export class FormFieldErrorComponent {
 ```
 
 ### HttpErrorInterceptor funcional
+
 ```ts
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) =>
   next(req).pipe(
@@ -216,6 +237,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) =>
 ```
 
 ### GlobalLoaderService
+
 ```ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -252,6 +274,7 @@ export class GlobalLoaderService {
 ```
 
 ### useCrudResource
+
 ```ts
 export function useCrudResource<T>(options: CrudResourceOptions<T>) {
   const status = signal<ResourceStatus>('idle');
@@ -288,12 +311,14 @@ export function useCrudResource<T>(options: CrudResourceOptions<T>) {
 ```
 
 ## 7) **Riscos/observações**
+
 - Migração para Angular 19 exige atualização de dependências (Angular Material/B. modules) e pode impactar temas existentes.
 - Interceptores funcionais dependem do Angular >= 15; validar compatibilidade com bibliotecas externas (Keycloak, PrimeNG).
 - SSR/hidratação requer verificação de libs que acessam `window` (Keycloak, charts) – usar `isPlatformBrowser`.
 - Remoção de NgRx não prevista; avaliar coexistência com sinais.
 
 ## 8) **Checklist final**
+
 - [ ] Ordem dos campos alinhada entre cadastros
 - [ ] Labels, placeholders e mensagens centralizadas
 - [ ] Validações e máscaras normalizadas

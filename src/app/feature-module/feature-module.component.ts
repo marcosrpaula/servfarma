@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonService } from '../shared/common/common.service';
-import { DataService } from '../shared/data/data.service';
 import { GlobalLoaderService } from '../shared/common/global-loader.service';
+import { DataService } from '../shared/data/data.service';
 import { SettingService } from '../shared/settings/settings.service';
 import { SideBarService } from '../shared/side-bar/side-bar.service';
 
