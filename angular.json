@@ -85,7 +85,10 @@
               "ngx-csv/ngx-csv",
               "dropzone",
               "file-saver",
-              "prismjs"
+              "prismjs",
+              "apexcharts",
+              "base64-js",
+              "js-sha256"
             ],
             "browser": "src/main.ts",
             "stylePreprocessorOptions": {
