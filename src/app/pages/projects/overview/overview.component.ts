@@ -4,23 +4,21 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { projectDocument, ProjectTeam } from 'src/app/core/data';
 
 @Component({
-    selector: 'app-overview',
-    templateUrl: './overview.component.html',
-    styleUrls: ['./overview.component.scss'],
-    standalone: false
+  selector: 'app-overview',
+  templateUrl: './overview.component.html',
+  styleUrls: ['./overview.component.scss'],
+  standalone: false,
 })
 
 /**
  * Overview Component
  */
 export class OverviewComponent {
-
   projectListWidgets!: any;
   teamOverviewList: any;
   submitted = false;
 
-  constructor(private modalService: NgbModal) {
-  }
+  constructor(private modalService: NgbModal) {}
 
   ngOnInit(): void {
     /**
@@ -30,23 +28,19 @@ export class OverviewComponent {
     this.teamOverviewList = ProjectTeam;
   }
 
-
   /**
- * Open modal
- * @param content modal content
- */
+   * Open modal
+   * @param content modal content
+   */
   openModal(content: any) {
     this.submitted = false;
     this.modalService.open(content, { size: 'md', centered: true });
   }
 
-
   /**
-  * Active Toggle navbar
-  */
+   * Active Toggle navbar
+   */
   activeMenu(id: any) {
     document.querySelector('.star_' + id)?.classList.toggle('active');
   }
-
-
 }

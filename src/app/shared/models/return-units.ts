@@ -1,6 +1,6 @@
-import { AddressViewModel } from "./addresses";
-import { LaboratorySimpleViewModel } from "./laboratories";
-import { ListRequestParams } from "./api/base-view.model";
+import { AddressViewModel } from './addresses';
+import { ListRequestParams } from './api/base-view.model';
+import { LaboratorySimpleViewModel } from './laboratories';
 
 export interface ReturnUnitViewModel {
   id: string;
@@ -43,7 +43,7 @@ export interface ReturnUnitInput {
   isActive: boolean;
 }
 
-export type ReturnUnitSortableField = "created_at" | "name" | "is_active";
+export type ReturnUnitSortableField = 'created_at' | 'name' | 'is_active';
 
 export interface ReturnUnitListFilters {
   laboratoryId?: string;
@@ -51,5 +51,5 @@ export interface ReturnUnitListFilters {
   isActive?: boolean;
 }
 
-export type ListReturnUnitsParams =
-  ListRequestParams<ReturnUnitSortableField> & ReturnUnitListFilters;
+export type ListReturnUnitsParams = ListRequestParams<ReturnUnitSortableField> &
+  ReturnUnitListFilters;

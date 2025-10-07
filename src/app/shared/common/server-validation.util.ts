@@ -1,4 +1,4 @@
-﻿import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 import { ValidationErrorEntry } from '../../core/notifications/notification.service';
 
 type ControlEntry = {
@@ -9,7 +9,7 @@ type ControlEntry = {
 
 export function applyServerValidationErrors(
   form: FormGroup,
-  entries: ValidationErrorEntry[] | undefined | null
+  entries: ValidationErrorEntry[] | undefined | null,
 ): string[] {
   if (!form || !entries || entries.length === 0) {
     return [];
@@ -18,7 +18,7 @@ export function applyServerValidationErrors(
   const controls = flattenControls(form);
   const unmatchedMessages: string[] = [];
 
-  entries.forEach(entry => {
+  entries.forEach((entry) => {
     const controlEntry = resolveControlForField(entry.field, controls);
     const joinedMessage = entry.messages.join(' ');
 
@@ -44,14 +44,12 @@ export function applyServerValidationErrors(
 function flattenControls(control: AbstractControl, path = ''): ControlEntry[] {
   if (control instanceof FormGroup) {
     return Object.entries(control.controls).flatMap(([key, child]) =>
-      flattenControls(child, path ? `${path}.${key}` : key)
+      flattenControls(child, path ? `${path}.${key}` : key),
     );
   }
 
   if (control instanceof FormArray) {
-    return control.controls.flatMap((child, index) =>
-      flattenControls(child, `${path}[${index}]`)
-    );
+    return control.controls.flatMap((child, index) => flattenControls(child, `${path}[${index}]`));
   }
 
   const fieldName = path.split('.').pop() ?? path;
@@ -71,12 +69,12 @@ function resolveControlForField(field: string, controls: ControlEntry[]): Contro
 
   const normalizedField = normalizeKey(field.split('.').pop() ?? field);
 
-  let match = controls.find(control => control.normalized === normalizedField);
+  let match = controls.find((control) => control.normalized === normalizedField);
   if (match) {
     return match;
   }
 
-  match = controls.find(control => normalizedField.endsWith(control.normalized));
+  match = controls.find((control) => normalizedField.endsWith(control.normalized));
   if (match) {
     return match;
   }

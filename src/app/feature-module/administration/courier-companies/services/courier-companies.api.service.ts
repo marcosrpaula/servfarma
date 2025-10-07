@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
@@ -8,22 +8,16 @@ import {
   CourierCompanyViewModel,
   ListCourierCompaniesParams,
 } from '../../../../shared/models/courier-companies';
-import {
-  PagedResult,
-  RawPagedResult,
-  mapRawPaged,
-} from '../../../../shared/models/pagination';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import { buildHttpParams } from '../../../../shared/utils/http-params';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class CourierCompaniesApiService {
   private readonly baseUrl = `${environment.apiBaseUrl}/api/v1/courier-companies`;
 
   constructor(private http: HttpClient) {}
 
-  list(
-    params: ListCourierCompaniesParams = {},
-  ): Observable<PagedResult<CourierCompanyViewModel>> {
+  list(params: ListCourierCompaniesParams = {}): Observable<PagedResult<CourierCompanyViewModel>> {
     const httpParams = buildHttpParams({
       page: params.page ?? 1,
       pageSize: params.pageSize ?? 10,

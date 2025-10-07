@@ -1,35 +1,23 @@
-﻿import {
-  Component,
-  OnInit,
-  inject,
-  computed,
-  signal,
-  ChangeDetectorRef,
-} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit, computed, inject, signal } from '@angular/core';
 import {
+  AbstractControl,
+  FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
-  FormArray,
-  FormControl,
-  ValidatorFn,
-  AbstractControl,
   ValidationErrors,
+  ValidatorFn,
+  Validators,
 } from '@angular/forms';
-import {
-  UsersApiService,
-  CreateUserDto,
-  UpdateUserDto,
-} from '../services/users.api.service';
-import { RolesApiService } from '../services/roles.api.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RoleViewModel } from '../../../../shared/models/users';
 import { SharedModule } from '../../../../shared/shared.module';
+import { RolesApiService } from '../services/roles.api.service';
+import { CreateUserDto, UpdateUserDto, UsersApiService } from '../services/users.api.service';
 
 @Component({
   selector: 'app-user-upsert',
@@ -54,10 +42,10 @@ export class UserUpsertComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   id = signal<string | null>(null);
-  title = computed(() => (this.id() ? 'Editar Usuário' : 'Adicionar Usuário'));
+  title = computed(() => (this.id() ? 'Editar UsuÃ¡rio' : 'Adicionar UsuÃ¡rio'));
   breadCrumbItems = computed(() => [
-    { label: 'Administra��o' },
-    { label: 'Usu�rios', link: '/user-management/users' },
+    { label: 'Administração' },
+    { label: 'Usuários', link: '/user-management/users' },
     { label: this.title(), active: true },
   ]);
   isSaving = signal(false);
@@ -96,10 +84,7 @@ export class UserUpsertComponent implements OnInit {
           if (!mod || !action) continue;
           const g = groups.get(mod) ?? {};
           if (action.toLowerCase() === 'read') g.readId = r.id;
-          if (
-            action.toLowerCase() === 'admin' ||
-            action.toLowerCase() === 'write'
-          )
+          if (action.toLowerCase() === 'admin' || action.toLowerCase() === 'write')
             g.writeId = r.id;
           groups.set(mod, g);
         }
@@ -114,12 +99,10 @@ export class UserUpsertComponent implements OnInit {
               enabled: [false],
               level: [''],
             },
-            { validators: [this.requireLevelWhenEnabled()] }
-          )
+            { validators: [this.requireLevelWhenEnabled()] },
+          ),
         );
-        const arr = this.fb.array(controls, [
-          this.requireAtLeastOnePermission(),
-        ]);
+        const arr = this.fb.array(controls, [this.requireAtLeastOnePermission()]);
         this.form.setControl('permissions', arr);
 
         if (this.id()) this.load(this.id()!);
@@ -136,7 +119,7 @@ export class UserUpsertComponent implements OnInit {
         isActive: u.isActive ?? true,
       });
 
-      // Marca checkboxes de acordo com as roles do usuÃ¡rio
+      // Marca checkboxes de acordo com as roles do usuÃÂ¡rio
       if (Array.isArray(u.permissions)) {
         const userRoleNames: string[] = u.permissions
           .map((p: RoleViewModel) => p?.name)
@@ -145,18 +128,16 @@ export class UserUpsertComponent implements OnInit {
           const group = this.permissionsArray.at(i) as FormGroup;
           const hasRead = userRoleNames.some((n) => n === `${pg.module}:read`);
           const hasWrite = userRoleNames.some(
-            (n) => n === `${pg.module}:admin` || n === `${pg.module}:write`
+            (n) => n === `${pg.module}:admin` || n === `${pg.module}:write`,
           );
-          if (hasWrite)
-            group.get('level')?.setValue('write', { emitEvent: false });
-          else if (hasRead)
-            group.get('level')?.setValue('read', { emitEvent: false });
+          if (hasWrite) group.get('level')?.setValue('write', { emitEvent: false });
+          else if (hasRead) group.get('level')?.setValue('read', { emitEvent: false });
 
           const enabled = hasRead || hasWrite;
           group.get('enabled')?.setValue(enabled, { emitEvent: false });
         });
 
-        // garante atualizaÃ§Ã£o da marcaÃ§Ã£o na view
+        // garante atualizaÃÂ§ÃÂ£o da marcaÃÂ§ÃÂ£o na view
         this.cdr.detectChanges();
       }
     });
@@ -232,7 +213,7 @@ export class UserUpsertComponent implements OnInit {
     };
   }
 
-  // permite desmarcar o rÃ¡dio ao clicar novamente
+  // permite desmarcar o rÃÂ¡dio ao clicar novamente
   toggleLevel(index: number, level: 'read' | 'write', event: Event) {
     const group = this.permissionsArray.at(index) as FormGroup;
     if (!group.get('enabled')?.value) {

@@ -1,10 +1,12 @@
-﻿<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
+<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-12">
     <form [formGroup]="form" (ngSubmit)="save()" novalidate>
       <div class="card">
-        <div class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div
+          class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2"
+        >
           <div>
             <h5 class="card-title mb-1">{{ title() }}</h5>
             <p class="text-muted mb-0">Cadastre ou edite informações do projeto.</p>
@@ -21,7 +23,9 @@
               Status
               <span
                 class="status-toggle__badge"
-                [ngClass]="form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'"
+                [ngClass]="
+                  form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'
+                "
               >
                 {{ form.get('isActive')?.value ? 'Ativo' : 'Inativo' }}
               </span>
@@ -33,7 +37,12 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Nome <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="name" [readonly]="isReadOnly()" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="name"
+                [readonly]="isReadOnly()"
+              />
             </div>
             <div class="col-md-6">
               <label class="form-label">Laboratorio <span class="text-danger">*</span></label>
@@ -46,7 +55,12 @@
             </div>
             <div class="col-12">
               <label class="form-label">Observacoes</label>
-              <textarea class="form-control" rows="3" formControlName="observation" [readonly]="isReadOnly()"></textarea>
+              <textarea
+                class="form-control"
+                rows="3"
+                formControlName="observation"
+                [readonly]="isReadOnly()"
+              ></textarea>
             </div>
           </div>
 
@@ -60,7 +74,9 @@
                   [disabled]="isReadOnly()"
                   id="emitReturnInvoice"
                 />
-                <label class="form-check-label" for="emitReturnInvoice">Emitir nota de retorno</label>
+                <label class="form-check-label" for="emitReturnInvoice"
+                  >Emitir nota de retorno</label
+                >
               </div>
             </div>
             <div class="col-md-3">
@@ -78,8 +94,15 @@
           </div>
 
           <div class="mt-4">
-            <label class="form-label">Tipos de servico permitidos <span class="text-danger">*</span></label>
-            <select class="form-select" formControlName="allowedServiceTypes" multiple [disabled]="isReadOnly()">
+            <label class="form-label"
+              >Tipos de servico permitidos <span class="text-danger">*</span></label
+            >
+            <select
+              class="form-select"
+              formControlName="allowedServiceTypes"
+              multiple
+              [disabled]="isReadOnly()"
+            >
               @for (type of serviceTypeOptions; track type.id) {
                 <option [value]="type.id">{{ type.label }}</option>
               }
@@ -90,19 +113,39 @@
           <div formGroupName="stock" class="row g-3">
             <div class="col-md-3">
               <label class="form-label">Estoque principal</label>
-              <input type="text" class="form-control" formControlName="mainStock" [readonly]="isReadOnly()" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="mainStock"
+                [readonly]="isReadOnly()"
+              />
             </div>
             <div class="col-md-3">
               <label class="form-label">Estoque kits</label>
-              <input type="text" class="form-control" formControlName="kitStock" [readonly]="isReadOnly()" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="kitStock"
+                [readonly]="isReadOnly()"
+              />
             </div>
             <div class="col-md-3">
               <label class="form-label">Estoque amostras</label>
-              <input type="text" class="form-control" formControlName="sampleStock" [readonly]="isReadOnly()" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="sampleStock"
+                [readonly]="isReadOnly()"
+              />
             </div>
             <div class="col-md-3">
               <label class="form-label">Estoque bloqueado</label>
-              <input type="text" class="form-control" formControlName="blockedStock" [readonly]="isReadOnly()" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="blockedStock"
+                [readonly]="isReadOnly()"
+              />
             </div>
             <div class="col-md-3">
               <div class="form-check form-switch">
@@ -132,8 +175,15 @@
         </div>
 
         <div class="card-footer d-flex justify-content-end gap-2 flex-wrap">
-          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancelar</button>
-          <button *ngIf="!isReadOnly()" type="submit" class="btn btn-primary" [disabled]="isSaving()">
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+            Cancelar
+          </button>
+          <button
+            *ngIf="!isReadOnly()"
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="isSaving()"
+          >
             {{ isSaving() ? 'Salvando...' : 'Salvar' }}
           </button>
         </div>

@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  HostListener,
-  RendererFactory2,
-} from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Chart, registerables } from 'chart.js';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -17,14 +12,11 @@ import {
   ApexXAxis,
   ChartComponent,
 } from 'ng-apexcharts';
-import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
-import { Chart, registerables } from 'chart.js';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { FormControl, FormGroup } from '@angular/forms';
+import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Editor, Toolbar, Validators } from 'ngx-editor';
+import { CommonService } from '../../../shared/common/common.service';
 import { breadCrumbItems } from '../../../shared/models/models';
 import { routes } from '../../../shared/routes/routes';
-import { CommonService } from '../../../shared/common/common.service';
 import { SettingService } from '../../../shared/settings/settings.service';
 export interface ChartOptions {
   series: ApexAxisChartSeries;
@@ -39,12 +31,12 @@ export interface ChartOptions {
 Chart.register(...registerables);
 
 @Component({
-    selector: 'app-modal-dashboard',
-    templateUrl: './modal-dashboard.component.html',
-    styleUrl: './modal-dashboard.component.scss',
-    standalone: false
+  selector: 'app-modal-dashboard',
+  templateUrl: './modal-dashboard.component.html',
+  styleUrl: './modal-dashboard.component.scss',
+  standalone: false,
 })
-export class ModalDashboardComponent  implements OnInit, OnDestroy {
+export class ModalDashboardComponent implements OnInit, OnDestroy {
   routes = routes;
   base = '';
   values: string[] = ['Jerald', 'Andrew', 'Philip', 'Davis'];
@@ -86,9 +78,11 @@ export class ModalDashboardComponent  implements OnInit, OnDestroy {
       // Move to the previous step
       this.selectedFieldSet[0]--;
     }
-
   }
-  constructor(private common: CommonService,public layout:SettingService) {
+  constructor(
+    private common: CommonService,
+    public layout: SettingService,
+  ) {
     this.selectedYear = new Date(new Date().getFullYear(), 0, 1);
     this.bsConfig = {
       minMode: 'year',
@@ -98,41 +92,39 @@ export class ModalDashboardComponent  implements OnInit, OnDestroy {
       this.base = res;
       if (this.base === 'layout-hovered') {
         layout.changeLayoutMode('13');
-      } else if (this.base === 'layout-horizontal'){
+      } else if (this.base === 'layout-horizontal') {
         layout.changeLayoutMode('14');
-      }else if (this.base === 'layout-detached'){
+      } else if (this.base === 'layout-detached') {
         layout.changeLayoutMode('5');
-      }else if (this.base === 'layout-modern'){
+      } else if (this.base === 'layout-modern') {
         layout.changeLayoutMode('11');
-      }else if (this.base === 'layout-two-column'){
+      } else if (this.base === 'layout-two-column') {
         sessionStorage.setItem('menuValue2', 'Layouts');
         layout.changeLayoutMode('6');
-      }else if (this.base === 'layout-horizontal-single'){
+      } else if (this.base === 'layout-horizontal-single') {
         layout.changeLayoutMode('4');
-      }else if (this.base === 'layout-horizontal-overlay'){
+      } else if (this.base === 'layout-horizontal-overlay') {
         layout.changeLayoutMode('8');
-      }else if (this.base === 'layout-horizontal-box'){
+      } else if (this.base === 'layout-horizontal-box') {
         layout.changeLayoutMode('15');
-      }else if (this.base === 'layout-horizontal-sidemenu'){
+      } else if (this.base === 'layout-horizontal-sidemenu') {
         layout.changeLayoutMode('9');
-      }else if (this.base === 'layout-vertical-transparent'){
+      } else if (this.base === 'layout-vertical-transparent') {
         layout.changeLayoutMode('12');
-      }else if (this.base === 'layout-without-header'){
+      } else if (this.base === 'layout-without-header') {
         layout.changeLayoutMode('7');
-      }else if (this.base === 'layout-rtl'){
+      } else if (this.base === 'layout-rtl') {
         layout.changeLayoutMode('16');
-      }else if (this.base === 'layout-box'){
+      } else if (this.base === 'layout-box') {
         layout.changeLayoutWidth('2');
-      }else if (this.base === 'layout-dark'){
+      } else if (this.base === 'layout-dark') {
         layout.changeThemeColor('2');
-      }else {
-
+      } else {
         // layout.changeLayoutMode('1');
         // layout.changeLayoutWidth('1');
         // layout.changeThemeColor('1');
       }
     });
-
   }
 
   // Open the dropdown
@@ -150,10 +142,7 @@ export class ModalDashboardComponent  implements OnInit, OnDestroy {
     this.closeDropdown(); // Close dropdown after time selection
   }
   ngOnInit(): void {
-    this.breadCrumbItems = [
-      { label: 'Dashboards' },
-      { label: 'Admin Dashboard', active: true },
-    ];
+    this.breadCrumbItems = [{ label: 'Dashboards' }, { label: 'Admin Dashboard', active: true }];
     this.editor = new Editor();
     this.EmpDepartment = {
       chart: {
@@ -198,14 +187,7 @@ export class ModalDashboardComponent  implements OnInit, OnDestroy {
         },
       ],
       xaxis: {
-        categories: [
-          'UI/UX',
-          'Development',
-          'Management',
-          'HR',
-          'Testing',
-          'Marketing',
-        ],
+        categories: ['UI/UX', 'Development', 'Management', 'HR', 'Testing', 'Marketing'],
         labels: {
           style: {
             colors: '#111827',

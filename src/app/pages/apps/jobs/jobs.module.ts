@@ -1,20 +1,25 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgbDropdownModule, NgbTooltipModule, NgbPaginationModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  NgbDropdownModule,
+  NgbNavModule,
+  NgbPaginationModule,
+  NgbTooltipModule,
+} from '@ng-bootstrap/ng-bootstrap';
 
 // Routing
-import { JobsRoutingModule } from './jobs-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { JobListsModule } from './job-lists/job-lists.module';
 import { CandidateListsModule } from './candidate-lists/candidate-lists.module';
+import { JobListsModule } from './job-lists/job-lists.module';
+import { JobsRoutingModule } from './jobs-routing.module';
 
 // Component
-import { StatisticsComponent } from './statistics/statistics.component';
 import { ApplicationComponent } from './application/application.component';
-import { NewjobComponent } from './newjob/newjob.component';
 import { CompaniesListComponent } from './companies-list/companies-list.component';
 import { JobCategoriesComponent } from './job-categories/job-categories.component';
+import { NewjobComponent } from './newjob/newjob.component';
+import { StatisticsComponent } from './statistics/statistics.component';
 
 // Apex Chart Package
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -23,14 +28,13 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { FeatherModule } from 'angular-feather';
 import { allIcons } from 'angular-feather/icons';
 
-
 // Flat Picker
 import { FlatpickrModule } from 'angularx-flatpickr';
 
 // Ng Select
 import { NgSelectModule } from '@ng-select/ng-select';
 // Load Icon
-import { defineElement } from "@lordicon/element";
+import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
 
 @NgModule({
@@ -39,7 +43,7 @@ import lottie from 'lottie-web';
     ApplicationComponent,
     NewjobComponent,
     CompaniesListComponent,
-    JobCategoriesComponent
+    JobCategoriesComponent,
   ],
   imports: [
     CommonModule,
@@ -56,9 +60,9 @@ import lottie from 'lottie-web';
     FlatpickrModule,
     NgSelectModule,
     NgbPaginationModule,
-    NgbNavModule
+    NgbNavModule,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class JobsModule {
   constructor() {

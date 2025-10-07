@@ -1,22 +1,21 @@
 import { Component, Renderer2 } from '@angular/core';
-import { routes } from '../../shared/routes/routes';
 import { Router } from '@angular/router';
+import { routes } from '../../shared/routes/routes';
 
 @Component({
-    selector: 'app-reset-password',
-    templateUrl: './reset-password.component.html',
-    styleUrl: './reset-password.component.scss',
-    standalone: false
+  selector: 'app-reset-password',
+  templateUrl: './reset-password.component.html',
+  styleUrl: './reset-password.component.scss',
+  standalone: false,
 })
 export class ResetPasswordComponent {
-
   public routes = routes;
   constructor(
     private router: Router,
-    private renderer:Renderer2
-  ){}
-  navigation(){
-    this.router.navigate([routes.success])
+    private renderer: Renderer2,
+  ) {}
+  navigation() {
+    this.router.navigate([routes.success]);
   }
 
   password: boolean[] = [false, false]; // Add more as needed
@@ -24,11 +23,10 @@ export class ResetPasswordComponent {
   togglePassword(index: number): void {
     this.password[index] = !this.password[index];
   }
-  ngOnInit():void{
-    this.renderer.addClass(document.body,'bg-white');
+  ngOnInit(): void {
+    this.renderer.addClass(document.body, 'bg-white');
   }
-  ngOnDestroy():void{
-    this.renderer.removeClass(document.body,'bg-white');
+  ngOnDestroy(): void {
+    this.renderer.removeClass(document.body, 'bg-white');
   }
-  
 }

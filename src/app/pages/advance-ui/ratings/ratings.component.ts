@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-ratings',
-    templateUrl: './ratings.component.html',
-    styleUrls: ['./ratings.component.scss'],
-    standalone: false
+  selector: 'app-ratings',
+  templateUrl: './ratings.component.html',
+  styleUrls: ['./ratings.component.scss'],
+  standalone: false,
 })
 
 /**
  * Ratings Component
  */
 export class RatingsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   readonly = false;
@@ -22,16 +21,12 @@ export class RatingsComponent implements OnInit {
   hovered = 0;
   clearRate = 2;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-     this.breadCrumbItems = [
-      { label: 'Advance UI' },
-      { label: 'Ratings', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Advance UI' }, { label: 'Ratings', active: true }];
   }
-
 }

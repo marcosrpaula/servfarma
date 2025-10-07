@@ -1,17 +1,17 @@
-﻿import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { FormsModule } from '@angular/forms';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { TimepickerModule } from 'ngx-bootstrap/timepicker';
+import { ChipsModule } from 'primeng/chips';
+import { ServfarmaSharedModule } from '../../shared/servfarma-shared.module';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
-import { FormsModule } from '@angular/forms';
-import { ServfarmaSharedModule } from '../../shared/servfarma-shared.module';
-import { TimepickerModule } from 'ngx-bootstrap/timepicker';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { DealsDashboardComponent } from './deals-dashboard/deals-dashboard.component';
 import { EmployeeDashboardComponent } from './employee-dashboard/employee-dashboard.component';
 import { LeadsDashboardComponent } from './leads-dashboard/leads-dashboard.component';
-import { DealsDashboardComponent } from './deals-dashboard/deals-dashboard.component';
-import { ChipsModule } from 'primeng/chips';
 import { ModalDashboardComponent } from './modal-dashboard/modal-dashboard.component';
 
 @NgModule({
@@ -21,7 +21,7 @@ import { ModalDashboardComponent } from './modal-dashboard/modal-dashboard.compo
     EmployeeDashboardComponent,
     LeadsDashboardComponent,
     DealsDashboardComponent,
-    ModalDashboardComponent
+    ModalDashboardComponent,
   ],
   imports: [
     CommonModule,
@@ -30,7 +30,7 @@ import { ModalDashboardComponent } from './modal-dashboard/modal-dashboard.compo
     TimepickerModule.forRoot(),
     BsDropdownModule.forRoot(),
     ServfarmaSharedModule,
-    ChipsModule
-  ]
+    ChipsModule,
+  ],
 })
-export class DashboardModule { }
+export class DashboardModule {}

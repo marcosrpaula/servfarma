@@ -8,9 +8,8 @@ describe('Login2Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [Login2Component]
-    })
-    .compileComponents();
+      declarations: [Login2Component],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Login2Component);
     component = fixture.componentInstance;

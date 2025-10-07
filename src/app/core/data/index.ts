@@ -1,96 +1,266 @@
-import { chatMessagesData } from "./advancedForm";
-import { application } from "./application";
-import { candidatelist } from "./candidateList";
-import { cartData } from "./cart";
-import { jobcategories } from "./category";
-import { lineAreaChart, lineBarChart, pieChart, donutChart, polarChart, radarChart } from "./chartjs";
-import { groupData, chatData, MessagesData, contactData } from "./chat";
-import { companieslist } from "./companiesList";
-import { Contacts, Companies, deals, Leads } from "./crm";
-import { Market, cryptoICOList, cryptoOrders, Transactions, BitcoinChart, litecoinChart, EatherreumChart, BinanceChart, DashChart, TetherChart, NeoChart, Wallets } from "./crypto"
-import { Customers } from "./customer";
-import { analyticstatData, analyticTopPages, BestSelling, TopSelling, Recentelling, statData, cryptostatData, cryptoBitcoinChart, cryptolitecoinChart, cryptoEatherreumChart, cryptoBinanceChart, cryptoDashChart, cryptoTetherChart, cryptoNeoChart, cryptoCurrencies, cryptoTopPerformers, cryptoNewsFeed } from "./dashboard";
-import { nftstatData, nftfeaturedData, nftrecentData, nfttopCollectionData, nftpopularData } from "./dashboardnft";
-import { projectstatData, ActiveProjects, MyTask, TeamMembers } from "./dashboardProject";
-import { Recommendedjob, jobcandidate } from "./dashboardJob";
-import { category, calendarEvents } from "./calendar";
-import { emailData } from "./email";
-import { IconsData } from "./featherIcon";
-import { folderData, recentData } from "./file-manager";
-import { invoiceData } from "./invoice";
-import { joblist, jobgrid } from "./jobList";
-import { tasks } from "./kanban";
-import { icons } from "./materialIcon";
-import { Orders } from "./order";
-import { MonthlyPlan, YearlyPlan, pricingPlan, SimplePlan } from "./pricing";
-import { Products } from "./product";
-import { projectListWidgets } from "./project";
-import { projectDocument, ProjectTeam } from "./project_overview";
-import { projectList, document } from "./projectList";
-import { nftwalletData, collectionData, creatorsData, creatorsListData, exploreData, marketplaceData, tradingData, recentMarketData, popularData, rankingData } from "./nft";
-import { remixicons } from "./remixIcon";
-import { swiper, gallery, news, video } from "./search";
-import { BitcoinsellerChart, MicroChart, NestaChart, iTestChart, MetaChart, DigitechChart, SyntyceChart, ZoeticChart, sellerDetals } from "./seller";
-import { sellerDetail } from "./sellerDetail";
-import { COUNTRIES, AssignedData } from "./taskList";
-import { Team } from "./team";
-import { ticketList } from "./ticketList";
-import { todoList, todoAssigned, todoProject } from "./todoList";
-import { tileBoxs1, tileBoxs2, tileBoxs3, tileBoxs4, otherWidgets, widgetsActivities, widgetsTasks, tileBoxs5, hotproducts, candidate, bank } from "./widget";
-import { apikeys } from "./apikey";
-import { ListJs, paginationlist, dataattribute, existingList, FuzzyList, GridJs } from "./tablelistjs";
-import { crmstatData, DealsStatus, UpcomingActivities, ClosingDeals } from "./dashboardCrm";
+import { chatMessagesData } from './advancedForm';
+import { apikeys } from './apikey';
+import { application } from './application';
+import { calendarEvents, category } from './calendar';
+import { candidatelist } from './candidateList';
+import { cartData } from './cart';
+import { jobcategories } from './category';
+import {
+  donutChart,
+  lineAreaChart,
+  lineBarChart,
+  pieChart,
+  polarChart,
+  radarChart,
+} from './chartjs';
+import { chatData, contactData, groupData, MessagesData } from './chat';
+import { companieslist } from './companiesList';
+import { Companies, Contacts, deals, Leads } from './crm';
+import {
+  BinanceChart,
+  BitcoinChart,
+  cryptoICOList,
+  cryptoOrders,
+  DashChart,
+  EatherreumChart,
+  litecoinChart,
+  Market,
+  NeoChart,
+  TetherChart,
+  Transactions,
+  Wallets,
+} from './crypto';
+import { Customers } from './customer';
+import {
+  analyticstatData,
+  analyticTopPages,
+  BestSelling,
+  cryptoBinanceChart,
+  cryptoBitcoinChart,
+  cryptoCurrencies,
+  cryptoDashChart,
+  cryptoEatherreumChart,
+  cryptolitecoinChart,
+  cryptoNeoChart,
+  cryptoNewsFeed,
+  cryptostatData,
+  cryptoTetherChart,
+  cryptoTopPerformers,
+  Recentelling,
+  statData,
+  TopSelling,
+} from './dashboard';
+import { ClosingDeals, crmstatData, DealsStatus, UpcomingActivities } from './dashboardCrm';
+import { jobcandidate, Recommendedjob } from './dashboardJob';
+import {
+  nftfeaturedData,
+  nftpopularData,
+  nftrecentData,
+  nftstatData,
+  nfttopCollectionData,
+} from './dashboardnft';
+import { ActiveProjects, MyTask, projectstatData, TeamMembers } from './dashboardProject';
+import { emailData } from './email';
+import { IconsData } from './featherIcon';
+import { folderData, recentData } from './file-manager';
+import { invoiceData } from './invoice';
+import { jobgrid, joblist } from './jobList';
+import { tasks } from './kanban';
+import { icons } from './materialIcon';
+import {
+  collectionData,
+  creatorsData,
+  creatorsListData,
+  exploreData,
+  marketplaceData,
+  nftwalletData,
+  popularData,
+  rankingData,
+  recentMarketData,
+  tradingData,
+} from './nft';
+import { Orders } from './order';
+import { MonthlyPlan, pricingPlan, SimplePlan, YearlyPlan } from './pricing';
+import { Products } from './product';
+import { projectListWidgets } from './project';
+import { projectDocument, ProjectTeam } from './project_overview';
+import { document, projectList } from './projectList';
+import { remixicons } from './remixIcon';
+import { gallery, news, swiper, video } from './search';
+import {
+  BitcoinsellerChart,
+  DigitechChart,
+  iTestChart,
+  MetaChart,
+  MicroChart,
+  NestaChart,
+  sellerDetals,
+  SyntyceChart,
+  ZoeticChart,
+} from './seller';
+import { sellerDetail } from './sellerDetail';
+import {
+  dataattribute,
+  existingList,
+  FuzzyList,
+  GridJs,
+  ListJs,
+  paginationlist,
+} from './tablelistjs';
+import { AssignedData, COUNTRIES } from './taskList';
+import { Team } from './team';
+import { ticketList } from './ticketList';
+import { todoAssigned, todoList, todoProject } from './todoList';
+import {
+  bank,
+  candidate,
+  hotproducts,
+  otherWidgets,
+  tileBoxs1,
+  tileBoxs2,
+  tileBoxs3,
+  tileBoxs4,
+  tileBoxs5,
+  widgetsActivities,
+  widgetsTasks,
+} from './widget';
 
 export {
-    chatMessagesData,
-    application,
-    candidatelist,
-    cartData,
-    jobcategories,
-    lineAreaChart, lineBarChart, pieChart, donutChart, polarChart, radarChart,
-    groupData, chatData, MessagesData, contactData,
-    collectionData,
-    companieslist,
-    creatorsData, creatorsListData,
-    Contacts, Companies, deals, Leads,
-    Market,
-    cryptoICOList,
-    cryptoOrders,
-    Transactions,
-    BitcoinChart, litecoinChart, EatherreumChart, BinanceChart, DashChart, TetherChart, NeoChart, Wallets,
-    Customers,
-    analyticstatData, analyticTopPages, BestSelling, TopSelling, Recentelling, statData, cryptostatData, cryptoBitcoinChart, cryptolitecoinChart, cryptoEatherreumChart, cryptoBinanceChart, cryptoDashChart, cryptoTetherChart, cryptoNeoChart, cryptoCurrencies, cryptoTopPerformers, cryptoNewsFeed,
-    nftstatData, nftfeaturedData, nftrecentData, nfttopCollectionData, nftpopularData,
-    projectstatData, ActiveProjects, MyTask, TeamMembers,
-    emailData,
-    exploreData,
-    IconsData,
-    folderData, recentData,
-    invoiceData,
-    joblist, jobgrid,
-    tasks,
-    marketplaceData, tradingData, recentMarketData, popularData,
-    icons,
-    nftwalletData,
-    Orders,
-    MonthlyPlan, YearlyPlan, pricingPlan, SimplePlan,
-    Products,
-    projectListWidgets,
-    projectDocument, ProjectTeam,
-    projectList, document,
-    rankingData,
-    remixicons,
-    swiper, gallery, news, video,
-    BitcoinsellerChart, MicroChart, NestaChart, iTestChart, MetaChart, DigitechChart, SyntyceChart, ZoeticChart, sellerDetals,
-    sellerDetail,
-    COUNTRIES, AssignedData,
-    Team,
-    ticketList,
-    todoList, todoAssigned, todoProject,
-    tileBoxs1, tileBoxs2, tileBoxs3, tileBoxs4, otherWidgets, widgetsActivities, widgetsTasks, tileBoxs5, hotproducts, candidate, bank,
-    apikeys,
-    ListJs, paginationlist, dataattribute, existingList, FuzzyList, GridJs,
-    Recommendedjob, jobcandidate,
-    category, calendarEvents,
-    crmstatData, DealsStatus, UpcomingActivities, ClosingDeals
-}
+  ActiveProjects,
+  analyticstatData,
+  analyticTopPages,
+  apikeys,
+  application,
+  AssignedData,
+  bank,
+  BestSelling,
+  BinanceChart,
+  BitcoinChart,
+  BitcoinsellerChart,
+  calendarEvents,
+  candidate,
+  candidatelist,
+  cartData,
+  category,
+  chatData,
+  chatMessagesData,
+  ClosingDeals,
+  collectionData,
+  Companies,
+  companieslist,
+  contactData,
+  Contacts,
+  COUNTRIES,
+  creatorsData,
+  creatorsListData,
+  crmstatData,
+  cryptoBinanceChart,
+  cryptoBitcoinChart,
+  cryptoCurrencies,
+  cryptoDashChart,
+  cryptoEatherreumChart,
+  cryptoICOList,
+  cryptolitecoinChart,
+  cryptoNeoChart,
+  cryptoNewsFeed,
+  cryptoOrders,
+  cryptostatData,
+  cryptoTetherChart,
+  cryptoTopPerformers,
+  Customers,
+  DashChart,
+  dataattribute,
+  deals,
+  DealsStatus,
+  DigitechChart,
+  document,
+  donutChart,
+  EatherreumChart,
+  emailData,
+  existingList,
+  exploreData,
+  folderData,
+  FuzzyList,
+  gallery,
+  GridJs,
+  groupData,
+  hotproducts,
+  icons,
+  IconsData,
+  invoiceData,
+  iTestChart,
+  jobcandidate,
+  jobcategories,
+  jobgrid,
+  joblist,
+  Leads,
+  lineAreaChart,
+  lineBarChart,
+  ListJs,
+  litecoinChart,
+  Market,
+  marketplaceData,
+  MessagesData,
+  MetaChart,
+  MicroChart,
+  MonthlyPlan,
+  MyTask,
+  NeoChart,
+  NestaChart,
+  news,
+  nftfeaturedData,
+  nftpopularData,
+  nftrecentData,
+  nftstatData,
+  nfttopCollectionData,
+  nftwalletData,
+  Orders,
+  otherWidgets,
+  paginationlist,
+  pieChart,
+  polarChart,
+  popularData,
+  pricingPlan,
+  Products,
+  projectDocument,
+  projectList,
+  projectListWidgets,
+  projectstatData,
+  ProjectTeam,
+  radarChart,
+  rankingData,
+  recentData,
+  Recentelling,
+  recentMarketData,
+  Recommendedjob,
+  remixicons,
+  sellerDetail,
+  sellerDetals,
+  SimplePlan,
+  statData,
+  swiper,
+  SyntyceChart,
+  tasks,
+  Team,
+  TeamMembers,
+  TetherChart,
+  ticketList,
+  tileBoxs1,
+  tileBoxs2,
+  tileBoxs3,
+  tileBoxs4,
+  tileBoxs5,
+  todoAssigned,
+  todoList,
+  todoProject,
+  TopSelling,
+  tradingData,
+  Transactions,
+  UpcomingActivities,
+  video,
+  Wallets,
+  widgetsActivities,
+  widgetsTasks,
+  YearlyPlan,
+  ZoeticChart,
+};

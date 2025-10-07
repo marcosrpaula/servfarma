@@ -1,80 +1,45 @@
 import { Injectable } from '@angular/core';
-import { ProductGroupViewModel } from '../../../../shared/models/product-groups';
+import {
+  ProductGroupSortableField,
+  ProductGroupViewModel,
+} from '../../../../shared/models/product-groups';
+import {
+  EntityListState,
+  EntityListStateService,
+  ListSortState,
+} from '../../../../shared/state/entity-list-state.service';
 
-interface ProductGroupsListState {
-  tableData: ProductGroupViewModel[];
-  totalItems: number;
-  pageSize: number;
-  backendPage: number;
-  filtroNome: string;
-  filtroAtivo: '' | 'true' | 'false';
-  orderBy: string;
-  ascending: boolean;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status';
-  lastRequestSignature?: string;
-  lastPagerKey?: string;
+export type ProductGroupSortLabel = 'CreatedDate' | 'Name' | 'Status';
+
+export interface ProductGroupListFiltersState {
+  name: string;
+  isActive: '' | 'true' | 'false';
+}
+
+export interface ProductGroupsListState
+  extends EntityListState<
+    ProductGroupViewModel,
+    ProductGroupListFiltersState,
+    ProductGroupSortableField
+  > {
+  sort: ListSortState<ProductGroupSortableField> & { label: ProductGroupSortLabel };
 }
 
 @Injectable({ providedIn: 'root' })
-export class ProductGroupsStateService {
-  private readonly cache = new Map<string, ProductGroupViewModel>();
-  private listState: ProductGroupsListState | null = null;
-
-  upsert(group: ProductGroupViewModel): void {
-    this.cache.set(group.id, { ...group });
+export class ProductGroupsStateService extends EntityListStateService<
+  ProductGroupViewModel,
+  ProductGroupListFiltersState,
+  ProductGroupSortableField
+> {
+  override setListState(state: ProductGroupsListState): void {
+    super.setListState(state);
   }
 
-  setMany(groups: ProductGroupViewModel[]): void {
-    groups.forEach(group => this.upsert(group));
+  override getListState(): ProductGroupsListState | null {
+    return super.getListState() as ProductGroupsListState | null;
   }
 
-  getById(id: string | null | undefined): ProductGroupViewModel | undefined {
-    if (!id) {
-      return undefined;
-    }
-    const found = this.cache.get(id);
-    return found ? { ...found } : undefined;
-  }
-
-  setListState(state: ProductGroupsListState): void {
-    this.listState = {
-      ...state,
-      tableData: state.tableData.map(group => ({ ...group })),
-    };
-  }
-
-  getListState(): ProductGroupsListState | null {
-    if (!this.listState) {
-      return null;
-    }
-    return {
-      ...this.listState,
-      tableData: this.listState.tableData.map(group => ({ ...group })),
-    };
-  }
-
-  updateListItem(updated: ProductGroupViewModel): void {
-    this.upsert(updated);
-    if (!this.listState) {
-      return;
-    }
-    if (!this.listState.tableData.some(group => group.id === updated.id)) {
-      return;
-    }
-    this.listState = {
-      ...this.listState,
-      tableData: this.listState.tableData.map(group =>
-        group.id === updated.id ? { ...updated } : { ...group }
-      ),
-    };
-  }
-
-  clearListState(): void {
-    this.listState = null;
-  }
-
-  clear(): void {
-    this.cache.clear();
-    this.listState = null;
+  override cloneFilters(filters: ProductGroupListFiltersState): ProductGroupListFiltersState {
+    return { ...filters };
   }
 }

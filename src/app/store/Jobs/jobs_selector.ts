@@ -4,17 +4,16 @@ import { ApplicationState } from './jobs_reducer';
 export const selectDataState = createFeatureSelector<ApplicationState>('Jobs');
 
 export const selectJobsData = createSelector(
-    selectDataState,
-    (state: ApplicationState) => state.Application
+  selectDataState,
+  (state: ApplicationState) => state.Application,
 );
 
 export const selectJobsLoading = createSelector(
-    selectDataState,
-    (state: ApplicationState) => state.loading
+  selectDataState,
+  (state: ApplicationState) => state.loading,
 );
 
 export const selectJobsError = createSelector(
-    selectDataState,
-    (state: ApplicationState) => state.error
+  selectDataState,
+  (state: ApplicationState) => state.error,
 );
-

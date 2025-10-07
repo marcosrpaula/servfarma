@@ -1,4 +1,4 @@
-<app-breadcrumbs title="LaboratÛrios" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs title="Laborat√≥rios" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-12">
@@ -6,7 +6,7 @@
       <div class="card-header border-bottom-dashed">
         <div class="row g-4 align-items-center">
           <div class="col-sm">
-            <h5 class="card-title mb-0">Lista de LaboratÛrios</h5>
+            <h5 class="card-title mb-0">Lista de Laborat√≥rios</h5>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-center gap-2">
@@ -25,12 +25,15 @@
       </div>
 
       <div class="card-body border-bottom border-bottom-dashed">
-        <div class="row g-3 align-items-end">
+        <form
+          class="row g-3 align-items-end"
+          [formGroup]="filtersForm"
+          (ngSubmit)="aplicarFiltros()"
+        >
           <div class="col-xxl-3 col-lg-4 col-md-6 col-sm-6">
             <div class="search-box w-100">
               <input
-                [(ngModel)]="filtroTradeName"
-                (keyup.enter)="aplicarFiltros()"
+                formControlName="tradeName"
                 type="text"
                 class="form-control"
                 placeholder="Buscar por nome fantasia"
@@ -41,11 +44,10 @@
           <div class="col-xxl-3 col-lg-4 col-md-6 col-sm-6">
             <div class="search-box w-100">
               <input
-                [(ngModel)]="filtroLegalName"
-                (keyup.enter)="aplicarFiltros()"
+                formControlName="legalName"
                 type="text"
                 class="form-control"
-                placeholder="Buscar por raz„o social"
+                placeholder="Buscar por raz√£o social"
               />
               <i class="ri-search-line search-icon"></i>
             </div>
@@ -53,8 +55,7 @@
           <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-6">
             <div class="search-box w-100">
               <input
-                [(ngModel)]="filtroDocumento"
-                (keyup.enter)="aplicarFiltros()"
+                formControlName="document"
                 type="text"
                 class="form-control"
                 placeholder="Buscar por documento"
@@ -64,8 +65,8 @@
           </div>
           <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-6">
             <div class="w-100">
-              <select class="form-select" [(ngModel)]="filtroAtivo">
-                <option value="" selected>Todos</option>
+              <select class="form-select" formControlName="isActive">
+                <option value="">Todos</option>
                 <option value="true">Ativo</option>
                 <option value="false">Inativo</option>
               </select>
@@ -73,17 +74,21 @@
           </div>
           <div class="col-xxl-2 col-lg-4 col-md-6 col-sm-12">
             <div class="d-flex flex-wrap align-items-center gap-2 justify-content-md-end w-100">
-              <button type="button" class="btn btn-primary d-inline-flex align-items-center" (click)="aplicarFiltros()">
+              <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
                 <i class="ri-search-line me-1"></i>
                 <span>Aplicar</span>
               </button>
-              <button type="button" class="btn btn-soft-secondary d-inline-flex align-items-center" (click)="limparFiltros()">
+              <button
+                type="button"
+                class="btn btn-soft-secondary d-inline-flex align-items-center"
+                (click)="limparFiltros()"
+              >
                 <i class="ri-refresh-line me-1"></i>
                 <span>Limpar</span>
               </button>
             </div>
           </div>
-        </div>
+        </form>
       </div>
 
       <div class="card-body">
@@ -112,39 +117,105 @@
           <table class="table align-middle table-nowrap">
             <thead class="table-light text-muted">
               <tr>
-                <th class="sort" (click)="toggleSort('TradeName')" (keydown.enter)="toggleSort('TradeName')" role="button" tabindex="0">
+                <th
+                  class="sort"
+                  (click)="toggleSort('TradeName')"
+                  (keydown.enter)="toggleSort('TradeName')"
+                  role="button"
+                  tabindex="0"
+                >
                   Nome fantasia
-                  <span class="sort-icon"><i *ngIf="orderLabel === 'TradeName'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'TradeName'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
-                <th class="sort" (click)="toggleSort('LegalName')" (keydown.enter)="toggleSort('LegalName')" role="button" tabindex="0">
-                  Raz„o social
-                  <span class="sort-icon"><i *ngIf="orderLabel === 'LegalName'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                <th
+                  class="sort"
+                  (click)="toggleSort('LegalName')"
+                  (keydown.enter)="toggleSort('LegalName')"
+                  role="button"
+                  tabindex="0"
+                >
+                  Raz√£o social
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'LegalName'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
-                <th class="sort" (click)="toggleSort('Document')" (keydown.enter)="toggleSort('Document')" role="button" tabindex="0">
+                <th
+                  class="sort"
+                  (click)="toggleSort('Document')"
+                  (keydown.enter)="toggleSort('Document')"
+                  role="button"
+                  tabindex="0"
+                >
                   Documento
-                  <span class="sort-icon"><i *ngIf="orderLabel === 'Document'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'Document'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
-                <th class="sort" (click)="toggleSort('CreatedDate')" (keydown.enter)="toggleSort('CreatedDate')" role="button" tabindex="0">
+                <th
+                  class="sort"
+                  (click)="toggleSort('CreatedDate')"
+                  (keydown.enter)="toggleSort('CreatedDate')"
+                  role="button"
+                  tabindex="0"
+                >
                   Criado em
-                  <span class="sort-icon"><i *ngIf="orderLabel === 'CreatedDate'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'CreatedDate'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
-                <th class="sort" (click)="toggleSort('Status')" (keydown.enter)="toggleSort('Status')" role="button" tabindex="0">
+                <th
+                  class="sort"
+                  (click)="toggleSort('Status')"
+                  (keydown.enter)="toggleSort('Status')"
+                  role="button"
+                  tabindex="0"
+                >
                   Status
-                  <span class="sort-icon"><i *ngIf="orderLabel === 'Status'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'Status'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              @for (row of tableData; track row) {
+              @for (row of tableData(); track row.id) {
                 <tr>
-                  <td><h6 class="fw-medium mb-0">{{ row.tradeName }}</h6></td>
+                  <td>
+                    <h6 class="fw-medium mb-0">{{ row.tradeName }}</h6>
+                  </td>
                   <td>{{ row.legalName }}</td>
                   <td>{{ row.document }}</td>
                   <td>{{ row.createdAt | date: 'short' }}</td>
                   <td>
-                    <span class="badge d-inline-flex align-items-center badge-xs" [ngClass]="row.isActive ? 'badge-success' : 'badge-danger'">
-                      <i class="ti ti-point-filled me-1"></i>{{ row.isActive ? 'Ativo' : 'Inativo' }}
+                    <span
+                      class="badge d-inline-flex align-items-center badge-xs"
+                      [ngClass]="row.isActive ? 'badge-success' : 'badge-danger'"
+                    >
+                      <i class="ti ti-point-filled me-1"></i
+                      >{{ row.isActive ? 'Ativo' : 'Inativo' }}
                     </span>
                   </td>
                   <td>
@@ -172,7 +243,7 @@
                   </td>
                 </tr>
               }
-              @if (carregando) {
+              @if (carregando()) {
                 <tr>
                   <td colspan="6" class="py-5 text-center">
                     <div class="spinner-border" role="status">
@@ -181,7 +252,7 @@
                   </td>
                 </tr>
               }
-              @if (!carregando && tableData.length === 0) {
+              @if (semResultados()) {
                 <tr>
                   <td colspan="6" class="py-5 text-center">
                     <h5 class="text-muted mb-0">Nenhum registro encontrado</h5>

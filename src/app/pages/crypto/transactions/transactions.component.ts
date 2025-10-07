@@ -1,25 +1,23 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
+import { Component } from '@angular/core';
 
-import { RootReducerState } from 'src/app/store';
 import { Store } from '@ngrx/store';
+import { cloneDeep } from 'lodash';
 import { PaginationService } from 'src/app/core/services/pagination.service';
+import { RootReducerState } from 'src/app/store';
 import { fetchCryptoTransactionData } from 'src/app/store/Crypto/crypto_action';
 import { selectCryptoLoading, selectTransacrionData } from 'src/app/store/Crypto/crypto_selector';
-import { cloneDeep } from 'lodash';
-
 
 @Component({
-    selector: 'app-transactions',
-    templateUrl: './transactions.component.html',
-    styleUrls: ['./transactions.component.scss'],
-    standalone: false
+  selector: 'app-transactions',
+  templateUrl: './transactions.component.html',
+  styleUrls: ['./transactions.component.scss'],
+  standalone: false,
 })
 
 /**
  * Transactions Component
  */
 export class TransactionsComponent {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   masterSelected!: boolean;
@@ -32,18 +30,16 @@ export class TransactionsComponent {
   searchTerm: any;
   currency: any = '';
 
-  constructor(public service: PaginationService,
-    private store: Store<{ data: RootReducerState }>) {
-  }
+  constructor(
+    public service: PaginationService,
+    private store: Store<{ data: RootReducerState }>,
+  ) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Crypto' },
-      { label: 'Transactions', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Crypto' }, { label: 'Transactions', active: true }];
     // this.service.currency = 'All'
 
     // Fetch Data
@@ -57,7 +53,7 @@ export class TransactionsComponent {
     this.store.select(selectTransacrionData).subscribe((data) => {
       this.transactions = data;
       this.TransactionList = cloneDeep(data);
-      this.transactions = this.service.changePage(this.TransactionList)
+      this.transactions = this.service.changePage(this.TransactionList);
     });
   }
 
@@ -74,14 +70,16 @@ export class TransactionsComponent {
    */
   config = {
     initialSlide: 0,
-    slidesPerView: 1
+    slidesPerView: 1,
   };
 
   CurrencyFilter() {
     if (this.currency != '') {
-      this.transactions = this.TransactionList.filter((item: any) => item.currency == this.currency);
+      this.transactions = this.TransactionList.filter(
+        (item: any) => item.currency == this.currency,
+      );
     } else {
-      this.transactions = this.service.changePage(this.TransactionList)
+      this.transactions = this.service.changePage(this.TransactionList);
     }
   }
 
@@ -91,7 +89,7 @@ export class TransactionsComponent {
 
   // Pagination
   changePage() {
-    this.transactions = this.service.changePage(this.TransactionList)
+    this.transactions = this.service.changePage(this.TransactionList);
   }
 
   // Search Data
@@ -106,12 +104,11 @@ export class TransactionsComponent {
         item.status.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     });
-    this.transactions = this.service.changePage(this.searchResults)
+    this.transactions = this.service.changePage(this.searchResults);
   }
 
   // Sort Data
   onSort(column: any) {
-    this.transactions = this.service.onSort(column, this.transactions)
+    this.transactions = this.service.onSort(column, this.transactions);
   }
 }
-

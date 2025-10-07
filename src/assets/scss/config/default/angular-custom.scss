@@ -6,12 +6,11 @@ Contact: support@themesbrand.com
 File: Custom Css File
 */
 
-// Select 2 
-@import "@ng-select/ng-select/themes/default.theme.css";
+// Select 2
+@import '@ng-select/ng-select/themes/default.theme.css';
 
 // Lightbox
-@import "ngx-lightbox/lightbox.css";
-
+@import 'ngx-lightbox/lightbox.css';
 
 .emoji-mart {
   position: absolute;
@@ -70,7 +69,7 @@ File: Custom Css File
   border: 0; // for button elements
   @include border-radius();
   opacity: $btn-close-opacity;
-  margin-right: $toast-padding-x * -.5;
+  margin-right: $toast-padding-x * -0.5;
   margin-left: $toast-padding-x !important;
 
   span {
@@ -79,7 +78,7 @@ File: Custom Css File
 }
 
 .list-group-flush .list-group-item {
-  border-width: 0 0 1px
+  border-width: 0 0 1px;
 }
 
 // LeafLet Chart
@@ -134,9 +133,8 @@ File: Custom Css File
   background: #a2adb7 !important;
 }
 
-@each $color,
-$value in $theme-colors {
-  [data-simplebar-track="#{$color}"] {
+@each $color, $value in $theme-colors {
+  [data-simplebar-track='#{$color}'] {
     .simplebar-scrollbar:before {
       background: $value !important;
     }
@@ -146,7 +144,6 @@ $value in $theme-colors {
 // .toast{
 //   width: auto;
 // }
-
 
 // ------------ Base Ui ---------//
 // Alert
@@ -183,7 +180,7 @@ $value in $theme-colors {
       padding: 0;
       border-bottom: 0;
 
-      >.btn.btn-link {
+      > .btn.btn-link {
         padding: 0;
         width: 100%;
         text-decoration: none;
@@ -208,13 +205,10 @@ $value in $theme-colors {
 .dropdown-toggle {
   &.arrow-none {
     &::after {
-      content: "";
+      content: '';
     }
   }
 }
-
-
-
 
 // ----- Advance Ui --------//
 // Rating
@@ -263,8 +257,6 @@ $value in $theme-colors {
   font-family: remixicon !important;
 }
 
-
-
 // filter slider
 .ngx-slider {
   .ngx-slider-bar {
@@ -296,7 +288,6 @@ $value in $theme-colors {
     }
   }
 }
-
 
 //form
 //select
@@ -361,8 +352,6 @@ $value in $theme-colors {
   border: 1px solid #3281f3;
 }
 
-
-
 // .ng-select.ng-select-disabled>.ng-select-container {
 //   background-color: rgba(var(--#{$variable-prefix}light-rgb), 0.75);
 
@@ -371,13 +360,9 @@ $value in $theme-colors {
 //   }
 // }
 
-
-
 // grid js
 
-
 .table-gridjs {
-
   th,
   td {
     border: 1px solid $table-border-color;
@@ -389,7 +374,6 @@ $value in $theme-colors {
     background-color: rgba(var(--#{$variable-prefix}light-rgb), 0.75);
 
     &.gridjs-th-sort {
-
       &:focus,
       &:hover {
         background-color: rgba(var(--#{$variable-prefix}light-rgb), 0.85);
@@ -425,21 +409,19 @@ $value in $theme-colors {
   color-adjust: exact; // Keep themed appearance for print
   @include transition($form-check-transition);
 
-  &[type="checkbox"] {
+  &[type='checkbox'] {
     @include border-radius($form-check-input-border-radius);
   }
 }
 
-.gridjs-checkbox[type=checkbox]:checked {
+.gridjs-checkbox[type='checkbox']:checked {
   background-color: $form-check-input-checked-bg-color;
   border-color: $form-check-input-checked-border-color;
 
   @if $enable-gradients {
-    background-image: escape-svg($form-check-input-checked-bg-image),
-    var(--#{$variable-prefix}gradient);
-  }
-
-  @else {
+    background-image:
+      escape-svg($form-check-input-checked-bg-image), var(--#{$variable-prefix}gradient);
+  } @else {
     background-image: escape-svg($form-check-input-checked-bg-image);
   }
 }
@@ -470,7 +452,7 @@ $value in $theme-colors {
     }
 
     &::before {
-      content: "";
+      content: '';
       border-left: 2px dashed $border-color;
       position: absolute;
       height: 100%;
@@ -495,7 +477,7 @@ $value in $theme-colors {
 .flush_accordion {
   .accordion-item {
     border: none;
-    border-bottom: 1px solid var(--vz-border-color)
+    border-bottom: 1px solid var(--vz-border-color);
   }
 
   &:last-child {
@@ -526,17 +508,17 @@ $value in $theme-colors {
     box-shadow: $box-shadow;
   }
 
-  >.card {
+  > .card {
     background-color: transparent;
     box-shadow: none;
     border: none;
 
-    >.collapse {
-      >.accordion-body {
+    > .collapse {
+      > .accordion-body {
         padding: 0;
       }
 
-      >.card-body {
+      > .card-body {
         padding: 0;
 
         .card {
@@ -545,7 +527,7 @@ $value in $theme-colors {
       }
 
       .card-header {
-        >.btn.btn-link {
+        > .btn.btn-link {
           padding: 16px;
         }
       }
@@ -565,7 +547,6 @@ $value in $theme-colors {
       }
     }
   }
-
 }
 
 // dashboard
@@ -594,7 +575,7 @@ $value in $theme-colors {
 
 // dropzone
 
-dropzone>.dropzone.dz-wrapper .dz-message .dz-text {
+dropzone > .dropzone.dz-wrapper .dz-message .dz-text {
   font-size: 16px;
 }
 
@@ -615,7 +596,7 @@ dropzone>.dropzone.dz-wrapper .dz-message .dz-text {
   }
 }
 
-swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
+swiper > .swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
   height: 10px !important;
 }
 
@@ -634,7 +615,7 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
   }
 }
 
-[data-bs-theme="dark"] {
+[data-bs-theme='dark'] {
   .light-dark-mode {
     .bx-moon {
       display: none;
@@ -723,7 +704,6 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
   border: 1px solid $input-border-color !important;
   height: 37.5px !important;
   @include border-radius($input-border-radius, 0);
-
 }
 
 .autocomplete-container .input-container .x {
@@ -736,7 +716,6 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
 
 // landing
 .testimonial-slider {
-
   .swiper-button-next,
   .swiper-button-prev {
     height: 32px !important;
@@ -761,7 +740,6 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
 }
 
 .marketplace-swiper {
-
   .swiper-button-next,
   .swiper-button-prev {
     top: 52px;
@@ -774,7 +752,6 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
 
 .ngx-slider-span {
   &.ngx-slider-bubble {
-
     &.ngx-slider-floor,
     &.ngx-slider-ceil {
       display: none;
@@ -803,7 +780,6 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
     }
   }
 }
-
 
 .dataTables_wrapper {
   .dataTables_paginate {
@@ -867,7 +843,7 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
 }
 
 #abc {
-  >tr {
+  > tr {
     display: table;
   }
 }
@@ -909,7 +885,7 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
 // }
 
 //dropzone
-.dropzone>.dropzone.dz-wrapper .dz-message {
+.dropzone > .dropzone.dz-wrapper .dz-message {
   background: var(--#{$prefix}custom-white) !important;
   color: var(--#{$prefix}body-color) !important;
 }
@@ -925,12 +901,12 @@ swiper>.swiper.s-wrapper .swiper-pagination .swiper-pagination-handle {
   color: var(--#{$prefix}body-color) !important;
 }
 
-.ck.ck-editor__main>.ck-editor__editable {
+.ck.ck-editor__main > .ck-editor__editable {
   background-color: var(--#{$prefix}custom-white) !important;
   color: var(--#{$prefix}body-color) !important;
 }
 
-.ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+.ck.ck-editor__main > .ck-editor__editable:not(.ck-focused) {
   border-color: $input-border-color !important;
 }
 

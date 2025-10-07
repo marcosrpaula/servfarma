@@ -1,24 +1,23 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
+import { Component } from '@angular/core';
 
-import { RootReducerState } from 'src/app/store';
 import { Store } from '@ngrx/store';
-import { fetchCryptoOrderData } from 'src/app/store/Crypto/crypto_action';
-import { selectCryptoLoading, selectCryptoOrderData } from 'src/app/store/Crypto/crypto_selector';
 import { cloneDeep } from 'lodash';
 import { PaginationService } from 'src/app/core/services/pagination.service';
+import { RootReducerState } from 'src/app/store';
+import { fetchCryptoOrderData } from 'src/app/store/Crypto/crypto_action';
+import { selectCryptoLoading, selectCryptoOrderData } from 'src/app/store/Crypto/crypto_selector';
 
 @Component({
-    selector: 'app-orders',
-    templateUrl: './orders.component.html',
-    styleUrls: ['./orders.component.scss'],
-    standalone: false
+  selector: 'app-orders',
+  templateUrl: './orders.component.html',
+  styleUrls: ['./orders.component.scss'],
+  standalone: false,
 })
 
 /**
  * Orders Component
  */
 export class OrdersComponent {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   Sell = 'Sell';
@@ -32,23 +31,20 @@ export class OrdersComponent {
   orders: any;
   searchResults: any;
   searchTerm: any;
-  type: any ='';
-  status: any='';
+  type: any = '';
+  status: any = '';
   date: any;
 
-  constructor(public service: PaginationService,
-    private store: Store<{ data: RootReducerState }>) {
-
-  }
+  constructor(
+    public service: PaginationService,
+    private store: Store<{ data: RootReducerState }>,
+  ) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Crypto' },
-      { label: 'Orders', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Crypto' }, { label: 'Orders', active: true }];
 
     // Fetch Data
     this.store.dispatch(fetchCryptoOrderData());
@@ -61,13 +57,13 @@ export class OrdersComponent {
     this.store.select(selectCryptoOrderData).subscribe((data) => {
       this.orders = data;
       this.OrdersList = cloneDeep(data);
-      this.orders = this.service.changePage(this.OrdersList)
+      this.orders = this.service.changePage(this.OrdersList);
     });
   }
 
   // Pagination
   changePage() {
-    this.orders = this.service.changePage(this.OrdersList)
+    this.orders = this.service.changePage(this.OrdersList);
   }
 
   // Search Data
@@ -80,12 +76,12 @@ export class OrdersComponent {
         item.status.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     });
-    this.orders = this.service.changePage(this.searchResults)
+    this.orders = this.service.changePage(this.searchResults);
   }
 
   // Sort Data
   onSort(column: any) {
-    this.orders = this.service.onSort(column, this.orders)
+    this.orders = this.service.onSort(column, this.orders);
   }
 
   // Filter
@@ -93,7 +89,7 @@ export class OrdersComponent {
     if (this.type != '') {
       this.orders = this.OrdersList.filter((order: any) => order.type == this.type);
     } else {
-      this.orders = this.service.changePage(this.OrdersList)
+      this.orders = this.service.changePage(this.OrdersList);
     }
   }
 
@@ -101,7 +97,7 @@ export class OrdersComponent {
     if (this.status != '') {
       this.orders = this.OrdersList.filter((order: any) => order.status == this.status);
     } else {
-      this.orders = this.service.changePage(this.OrdersList)
+      this.orders = this.service.changePage(this.OrdersList);
     }
   }
 }

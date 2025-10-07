@@ -1,21 +1,12 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  UnitsApiService,
-  CreateUnitDto,
-  UpdateUnitDto,
-} from '../services/units.api.service';
-import { UnitsStateService } from '../services/units-state.service';
-import { UnitViewModel } from '../../../../shared/models/units';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { UnitViewModel } from '../../../../shared/models/units';
 import { SharedModule } from '../../../../shared/shared.module';
+import { UnitsStateService } from '../services/units-state.service';
+import { CreateUnitDto, UnitsApiService, UpdateUnitDto } from '../services/units.api.service';
 
 @Component({
   selector: 'app-unit-upsert',
@@ -60,7 +51,9 @@ export class UnitUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const unit = this.resolveUnitForReadOnly();
         if (!unit) {
-          this.notifications.error('Nao foi possivel carregar os dados da unidade para visualizacao. Acesse novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados da unidade para visualizacao. Acesse novamente a partir da listagem.',
+          );
           this.router.navigate(['/units']);
           return;
         }
@@ -154,7 +147,9 @@ export class UnitUpsertComponent implements OnInit {
       return { ...candidate };
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const historyCandidate = (history.state as Record<string, unknown>)['unit'] as UnitViewModel | undefined;
+      const historyCandidate = (history.state as Record<string, unknown>)['unit'] as
+        | UnitViewModel
+        | undefined;
       if (historyCandidate) {
         return { ...historyCandidate };
       }

@@ -1,98 +1,104 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 import { PaginationService } from '../../../../shared/custom-pagination/pagination.service';
+import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import {
-  ProjectsApiService,
   ListProjectsParams,
-} from '../services/projects.api.service';
-import {
   ProjectSortableField,
   ProjectViewModel,
 } from '../../../../shared/models/projects';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
-import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
-import { ProjectsStateService } from '../services/projects-state.service';
+import {
+  ProjectListFiltersState,
+  ProjectSortLabel,
+  ProjectsListState,
+  ProjectsStateService,
+} from '../services/projects-state.service';
+import { ProjectsApiService } from '../services/projects.api.service';
+
+const SORT_FIELD_MAP: Record<ProjectSortLabel, ProjectSortableField> = {
+  CreatedDate: 'createdAt',
+  Name: 'name',
+  Status: 'isActive',
+};
 
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class ProjectsComponent implements OnInit {
-  breadCrumbItems = [
-    { label: 'Administracao' },
-    { label: 'Projetos', active: true },
-  ];
-  tableData: ProjectViewModel[] = [];
+  private readonly api = inject(ProjectsApiService);
+  private readonly labsApi = inject(LaboratoriesApiService);
+  private readonly pagination = inject(PaginationService);
+  private readonly projectsState = inject(ProjectsStateService);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly breadCrumbItems = [{ label: 'Administração' }, { label: 'Projetos', active: true }];
+
+  readonly filtersForm = this.fb.group({
+    name: [''],
+    laboratoryId: [''],
+    isActive: ['' as '' | 'true' | 'false'],
+  });
+
+  readonly laboratories = signal<LaboratoryViewModel[]>([]);
+  readonly tableData = signal<ProjectViewModel[]>([]);
+  readonly carregando = signal(false);
+  readonly semResultados = computed(() => !this.carregando() && this.tableData().length === 0);
+
   pageSize = 10;
   backendPage = 1;
   totalItems = 0;
 
-  filtroNome = '';
-  filtroLaboratorio = '';
-  filtroAtivo: '' | 'true' | 'false' = '';
-
   orderBy: ProjectSortableField = 'createdAt';
   ascending = false;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
+  orderLabel: ProjectSortLabel = 'CreatedDate';
 
-  carregando = false;
   private lastPagerKey = '';
   private lastRequestSignature = '';
   private allowPagerUpdates = false;
 
-  labs: LaboratoryViewModel[] = [];
-
-  constructor(
-    private api: ProjectsApiService,
-    private labsApi: LaboratoriesApiService,
-    private pagination: PaginationService,
-    private projectsState: ProjectsStateService,
-  ) {
-    this.pagination.tablePageSize.subscribe(({ skip, pageSize }) => {
-      if (!this.allowPagerUpdates) {
-        return;
-      }
-      const size = typeof pageSize === 'number' && pageSize > 0 ? pageSize : this.pageSize || 10;
-      const newPage = Math.floor((typeof skip === 'number' ? skip : 0) / size) + 1;
-      const pagerKey = `${newPage}|${size}`;
-      if (pagerKey === this.lastPagerKey) return;
-      this.lastPagerKey = pagerKey;
-      this.pageSize = size;
-      this.backendPage = newPage;
-      this.loadPage();
-    });
-  }
+  readonly labName = (row: ProjectViewModel): string => row.laboratory?.tradeName ?? 'N/A';
 
   ngOnInit(): void {
+    this.pagination.tablePageSize
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ skip, pageSize }) => {
+        if (!this.allowPagerUpdates) {
+          return;
+        }
+        const size = typeof pageSize === 'number' && pageSize > 0 ? pageSize : this.pageSize || 10;
+        const skipValue = typeof skip === 'number' && skip >= 0 ? skip : 0;
+        const newPage = Math.floor(skipValue / size) + 1;
+        const pagerKey = `${newPage}|${size}`;
+        if (pagerKey === this.lastPagerKey) {
+          return;
+        }
+        this.lastPagerKey = pagerKey;
+        this.pageSize = size;
+        this.backendPage = newPage;
+        this.loadPage();
+      });
+
     this.loadLaboratories();
 
     const savedState = this.projectsState.getListState();
     if (savedState) {
-      this.totalItems = savedState.totalItems;
-      this.pageSize = savedState.pageSize;
-      this.backendPage = savedState.backendPage;
-      this.filtroNome = savedState.filtroNome;
-      this.filtroLaboratorio = savedState.filtroLaboratorio;
-      this.filtroAtivo = savedState.filtroAtivo;
-      this.orderBy = savedState.orderBy;
-      this.ascending = savedState.ascending;
-      this.orderLabel = savedState.orderLabel;
-      this.tableData = savedState.tableData;
-      this.lastRequestSignature = savedState.lastRequestSignature ?? '';
-      this.lastPagerKey = savedState.lastPagerKey ?? `${this.backendPage}|${this.pageSize}`;
-      this.pagination.calculatePageSize.next({
-        totalData: this.totalItems,
-        pageSize: this.pageSize,
-        tableData: this.tableData,
-        serialNumberArray: [],
-      });
-      this.pagination.tablePageSize.next({
-        skip: (this.backendPage - 1) * this.pageSize,
-        limit: this.backendPage * this.pageSize,
-        pageSize: this.pageSize,
-      });
-      this.allowPagerUpdates = true;
+      this.restoreFromState(savedState);
       return;
     }
 
@@ -106,31 +112,19 @@ export class ProjectsComponent implements OnInit {
     this.loadPage();
   }
 
-  toggleSort(field: 'CreatedDate' | 'Name' | 'Status') {
+  toggleSort(field: ProjectSortLabel): void {
     if (this.orderLabel === field) {
       this.ascending = !this.ascending;
     } else {
       this.orderLabel = field;
       this.ascending = true;
     }
-    this.orderBy = this.mapOrderField(field);
+    this.orderBy = SORT_FIELD_MAP[field];
     this.backendPage = 1;
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): ProjectSortableField {
-    switch (field) {
-      case 'Name':
-        return 'name';
-      case 'Status':
-        return 'isActive';
-      case 'CreatedDate':
-      default:
-        return 'createdAt';
-    }
-  }
-
-  changePageSize(size: number) {
+  changePageSize(size: number): void {
     this.pageSize = Number(size) || 10;
     this.backendPage = 1;
     this.pagination.tablePageSize.next({
@@ -140,83 +134,132 @@ export class ProjectsComponent implements OnInit {
     });
   }
 
-  aplicarFiltros() {
+  aplicarFiltros(): void {
     this.backendPage = 1;
+    this.lastRequestSignature = '';
     this.loadPage();
   }
 
-  limparFiltros() {
-    this.filtroNome = '';
-    this.filtroLaboratorio = '';
-    this.filtroAtivo = '';
+  limparFiltros(): void {
+    this.filtersForm.setValue({
+      name: '',
+      laboratoryId: '',
+      isActive: '',
+    });
     this.backendPage = 1;
+    this.lastRequestSignature = '';
     this.loadPage();
   }
 
-  labName(row: ProjectViewModel): string {
-    return row.laboratory?.tradeName ?? 'N/A';
-  }
-
-  private loadLaboratories() {
+  private loadLaboratories(): void {
     this.labsApi
       .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((res) => {
-        this.labs = res.items || [];
+        this.laboratories.set(res.items ?? []);
       });
   }
 
-  private loadPage() {
-    this.carregando = true;
+  private restoreFromState(state: ProjectsListState): void {
+    this.totalItems = state.totalItems;
+    this.pageSize = state.pageSize;
+    this.backendPage = state.backendPage;
+    this.orderBy = state.sort.field;
+    this.orderLabel = state.sort.label;
+    this.ascending = state.sort.ascending;
+    this.tableData.set(state.items);
+    this.filtersForm.setValue(
+      {
+        name: state.filters.name,
+        laboratoryId: state.filters.laboratoryId,
+        isActive: state.filters.isActive,
+      },
+      { emitEvent: false },
+    );
+    this.lastRequestSignature = state.lastRequestSignature ?? '';
+    this.lastPagerKey = state.lastPagerKey ?? `${this.backendPage}|${this.pageSize}`;
+
+    this.pagination.calculatePageSize.next({
+      totalData: this.totalItems,
+      pageSize: this.pageSize,
+      tableData: state.items,
+      serialNumberArray: [],
+    });
+    this.pagination.tablePageSize.next({
+      skip: (this.backendPage - 1) * this.pageSize,
+      limit: this.backendPage * this.pageSize,
+      pageSize: this.pageSize,
+    });
+    this.allowPagerUpdates = true;
+  }
+
+  private loadPage(): void {
+    this.carregando.set(true);
     this.lastPagerKey = `${this.backendPage}|${this.pageSize}`;
+
+    const filters = this.getFilters();
     const params: ListProjectsParams = {
       page: this.backendPage,
       pageSize: this.pageSize,
       orderBy: this.orderBy,
       ascending: this.ascending,
+      laboratoryId: filters.laboratoryId || undefined,
+      name: filters.name || undefined,
+      isActive: filters.isActive === '' ? undefined : filters.isActive === 'true',
     };
-
-    if (this.filtroNome) params.name = this.filtroNome;
-    if (this.filtroLaboratorio) params.laboratoryId = this.filtroLaboratorio;
-    if (this.filtroAtivo !== '') params.isActive = this.filtroAtivo === 'true';
 
     const signature = JSON.stringify(params);
     if (signature === this.lastRequestSignature) {
-      this.carregando = false;
+      this.carregando.set(false);
       return;
     }
-
     this.lastRequestSignature = signature;
 
-    this.api.list(params).subscribe({
-      next: (res) => {
-        this.totalItems = res.totalCount ?? 0;
-        this.tableData = res.items || [];
-        this.projectsState.setMany(this.tableData);
-        this.projectsState.setListState({
-          tableData: this.tableData,
-          totalItems: this.totalItems,
-          pageSize: this.pageSize,
-          backendPage: this.backendPage,
-          filtroNome: this.filtroNome,
-          filtroLaboratorio: this.filtroLaboratorio,
-          filtroAtivo: this.filtroAtivo,
-          orderBy: this.orderBy,
-          ascending: this.ascending,
-          orderLabel: this.orderLabel,
-          lastRequestSignature: this.lastRequestSignature,
-          lastPagerKey: this.lastPagerKey,
-        });
-        this.pagination.calculatePageSize.next({
-          totalData: this.totalItems,
-          pageSize: this.pageSize,
-          tableData: this.tableData,
-          serialNumberArray: [],
-        });
-        this.carregando = false;
-      },
-      error: () => {
-        this.carregando = false;
-      },
-    });
+    this.api
+      .list(params)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.carregando.set(false)),
+      )
+      .subscribe({
+        next: (res) => {
+          this.totalItems = res.totalCount ?? 0;
+          const items = res.items ?? [];
+          this.tableData.set(items);
+          this.projectsState.setMany(items);
+          this.projectsState.setListState({
+            items,
+            totalItems: this.totalItems,
+            pageSize: this.pageSize,
+            backendPage: this.backendPage,
+            filters,
+            sort: {
+              field: this.orderBy,
+              label: this.orderLabel,
+              ascending: this.ascending,
+            },
+            lastRequestSignature: this.lastRequestSignature,
+            lastPagerKey: this.lastPagerKey,
+          });
+          this.pagination.calculatePageSize.next({
+            totalData: this.totalItems,
+            pageSize: this.pageSize,
+            tableData: items,
+            serialNumberArray: [],
+          });
+        },
+        error: () => {
+          this.lastRequestSignature = '';
+        },
+      });
+  }
+
+  private getFilters(): ProjectListFiltersState {
+    const { name, laboratoryId, isActive } = this.filtersForm.getRawValue();
+    return {
+      name: name.trim(),
+      laboratoryId: laboratoryId.trim(),
+      isActive,
+    };
   }
 }

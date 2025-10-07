@@ -2,37 +2,32 @@ import { Component, OnInit } from '@angular/core';
 import { NgxMasonryOptions } from 'ngx-masonry';
 
 @Component({
-    selector: 'app-cards',
-    templateUrl: './cards.component.html',
-    styleUrls: ['./cards.component.scss'],
-    standalone: false
+  selector: 'app-cards',
+  templateUrl: './cards.component.html',
+  styleUrls: ['./cards.component.scss'],
+  standalone: false,
 })
 
 /**
  * Cards Component
  */
 export class CardsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-     this.breadCrumbItems = [
-      { label: 'Base UI' },
-      { label: 'Cards', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Base UI' }, { label: 'Cards', active: true }];
   }
 
   /***
    * Masonry Option Function
    */
-   public myOptions: NgxMasonryOptions = {
-    horizontalOrder: true
+  public myOptions: NgxMasonryOptions = {
+    horizontalOrder: true,
   };
-
 }

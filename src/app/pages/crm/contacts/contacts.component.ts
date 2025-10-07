@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, UntypedFormControl, Validators } from '@angular/forms';
 
 // Date Format
 import { DatePipe } from '@angular/common';
@@ -8,31 +14,35 @@ import { DatePipe } from '@angular/common';
 import { ngxCsv } from 'ngx-csv/ngx-csv';
 
 // Rest Api Service
-import { restApiService } from "../../../core/services/rest-api.service";
+import { restApiService } from '../../../core/services/rest-api.service';
 import { GlobalComponent } from '../../../global-component';
 
 // Sweet Alert
 import Swal from 'sweetalert2';
 
 import { Store } from '@ngrx/store';
-import { RootReducerState } from 'src/app/store';
-import { addContact, deleteContact, fetchCrmContactData, updateContact } from 'src/app/store/CRM/crm_action';
-import { selectCRMLoading, selectContactData } from 'src/app/store/CRM/crm_selector';
 import { cloneDeep } from 'lodash';
 import { PaginationService } from 'src/app/core/services/pagination.service';
+import { RootReducerState } from 'src/app/store';
+import {
+  addContact,
+  deleteContact,
+  fetchCrmContactData,
+  updateContact,
+} from 'src/app/store/CRM/crm_action';
+import { selectCRMLoading, selectContactData } from 'src/app/store/CRM/crm_selector';
 
 @Component({
-    selector: 'app-contacts',
-    templateUrl: './contacts.component.html',
-    styleUrls: ['./contacts.component.scss'],
-    standalone: false
+  selector: 'app-contacts',
+  templateUrl: './contacts.component.html',
+  styleUrls: ['./contacts.component.scss'],
+  standalone: false,
 })
 
 /**
  * Contacts Component
  */
 export class ContactsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   submitted = false;
@@ -49,22 +59,20 @@ export class ContactsComponent implements OnInit {
   searchTerm: any;
   searchResults: any;
 
-  constructor(private modalService: NgbModal,
+  constructor(
+    private modalService: NgbModal,
     public service: PaginationService,
     private formBuilder: UntypedFormBuilder,
     private restApiService: restApiService,
     private store: Store<{ data: RootReducerState }>,
-    private datePipe: DatePipe) {
-  }
+    private datePipe: DatePipe,
+  ) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'CRM' },
-      { label: 'Contacts', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'CRM' }, { label: 'Contacts', active: true }];
 
     /**
      * Form Validation
@@ -96,23 +104,20 @@ export class ContactsComponent implements OnInit {
     this.store.select(selectContactData).subscribe((data) => {
       this.contacts = data;
       this.allcontacts = cloneDeep(data);
-      this.contacts = this.service.changePage(this.allcontacts)
+      this.contacts = this.service.changePage(this.allcontacts);
     });
-
   }
 
   changePage() {
-    this.contacts = this.service.changePage(this.allcontacts)
+    this.contacts = this.service.changePage(this.allcontacts);
   }
 
   // Search Data
   performSearch(): void {
     this.searchResults = this.allcontacts.filter((item: any) => {
-      return (
-        item.name.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
+      return item.name.toLowerCase().includes(this.searchTerm.toLowerCase());
     });
-    this.contacts = this.service.changePage(this.searchResults)
+    this.contacts = this.service.changePage(this.searchResults);
   }
 
   /**
@@ -125,8 +130,8 @@ export class ContactsComponent implements OnInit {
   }
 
   /**
-  * Form data get
-  */
+   * Form data get
+   */
   get form() {
     return this.contactsForm.controls;
   }
@@ -134,33 +139,32 @@ export class ContactsComponent implements OnInit {
   // File Upload
   imageURL: string | undefined;
   fileChange(event: any) {
-    let fileList: any = (event.target as HTMLInputElement);
+    let fileList: any = event.target as HTMLInputElement;
     let file: File = fileList.files[0];
-    document.getElementById('')
+    document.getElementById('');
     this.contactsForm.patchValue({
       // image_src: file.name
-      image_src: 'avatar-8.jpg'
+      image_src: 'avatar-8.jpg',
     });
     const reader = new FileReader();
     reader.onload = () => {
       this.imageURL = reader.result as string;
       (document.getElementById('customer-img') as HTMLImageElement).src = this.imageURL;
       this.contactsForm.controls['image_src'].setValue('avatar-8.jpg');
-    }
-    reader.readAsDataURL(file)
+    };
+    reader.readAsDataURL(file);
   }
 
   /**
-  * Save user
-  */
+   * Save user
+   */
   saveUser() {
     if (this.contactsForm.valid) {
       if (this.contactsForm.get('_id')?.value) {
         const updatedData = this.contactsForm.value;
         this.store.dispatch(updateContact({ updatedData }));
         this.modalService.dismissAll();
-      }
-      else {
+      } else {
         const contactId = (this.allcontacts.length + 1).toString();
         this.contactsForm.controls['_id'].setValue(contactId);
         const newData = this.contactsForm.value;
@@ -184,7 +188,7 @@ export class ContactsComponent implements OnInit {
     setTimeout(() => {
       this.contactsForm.reset();
     }, 2000);
-    this.submitted = true
+    this.submitted = true;
   }
 
   /**
@@ -197,11 +201,11 @@ export class ContactsComponent implements OnInit {
     var modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
     modelTitle.innerHTML = 'Edit Contact';
     var updateBtn = document.getElementById('add-btn') as HTMLAreaElement;
-    updateBtn.innerHTML = "Update";
+    updateBtn.innerHTML = 'Update';
 
     this.econtent = this.allcontacts[id];
     var img_data = document.getElementById('customer-img') as HTMLImageElement;
-    img_data.src = 'assets/images/users/' + this.econtent.image_src
+    img_data.src = 'assets/images/users/' + this.econtent.image_src;
     this.contactsForm.controls['name'].setValue(this.econtent.name);
     this.contactsForm.controls['company'].setValue(this.econtent.company);
     this.contactsForm.controls['designation'].setValue(this.econtent.designation);
@@ -222,42 +226,47 @@ export class ContactsComponent implements OnInit {
     this.econtent = this.allcontacts[id];
     var img_data = document.querySelector('.contact-details img') as HTMLImageElement;
     img_data.src = 'assets/images/users/' + this.econtent.image_src;
-    (document.querySelector('.contact-details h5') as HTMLImageElement).innerHTML = this.econtent.name;
-    (document.querySelector('.contact-details p') as HTMLImageElement).innerHTML = this.econtent.company;
-    (document.querySelector('.designation') as HTMLImageElement).innerHTML = this.econtent.designation;
+    (document.querySelector('.contact-details h5') as HTMLImageElement).innerHTML =
+      this.econtent.name;
+    (document.querySelector('.contact-details p') as HTMLImageElement).innerHTML =
+      this.econtent.company;
+    (document.querySelector('.designation') as HTMLImageElement).innerHTML =
+      this.econtent.designation;
     (document.querySelector('.email') as HTMLImageElement).innerHTML = this.econtent.email;
     (document.querySelector('.phone') as HTMLImageElement).innerHTML = this.econtent.phone;
     (document.querySelector('.l_score') as HTMLImageElement).innerHTML = this.econtent.lead_score;
     (document.querySelector('.tags-list .d-flex') as HTMLImageElement).innerHTML = '';
     this.econtent.tags.forEach((item: any) => {
-      (document.querySelector('.tags-list .d-flex') as HTMLImageElement).innerHTML += `<span class="badge bg-primary-subtle text-primary">` + item + `</span>`;
+      (document.querySelector('.tags-list .d-flex') as HTMLImageElement).innerHTML +=
+        `<span class="badge bg-primary-subtle text-primary">` + item + `</span>`;
     });
     var date: any = document.querySelector('.contacted_date') as HTMLImageElement;
-    date.innerHTML = this.datePipe.transform(new Date(this.econtent.last_contacted), "MMMM d, y");
+    date.innerHTML = this.datePipe.transform(new Date(this.econtent.last_contacted), 'MMMM d, y');
   }
 
   // The master checkbox will check/ uncheck all items
   checkUncheckAll(ev: any) {
-    this.contacts.forEach((x: { state: any; }) => x.state = ev.target.checked)
+    this.contacts.forEach((x: { state: any }) => (x.state = ev.target.checked));
     var checkedVal: any[] = [];
-    var result
+    var result;
     for (var i = 0; i < this.contacts.length; i++) {
       if (this.contacts[i].state == true) {
         result = this.contacts[i];
         checkedVal.push(result);
       }
     }
-    this.checkedValGet = checkedVal
-    checkedVal.length > 0 ? (document.getElementById("remove-actions") as HTMLElement).style.display = "block" : (document.getElementById("remove-actions") as HTMLElement).style.display = "none";
-
+    this.checkedValGet = checkedVal;
+    checkedVal.length > 0
+      ? ((document.getElementById('remove-actions') as HTMLElement).style.display = 'block')
+      : ((document.getElementById('remove-actions') as HTMLElement).style.display = 'none');
   }
   isAllChecked() {
-    return this.content.every((_: { state: any; }) => _.state);
+    return this.content.every((_: { state: any }) => _.state);
   }
 
   /**
-  * Multiple Default Select2
-  */
+   * Multiple Default Select2
+   */
   selectValue = ['Lead', 'Partner', 'Exiting', 'Long-term'];
 
   // Csv File Export
@@ -271,9 +280,20 @@ export class ContactsComponent implements OnInit {
       title: 'Contact Data',
       useBom: true,
       noDownload: false,
-      headers: ["Id", "Image src", "Name", "Company", "Designation", "Email", "Phone", "Tags", "Lead Score", "Last Contacted"]
+      headers: [
+        'Id',
+        'Image src',
+        'Name',
+        'Company',
+        'Designation',
+        'Email',
+        'Phone',
+        'Tags',
+        'Lead Score',
+        'Last Contacted',
+      ],
     };
-    new ngxCsv(this.content, "Contact", orders);
+    new ngxCsv(this.content, 'Contact', orders);
   }
 
   // Select Checkbox value Get
@@ -281,15 +301,17 @@ export class ContactsComponent implements OnInit {
     const checkArray: UntypedFormArray = this.contactsForm.get('subItem') as UntypedFormArray;
     checkArray.push(new UntypedFormControl(e.target.value));
     var checkedVal: any[] = [];
-    var result
+    var result;
     for (var i = 0; i < this.contacts.length; i++) {
       if (this.contacts[i].state == true) {
         result = this.contacts[i];
         checkedVal.push(result);
       }
     }
-    this.checkedValGet = checkedVal
-    checkedVal.length > 0 ? (document.getElementById("remove-actions") as HTMLElement).style.display = "block" : (document.getElementById("remove-actions") as HTMLElement).style.display = "none";
+    this.checkedValGet = checkedVal;
+    checkedVal.length > 0
+      ? ((document.getElementById('remove-actions') as HTMLElement).style.display = 'block')
+      : ((document.getElementById('remove-actions') as HTMLElement).style.display = 'none');
   }
 
   /**
@@ -318,7 +340,7 @@ export class ContactsComponent implements OnInit {
   checkedValGet: any[] = [];
   deleteMultiple(content: any) {
     var checkboxes: any = document.getElementsByName('checkAll');
-    var result
+    var result;
     var checkedVal: any[] = [];
     for (var i = 0; i < checkboxes.length; i++) {
       if (checkboxes[i].checked) {
@@ -328,31 +350,29 @@ export class ContactsComponent implements OnInit {
     }
     if (checkedVal.length > 0) {
       this.modalService.open(content, { centered: true });
-    }
-    else {
-      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb', });
+    } else {
+      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb' });
     }
     this.checkedValGet = checkedVal;
   }
 
   // Sort filter
   sortField: any;
-  sortBy: any
+  sortBy: any;
   SortFilter() {
-    this.sortField = (document.getElementById("choices-single-default") as HTMLInputElement).value;
+    this.sortField = (document.getElementById('choices-single-default') as HTMLInputElement).value;
     if (this.sortField[0] == 'A') {
       this.sortBy = 'desc';
-      this.sortField = this.sortField.replace(/A/g, '')
+      this.sortField = this.sortField.replace(/A/g, '');
     }
     if (this.sortField[0] == 'D') {
       this.sortBy = 'asc';
-      this.sortField = this.sortField.replace(/D/g, '')
+      this.sortField = this.sortField.replace(/D/g, '');
     }
   }
 
   // Sort data
   onSort(column: any) {
-    this.contacts = this.service.onSort(column, this.contacts)
+    this.contacts = this.service.onSort(column, this.contacts);
   }
-
 }

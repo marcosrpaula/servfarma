@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
 import {
-  BankViewModel,
   BankDetailsViewModel,
-  ListBanksParams,
+  BankViewModel,
   CreateBankPayload,
+  ListBanksParams,
   UpdateBankPayload,
 } from '../../../../shared/models/banks';
 import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
@@ -20,15 +20,7 @@ export class BanksApiService {
   constructor(private http: HttpClient) {}
 
   list(params: ListBanksParams = {}): Observable<PagedResult<BankViewModel>> {
-    const {
-      page = 1,
-      pageSize = 10,
-      orderBy,
-      ascending,
-      name,
-      bankCode,
-      isActive,
-    } = params;
+    const { page = 1, pageSize = 10, orderBy, ascending, name, bankCode, isActive } = params;
 
     const httpParams = buildHttpParams({
       page,
@@ -42,7 +34,7 @@ export class BanksApiService {
 
     return this.http
       .get<RawPagedResult<BankViewModel>>(this.baseUrl, { params: httpParams })
-      .pipe(map(res => mapRawPaged<BankViewModel>(res)));
+      .pipe(map((res) => mapRawPaged<BankViewModel>(res)));
   }
 
   getById(id: string): Observable<BankDetailsViewModel> {

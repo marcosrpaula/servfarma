@@ -1,26 +1,21 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 // Component
-import { PassCreateRoutingModule } from "./pass-create-routing.module";
 import { BasicComponent } from './basic/basic.component';
 import { CoverComponent } from './cover/cover.component';
+import { PassCreateRoutingModule } from './pass-create-routing.module';
 
 @NgModule({
-  declarations: [
-    BasicComponent,
-    CoverComponent
-  ],
+  declarations: [BasicComponent, CoverComponent],
   imports: [
     CommonModule,
     NgbCarouselModule,
     ReactiveFormsModule,
     FormsModule,
-    PassCreateRoutingModule
-  ]
+    PassCreateRoutingModule,
+  ],
 })
-export class PassCreateModule { 
-  
-}
+export class PassCreateModule {}

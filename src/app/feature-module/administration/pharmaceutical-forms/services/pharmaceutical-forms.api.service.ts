@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import {
   ListPharmaceuticalFormsParams,
   PharmaceuticalFormViewModel,
 } from '../../../../shared/models/pharmaceutical-forms';
-import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import { buildHttpParams } from '../../../../shared/utils/http-params';
 
 export interface CreatePharmaceuticalFormDto {
@@ -26,7 +26,9 @@ export class PharmaceuticalFormsApiService {
 
   constructor(private http: HttpClient) {}
 
-  list(params: ListPharmaceuticalFormsParams = {}): Observable<PagedResult<PharmaceuticalFormViewModel>> {
+  list(
+    params: ListPharmaceuticalFormsParams = {},
+  ): Observable<PagedResult<PharmaceuticalFormViewModel>> {
     const httpParams = buildHttpParams({
       page: params.page ?? 1,
       pageSize: params.pageSize ?? 10,

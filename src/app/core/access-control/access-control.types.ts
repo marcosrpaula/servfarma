@@ -19,8 +19,4 @@ export interface AccessControlConfig {
   moduleMap?: Record<string, string>;
 }
 
-export type PermissionInput =
-  | PermissionRequirement
-  | PermissionRequirement[]
-  | string
-  | string[];
+export type PermissionInput = PermissionRequirement | PermissionRequirement[] | string | string[];

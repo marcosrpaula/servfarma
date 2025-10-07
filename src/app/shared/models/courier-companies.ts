@@ -1,5 +1,5 @@
-import { AuditableViewModel, ListRequestParams } from './api/base-view.model';
 import { AddressViewModel } from './addresses';
+import { AuditableViewModel, ListRequestParams } from './api/base-view.model';
 
 export interface CourierCompanySimpleViewModel {
   id: string;
@@ -44,7 +44,8 @@ export interface CourierCompanyListFilters {
   isActive?: boolean;
 }
 
-export type ListCourierCompaniesParams = ListRequestParams<CourierCompanySortableField> & CourierCompanyListFilters;
+export type ListCourierCompaniesParams = ListRequestParams<CourierCompanySortableField> &
+  CourierCompanyListFilters;
 
 export interface CourierCompanyListFilterState extends Record<string, unknown> {
   name: string;

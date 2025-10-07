@@ -1,16 +1,14 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Component } from '@angular/core';
 
-import { creatorsModel, creatorsListModel } from './creators.model';
-import { PaginationService } from 'src/app/core/services/pagination.service';
 import { creatorsData, creatorsListData } from 'src/app/core/data';
+import { PaginationService } from 'src/app/core/services/pagination.service';
+import { creatorsModel } from './creators.model';
 
 @Component({
-    selector: 'app-creators',
-    templateUrl: './creators.component.html',
-    styleUrls: ['./creators.component.scss'],
-    standalone: false
+  selector: 'app-creators',
+  templateUrl: './creators.component.html',
+  styleUrls: ['./creators.component.scss'],
+  standalone: false,
 })
 
 /**
@@ -25,19 +23,15 @@ export class CreatorsComponent {
   creatorsListData!: any[];
   allcreatorsListData!: any[];
 
-
   constructor(public service: PaginationService) {
     this.service.pageSize = 10;
   }
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'NFT Marketplace' },
-      { label: 'Creators', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'NFT Marketplace' }, { label: 'Creators', active: true }];
 
     // FetchData
     this.creatorsData = creatorsData;
@@ -47,16 +41,14 @@ export class CreatorsComponent {
 
   // Pagination
   changePage() {
-    this.creatorsListData = this.service.changePage(this.allcreatorsListData)
+    this.creatorsListData = this.service.changePage(this.allcreatorsListData);
   }
 
   // Search Data
   performSearch(): void {
     this.searchResults = creatorsListData.filter((item: any) => {
-      return (
-        item.title.toLowerCase().includes(this.searchTerm.toLowerCase())
-      );
+      return item.title.toLowerCase().includes(this.searchTerm.toLowerCase());
     });
-    this.creatorsListData = this.service.changePage(this.searchResults)
+    this.creatorsListData = this.service.changePage(this.searchResults);
   }
 }

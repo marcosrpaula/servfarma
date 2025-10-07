@@ -1,23 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-horizontal',
-    templateUrl: './horizontal.component.html',
-    styleUrls: ['./horizontal.component.scss'],
-    standalone: false
+  selector: 'app-horizontal',
+  templateUrl: './horizontal.component.html',
+  styleUrls: ['./horizontal.component.scss'],
+  standalone: false,
 })
 
 /**
  * Horizontal Component
  */
 export class HorizontalComponent implements OnInit {
-
-  constructor() { }
+  constructor() {}
 
   isCondensed = false;
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   /**
    * On mobile toggle button clicked

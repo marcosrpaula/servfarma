@@ -7,36 +7,35 @@ import { fetchCrmDealData } from 'src/app/store/CRM/crm_action';
 import { selectCRMLoading, selectDealData } from 'src/app/store/CRM/crm_selector';
 
 @Component({
-    selector: 'app-deals',
-    templateUrl: './deals.component.html',
-    styleUrls: ['./deals.component.scss'],
-    standalone: false
+  selector: 'app-deals',
+  templateUrl: './deals.component.html',
+  styleUrls: ['./deals.component.scss'],
+  standalone: false,
 })
 
 /**
  * Deals Component
  */
 export class DealsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   submitted = false;
   deals: any;
 
-  constructor(private modalService: NgbModal, private store: Store<{ data: RootReducerState }>) { }
+  constructor(
+    private modalService: NgbModal,
+    private store: Store<{ data: RootReducerState }>,
+  ) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'CRM' },
-      { label: 'Deals', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'CRM' }, { label: 'Deals', active: true }];
 
     /**
- * fetches data
- */
+     * fetches data
+     */
     this.store.dispatch(fetchCrmDealData());
     this.store.select(selectCRMLoading).subscribe((data) => {
       if (data == false) {
@@ -59,5 +58,4 @@ export class DealsComponent implements OnInit {
     this.submitted = false;
     this.modalService.open(content, { size: 'md', centered: true });
   }
-
 }

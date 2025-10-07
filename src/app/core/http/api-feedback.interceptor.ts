@@ -1,4 +1,3 @@
-﻿import { Injectable } from '@angular/core';
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -7,6 +6,7 @@ import {
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { NotificationService } from '../notifications/notification.service';
 import { SKIP_ERROR_TOAST, SKIP_SUCCESS_TOAST, SUCCESS_MESSAGE } from './http-context.tokens';
@@ -24,7 +24,7 @@ export class ApiFeedbackInterceptor implements HttpInterceptor {
     }
 
     return next.handle(req).pipe(
-      tap(event => {
+      tap((event) => {
         if (event instanceof HttpResponse && this.shouldNotifySuccess(method, req, event)) {
           const message = this.resolveSuccessMessage(method, req, event);
           this.notification.clearValidationErrors();
@@ -37,11 +37,15 @@ export class ApiFeedbackInterceptor implements HttpInterceptor {
         }
         const normalized = this.notification.handleHttpError(error);
         return throwError(() => normalized);
-      })
+      }),
     );
   }
 
-  private shouldNotifySuccess(method: string, req: HttpRequest<unknown>, res: HttpResponse<unknown>): boolean {
+  private shouldNotifySuccess(
+    method: string,
+    req: HttpRequest<unknown>,
+    res: HttpResponse<unknown>,
+  ): boolean {
     if (!res.ok) {
       return false;
     }
@@ -54,7 +58,11 @@ export class ApiFeedbackInterceptor implements HttpInterceptor {
     return true;
   }
 
-  private resolveSuccessMessage(method: string, req: HttpRequest<unknown>, res: HttpResponse<unknown>): string {
+  private resolveSuccessMessage(
+    method: string,
+    req: HttpRequest<unknown>,
+    res: HttpResponse<unknown>,
+  ): string {
     const contextMessage = req.context.get(SUCCESS_MESSAGE);
     if (contextMessage && contextMessage.trim().length > 0) {
       return contextMessage;

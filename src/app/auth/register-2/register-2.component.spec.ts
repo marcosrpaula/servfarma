@@ -8,9 +8,8 @@ describe('Register2Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [Register2Component]
-    })
-    .compileComponents();
+      declarations: [Register2Component],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Register2Component);
     component = fixture.componentInstance;

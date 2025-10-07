@@ -1,31 +1,27 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'app-links',
-    templateUrl: './links.component.html',
-    styleUrls: ['./links.component.scss'],
-    standalone: false
+  selector: 'app-links',
+  templateUrl: './links.component.html',
+  styleUrls: ['./links.component.scss'],
+  standalone: false,
 })
 export class LinksComponent {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     /**
-   * BreadCrumb
-   */
-    this.breadCrumbItems = [
-      { label: 'Base UI' },
-      { label: 'Colored Links', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Base UI' }, { label: 'Colored Links', active: true }];
   }
 
   /**
-    * Show Code Toggle
-    */
+   * Show Code Toggle
+   */
   ShowCode(event: any) {
     let card = event.target.closest('.card');
     const preview = card.children[1].children[1];
@@ -35,7 +31,6 @@ export class LinksComponent {
     }
     if (preview != null) {
       preview.classList.toggle('d-none');
-
     }
   }
 }

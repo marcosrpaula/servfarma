@@ -1,6 +1,6 @@
-import { ListRequestParams } from "./api/base-view.model";
+import { ListRequestParams } from './api/base-view.model';
 
-export type SimpleItemType = "Label" | "Receipt" | "SecurityEnvelope";
+export type SimpleItemType = 'Label' | 'Receipt' | 'SecurityEnvelope';
 
 export enum SupplyType {
   SecurityEnvelope = 1,
@@ -60,12 +60,11 @@ export interface RefrigeratedPackageInput extends DryPackageInput {
   coolingDurationHours: number;
 }
 
-export type SupplySortableField = "createdAt" | "name" | "isActive";
+export type SupplySortableField = 'createdAt' | 'name' | 'isActive';
 
 export interface SupplyListFilters {
   name?: string;
   isActive?: boolean;
 }
 
-export type ListSuppliesParams =
-  ListRequestParams<SupplySortableField> & SupplyListFilters;
+export type ListSuppliesParams = ListRequestParams<SupplySortableField> & SupplyListFilters;

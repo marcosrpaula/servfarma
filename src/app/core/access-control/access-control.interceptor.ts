@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -6,6 +5,7 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { AccessControlService } from './access-control.service';
 
@@ -13,10 +13,7 @@ import { AccessControlService } from './access-control.service';
 export class AccessControlInterceptor implements HttpInterceptor {
   constructor(private readonly access: AccessControlService) {}
 
-  intercept(
-    req: HttpRequest<unknown>,
-    next: HttpHandler
-  ): Observable<HttpEvent<unknown>> {
+  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const requirement = this.access.resolveHttpRequirement(req.method, req.url);
 
     if (!requirement || !this.access.isReady()) {

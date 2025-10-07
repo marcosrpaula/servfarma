@@ -1,16 +1,18 @@
 # Plano de padronização e refatoração Angular 19
 
 ## 1) Diagnóstico resumido
-| Tela / Feature | Divergências principais |
-| --- | --- |
-| Bancos – Cadastro (`bank-upsert`)| Formulário não tipado (`FormGroup` genérico), mensagens de validação duplicadas por campo, uso de `*ngIf/*ngFor`, ausência de máscaras e tokens de estilo compartilhados. | 
-| Transportadoras – Cadastro (`courier-company-upsert`)| Estrutura de endereço diferente das demais telas (campos opcionais obrigatórios na prática), validações inconsistentes (CEP sem máscara, ausência de mensagens), mistura de controle de fluxo novo/antigo, carregamento de listas sem estados de loading.| 
-| Laboratórios – Cadastro (`laboratory-upsert`)| Sem reaproveitamento de componente de erros, não utiliza `formControlName` camelCase alinhado, faltam máscaras de documento e mensagens padrão.| 
-| Unidades – Cadastro (`unit-upsert`)| Apenas validação requerida, sem feedback de erro, não aplica helpers de acessibilidade (`aria-*`), mantém layout distinto (sem grid 12 colunas nos campos secundários).| 
-| App shell (`main.ts`, `app.module.ts`, `app-routing.module.ts`)| Arquitetura baseada em NgModule, roteamento sem `provideRouter`/view transitions, interceptors orientados a classe, ausência de SSR/hidratação e form shell reutilizável.| 
-| Styles globais (`styles.scss`)| Não há design tokens centralizados (cores, tipografia, espaçamento), mix de estilos específicos com bootstrap puro, ausência de convenção BEM/utilitários.| 
+
+| Tela / Feature                                                  | Divergências principais                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bancos – Cadastro (`bank-upsert`)                               | Formulário não tipado (`FormGroup` genérico), mensagens de validação duplicadas por campo, uso de `*ngIf/*ngFor`, ausência de máscaras e tokens de estilo compartilhados.                                                                                 |
+| Transportadoras – Cadastro (`courier-company-upsert`)           | Estrutura de endereço diferente das demais telas (campos opcionais obrigatórios na prática), validações inconsistentes (CEP sem máscara, ausência de mensagens), mistura de controle de fluxo novo/antigo, carregamento de listas sem estados de loading. |
+| Laboratórios – Cadastro (`laboratory-upsert`)                   | Sem reaproveitamento de componente de erros, não utiliza `formControlName` camelCase alinhado, faltam máscaras de documento e mensagens padrão.                                                                                                           |
+| Unidades – Cadastro (`unit-upsert`)                             | Apenas validação requerida, sem feedback de erro, não aplica helpers de acessibilidade (`aria-*`), mantém layout distinto (sem grid 12 colunas nos campos secundários).                                                                                   |
+| App shell (`main.ts`, `app.module.ts`, `app-routing.module.ts`) | Arquitetura baseada em NgModule, roteamento sem `provideRouter`/view transitions, interceptors orientados a classe, ausência de SSR/hidratação e form shell reutilizável.                                                                                 |
+| Styles globais (`styles.scss`)                                  | Não há design tokens centralizados (cores, tipografia, espaçamento), mix de estilos específicos com bootstrap puro, ausência de convenção BEM/utilitários.                                                                                                |
 
 ## 2) Padrões propostos
+
 1. **Arquitetura Angular 19** – Migrar bootstrap para `bootstrapApplication` com `provideRouter` (rotas tipadas, `withComponentInputBinding`, `withViewTransitions`) e `provideClientHydration`.
 2. **Form Shell Standalone** – Criar `FormShellComponent` com header, estado `@if (isSaving())`, slots para ações e uso uniforme em cadastros.
 3. **Forms Reativos Tipados** – Usar `FormBuilder.nonNullable` + tipos inferidos (`type BankForm = ReturnType<typeof bankFormFactory>`), máscaras via directives dedicadas.
@@ -22,13 +24,16 @@
 9. **Testes** – Implementar testes unitários para forms (validadores), services (HTTP + interceptores) e rotas (guards/resolvers) usando `TestBed` standalone.
 
 ## 3) Plano de refatoração por feature
+
 ### 3.1 Administração / Bancos (Esforço: Médio)
+
 1. Criar `bank.routes.ts` com `provideState` e lazy `@defer` para listagem.
 2. Extrair `bankFormFactory` tipado com `FormBuilder.nonNullable`.
 3. Substituir mensagens inline por `<app-form-field-error>`, aplicar máscaras (código numérico) e tokens de layout.
 4. Cobrir com testes de validação e service mockado.
 
 ### 3.2 Administração / Transportadoras (Esforço: Grande)
+
 1. Normalizar endereço com `AddressFormGroup` compartilhado.
 2. Implementar carregamento de estados/cidades com `@defer` + `LoadingState` skeleton.
 3. Padronizar ações (Salvar/Cancelar) no `FormShellComponent` e mensagens centralizadas.
@@ -36,18 +41,21 @@
 5. Testes para resolver dependências (`locations` fetcher) e comportamento do formulário.
 
 ### 3.3 Administração / Laboratórios (Esforço: Médio)
+
 1. Aplicar form tipado e máscara de CNPJ/CPF via directive.
 2. Reutilizar `FormShellComponent` com tokens.
 3. Adotar mensagens padronizadas e `@if` no template.
 4. Criar testes para validar campos obrigatórios e interceptar HTTP.
 
 ### 3.4 Administração / Unidades (Esforço: Pequeno)
+
 1. Reutilizar form shell com grid 12 colunas.
 2. Adicionar mensagens de erro e validação mínima/máxima.
 3. Garantir acessibilidade (`aria-invalid`, foco em erro).
 4. Teste simples de formulário.
 
 ### 3.5 App Shell e Core (Esforço: Grande)
+
 1. Migrar `main.ts` para `bootstrapApplication`, remover `AppModule`.
 2. Definir `app.config.ts` com providers: `provideRouter`, `provideHttpClient(withInterceptors([...]))`, `provideClientHydration`, guards funcionais.
 3. Converter interceptors (`TokenInterceptor`, `AccessControlInterceptor`, `SnakeCaseInterceptor`, `ApiFeedbackInterceptor`) para funções puras.
@@ -55,13 +63,16 @@
 5. Configurar SSR (Angular Universal) e avaliar modo zoneless + sinais.
 
 ### 3.6 Design System (Esforço: Médio)
+
 1. Criar pasta `src/styles/tokens/` com `_colors.scss`, `_spacing.scss`, `_typography.scss`.
 2. Implementar utilitários (mixins BEM) e substituir classes custom inline.
 3. Padronizar `status-toggle` como componente com tokens.
 4. Testar contraste (WCAG AA) e ajustar.
 
 ## 4) Exemplos “antes → depois”
+
 ### 4.1 Template (`bank-upsert.component.html`)
+
 ```patch
 @@
 -        <div class="card-body">
@@ -123,6 +134,7 @@
 ```
 
 ### 4.2 Form tipado (`bank-upsert.component.ts`)
+
 ```patch
 @@
 -import { Component, OnInit, computed, inject, signal } from '@angular/core';
@@ -156,6 +168,7 @@
 ```
 
 ### 4.3 CSS (`_form-shell.scss`)
+
 ```patch
 +@use 'sass:map';
 +@use '../tokens/colors' as colors;
@@ -177,6 +190,7 @@
 ```
 
 ### 4.4 Router / Providers (`app.config.ts`)
+
 ```patch
 +import { ApplicationConfig } from '@angular/core';
 +import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
@@ -195,6 +209,7 @@
 ```
 
 ### 4.5 Interceptor funcional (`token.interceptor.ts`)
+
 ```patch
 -import { Injectable } from '@angular/core';
 -import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
@@ -229,6 +244,7 @@
 ```
 
 ## 5) Diffs por arquivo
+
 - `src/app/feature-module/administration/banks/bank-upsert/bank-upsert.component.html` – ver Diff 4.1.
 - `src/app/feature-module/administration/banks/bank-upsert/bank-upsert.component.ts` – ver Diff 4.2.
 - `src/styles/components/_form-shell.scss` – ver Diff 4.3.
@@ -236,9 +252,20 @@
 - `src/app/auth/keycloak/token.interceptor.ts` – ver Diff 4.5.
 
 ## 6) Snippets reutilizáveis
+
 ### 6.1 `FormShellComponent`
+
 ```ts
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter, contentChildren, TemplateRef, QueryList } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  contentChildren,
+  TemplateRef,
+  QueryList,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -260,6 +287,7 @@ export class FormShellComponent {
 ```
 
 ### 6.2 `FormFieldErrorComponent`
+
 ```ts
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
@@ -283,10 +311,8 @@ import { map } from 'rxjs';
 export class FormFieldErrorComponent {
   @Input({ required: true }) control!: AbstractControl | null;
   readonly messages = toSignal(
-    this.control?.statusChanges.pipe(
-      map(() => this.resolveMessages(this.control))
-    ) ?? [],
-    { initialValue: this.resolveMessages(this.control) }
+    this.control?.statusChanges.pipe(map(() => this.resolveMessages(this.control))) ?? [],
+    { initialValue: this.resolveMessages(this.control) },
   );
 
   private resolveMessages(control: AbstractControl | null): string[] {
@@ -299,12 +325,15 @@ export class FormFieldErrorComponent {
       minlength: $localize`Quantidade mínima não atendida`,
       maxlength: $localize`Quantidade máxima excedida`,
     };
-    return Object.entries(control.errors).map(([key, value]) => mapErrors[key] ?? value?.message ?? value);
+    return Object.entries(control.errors).map(
+      ([key, value]) => mapErrors[key] ?? value?.message ?? value,
+    );
   }
 }
 ```
 
 ### 6.3 `HttpErrorInterceptor`
+
 ```ts
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
@@ -322,6 +351,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = async (req, next) => {
 ```
 
 ### 6.4 `LoadingState`
+
 ```ts
 import { signal } from '@angular/core';
 
@@ -340,6 +370,7 @@ export function createLoadingState() {
 ```
 
 ### 6.5 `useCrudResource<T>()`
+
 ```ts
 import { computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
@@ -357,12 +388,14 @@ export function useCrudResource<T>(initialValue?: T) {
 ```
 
 ## 7) Riscos e observações
+
 - Migração para Angular 19 exige atualização de dependências e possíveis ajustes em libs terceiras (ex.: Keycloak, componentes Bootstrap customizados).
 - Ativar SSR/hidratação implica revisar chamadas diretas ao `window/history` (presentes em diversas telas) para garantir execução apenas no browser.
 - Uso de modo zoneless requer avaliar dependências que ainda assumem Zone.js; iniciar por módulos isolados.
 - Manter compatibilidade com API atual – qualquer ajuste em payload (ex.: normalização de endereço) deve ser pactuado com backend.
 
 ## 8) Checklist final
+
 - [ ] Form shell unificado aplicado.
 - [ ] Forms tipados com máscaras e validações padronizadas.
 - [ ] Mensagens e estados centralizados (`FormFieldError`, `LoadingState`).

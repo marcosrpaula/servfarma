@@ -1,83 +1,38 @@
 import { Injectable } from '@angular/core';
+import { SimpleItemViewModel, SupplySortableField } from '../../../../shared/models/supplies';
 import {
-  SimpleItemViewModel,
-  SupplySortableField,
-} from '../../../../shared/models/supplies';
+  EntityListState,
+  EntityListStateService,
+  ListSortState,
+} from '../../../../shared/state/entity-list-state.service';
 
-interface SuppliesListState {
-  tableData: SimpleItemViewModel[];
-  totalItems: number;
-  pageSize: number;
-  backendPage: number;
-  filtroNome: string;
-  filtroAtivo: '' | 'true' | 'false';
-  orderBy: SupplySortableField;
-  ascending: boolean;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status';
-  lastRequestSignature?: string;
-  lastPagerKey?: string;
+export type SupplySortLabel = 'CreatedDate' | 'Name' | 'Status';
+
+export interface SupplyListFiltersState {
+  name: string;
+  isActive: '' | 'true' | 'false';
+}
+
+export interface SuppliesListState
+  extends EntityListState<SimpleItemViewModel, SupplyListFiltersState, SupplySortableField> {
+  sort: ListSortState<SupplySortableField> & { label: SupplySortLabel };
 }
 
 @Injectable({ providedIn: 'root' })
-export class SuppliesStateService {
-  private readonly cache = new Map<string, SimpleItemViewModel>();
-  private listState: SuppliesListState | null = null;
-
-  upsert(supply: SimpleItemViewModel): void {
-    this.cache.set(supply.id, { ...supply });
+export class SuppliesStateService extends EntityListStateService<
+  SimpleItemViewModel,
+  SupplyListFiltersState,
+  SupplySortableField
+> {
+  override setListState(state: SuppliesListState): void {
+    super.setListState(state);
   }
 
-  setMany(supplies: SimpleItemViewModel[]): void {
-    supplies.forEach(supply => this.upsert(supply));
+  override getListState(): SuppliesListState | null {
+    return super.getListState() as SuppliesListState | null;
   }
 
-  getById(id: string | null | undefined): SimpleItemViewModel | undefined {
-    if (!id) {
-      return undefined;
-    }
-    const found = this.cache.get(id);
-    return found ? { ...found } : undefined;
-  }
-
-  setListState(state: SuppliesListState): void {
-    this.listState = {
-      ...state,
-      tableData: state.tableData.map(supply => ({ ...supply })),
-    };
-  }
-
-  getListState(): SuppliesListState | null {
-    if (!this.listState) {
-      return null;
-    }
-    return {
-      ...this.listState,
-      tableData: this.listState.tableData.map(supply => ({ ...supply })),
-    };
-  }
-
-  updateListItem(updated: SimpleItemViewModel): void {
-    this.upsert(updated);
-    if (!this.listState) {
-      return;
-    }
-    if (!this.listState.tableData.some(supply => supply.id === updated.id)) {
-      return;
-    }
-    this.listState = {
-      ...this.listState,
-      tableData: this.listState.tableData.map(supply =>
-        supply.id === updated.id ? { ...updated } : { ...supply }
-      ),
-    };
-  }
-
-  clearListState(): void {
-    this.listState = null;
-  }
-
-  clear(): void {
-    this.cache.clear();
-    this.listState = null;
+  override cloneFilters(filters: SupplyListFiltersState): SupplyListFiltersState {
+    return { ...filters };
   }
 }

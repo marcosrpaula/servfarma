@@ -1,23 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 // Light Box
 import { Lightbox } from 'ngx-lightbox';
 
-import { swiperModel, GalleryModel, NewsModel, VideoModel } from './search-results.model';
 import { gallery, news, swiper, video } from 'src/app/core/data';
+import { GalleryModel, NewsModel, swiperModel, VideoModel } from './search-results.model';
 
 @Component({
-    selector: 'app-search-results',
-    templateUrl: './search-results.component.html',
-    styleUrls: ['./search-results.component.scss'],
-    standalone: false
+  selector: 'app-search-results',
+  templateUrl: './search-results.component.html',
+  styleUrls: ['./search-results.component.scss'],
+  standalone: false,
 })
 
 /**
  * SearchResults Component
  */
 export class SearchResultsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   swiper!: swiperModel[];
@@ -35,7 +34,7 @@ export class SearchResultsComponent implements OnInit {
       const item = {
         src: src,
         caption: caption,
-        thumb: thumb
+        thumb: thumb,
       };
       this.images.push(item);
     }
@@ -43,12 +42,9 @@ export class SearchResultsComponent implements OnInit {
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Pages' },
-      { label: 'Search Results', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Pages' }, { label: 'Search Results', active: true }];
 
     // Chat Data Get Function
     this._fetchData();
@@ -60,7 +56,7 @@ export class SearchResultsComponent implements OnInit {
         slidesToScroll: 1,
         autoplay: true,
         autoplaySpeed: 100,
-        arrows: false
+        arrows: false,
       };
     }, 0);
   }
@@ -73,12 +69,10 @@ export class SearchResultsComponent implements OnInit {
     this.video = video;
   }
 
-
   open(index: number): void {
     // open lightbox
     this.lightbox.open(this.images, index, {});
   }
-
 
   /**
    * Swiper setting
@@ -89,8 +83,6 @@ export class SearchResultsComponent implements OnInit {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 100,
-    arrows: false
+    arrows: false,
   };
-
-
 }

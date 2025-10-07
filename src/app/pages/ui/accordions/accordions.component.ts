@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-accordions',
-    templateUrl: './accordions.component.html',
-    styleUrls: ['./accordions.component.scss'],
-    standalone: false
+  selector: 'app-accordions',
+  templateUrl: './accordions.component.html',
+  styleUrls: ['./accordions.component.scss'],
+  standalone: false,
 })
 export class AccordionsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   public Collapsed = false;
@@ -20,32 +19,27 @@ export class AccordionsComponent implements OnInit {
   public secondColleaps = false;
   public bothColleaps = false;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-     this.breadCrumbItems = [
-      { label: 'Base UI' },
-      { label: 'Accordions', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Base UI' }, { label: 'Accordions', active: true }];
   }
 
   /**
    * Show Code Toggle
    */
-   ShowCode(event: any) {
+  ShowCode(event: any) {
     let card = event.target.closest('.card');
     const preview = card.children[1].children[1];
     const codeView = card.children[1].children[2];
-    if(codeView != null){
+    if (codeView != null) {
       codeView.classList.toggle('d-none');
     }
-    if(preview != null){
+    if (preview != null) {
       preview.classList.toggle('d-none');
-      
     }
   }
-
 }

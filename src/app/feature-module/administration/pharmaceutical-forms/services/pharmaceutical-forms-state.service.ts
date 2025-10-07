@@ -1,80 +1,47 @@
 import { Injectable } from '@angular/core';
-import { PharmaceuticalFormSortableField, PharmaceuticalFormViewModel } from '../../../../shared/models/pharmaceutical-forms';
+import {
+  PharmaceuticalFormSortableField,
+  PharmaceuticalFormViewModel,
+} from '../../../../shared/models/pharmaceutical-forms';
+import {
+  EntityListState,
+  EntityListStateService,
+  ListSortState,
+} from '../../../../shared/state/entity-list-state.service';
 
-interface PharmaceuticalFormsListState {
-  tableData: PharmaceuticalFormViewModel[];
-  totalItems: number;
-  pageSize: number;
-  backendPage: number;
-  filtroNome: string;
-  filtroAtivo: '' | 'true' | 'false';
-  orderBy: PharmaceuticalFormSortableField;
-  ascending: boolean;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status';
-  lastRequestSignature?: string;
-  lastPagerKey?: string;
+export type PharmaceuticalFormSortLabel = 'CreatedDate' | 'Name' | 'Status';
+
+export interface PharmaceuticalFormListFiltersState {
+  name: string;
+  isActive: '' | 'true' | 'false';
+}
+
+export interface PharmaceuticalFormsListState
+  extends EntityListState<
+    PharmaceuticalFormViewModel,
+    PharmaceuticalFormListFiltersState,
+    PharmaceuticalFormSortableField
+  > {
+  sort: ListSortState<PharmaceuticalFormSortableField> & { label: PharmaceuticalFormSortLabel };
 }
 
 @Injectable({ providedIn: 'root' })
-export class PharmaceuticalFormsStateService {
-  private readonly cache = new Map<string, PharmaceuticalFormViewModel>();
-  private listState: PharmaceuticalFormsListState | null = null;
-
-  upsert(form: PharmaceuticalFormViewModel): void {
-    this.cache.set(form.id, { ...form });
+export class PharmaceuticalFormsStateService extends EntityListStateService<
+  PharmaceuticalFormViewModel,
+  PharmaceuticalFormListFiltersState,
+  PharmaceuticalFormSortableField
+> {
+  override setListState(state: PharmaceuticalFormsListState): void {
+    super.setListState(state);
   }
 
-  setMany(forms: PharmaceuticalFormViewModel[]): void {
-    forms.forEach(form => this.upsert(form));
+  override getListState(): PharmaceuticalFormsListState | null {
+    return super.getListState() as PharmaceuticalFormsListState | null;
   }
 
-  getById(id: string | null | undefined): PharmaceuticalFormViewModel | undefined {
-    if (!id) {
-      return undefined;
-    }
-    const found = this.cache.get(id);
-    return found ? { ...found } : undefined;
-  }
-
-  setListState(state: PharmaceuticalFormsListState): void {
-    this.listState = {
-      ...state,
-      tableData: state.tableData.map(form => ({ ...form })),
-    };
-  }
-
-  getListState(): PharmaceuticalFormsListState | null {
-    if (!this.listState) {
-      return null;
-    }
-    return {
-      ...this.listState,
-      tableData: this.listState.tableData.map(form => ({ ...form })),
-    };
-  }
-
-  updateListItem(updated: PharmaceuticalFormViewModel): void {
-    this.upsert(updated);
-    if (!this.listState) {
-      return;
-    }
-    if (!this.listState.tableData.some(form => form.id === updated.id)) {
-      return;
-    }
-    this.listState = {
-      ...this.listState,
-      tableData: this.listState.tableData.map(form =>
-        form.id === updated.id ? { ...updated } : { ...form }
-      ),
-    };
-  }
-
-  clearListState(): void {
-    this.listState = null;
-  }
-
-  clear(): void {
-    this.cache.clear();
-    this.listState = null;
+  override cloneFilters(
+    filters: PharmaceuticalFormListFiltersState,
+  ): PharmaceuticalFormListFiltersState {
+    return { ...filters };
   }
 }

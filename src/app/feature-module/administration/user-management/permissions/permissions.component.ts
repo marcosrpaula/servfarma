@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { RolesApiService } from '../services/roles.api.service';
 import { RoleViewModel } from '../../../../shared/models/users';
+import { RolesApiService } from '../services/roles.api.service';
 
 @Component({
   selector: 'app-permissions',
@@ -8,10 +8,7 @@ import { RoleViewModel } from '../../../../shared/models/users';
   standalone: false,
 })
 export class PermissionsComponent implements OnInit {
-  breadCrumbItems = [
-    { label: 'Administracao' },
-    { label: 'Roles & Permissions', active: true },
-  ];
+  breadCrumbItems = [{ label: 'Administracao' }, { label: 'Roles & Permissions', active: true }];
 
   private rolesApi = inject(RolesApiService);
 
@@ -29,15 +26,10 @@ export class PermissionsComponent implements OnInit {
   totalPages = 0;
   trackById = (_: number, r: RoleViewModel) => r.id;
   get startIndex() {
-    return this.filteredRoles.length
-      ? (this.currentPage - 1) * this.pageSize
-      : 0;
+    return this.filteredRoles.length ? (this.currentPage - 1) * this.pageSize : 0;
   }
   get endIndex() {
-    return Math.min(
-      this.startIndex + this.roles.length,
-      this.filteredRoles.length
-    );
+    return Math.min(this.startIndex + this.roles.length, this.filteredRoles.length);
   }
 
   ngOnInit(): void {
@@ -50,29 +42,27 @@ export class PermissionsComponent implements OnInit {
     const pageSize = 100;
     const buffer: RoleViewModel[] = [];
     const fetchPage = () => {
-      this.rolesApi
-        .list({ page, pageSize, orderBy: 'name', ascending: true })
-        .subscribe({
-          next: (res: any) => {
-            const items: RoleViewModel[] = res.items || [];
-            buffer.push(...items);
-            const hasNext = !!res.has_next_page;
-            if (hasNext) {
-              page += 1;
-              fetchPage();
-            } else {
-              this.allRoles = buffer;
-              this.applyFilter();
-              this.loading = false;
-            }
-          },
-          error: () => {
-            // em caso de erro, mostra o que já tiver
+      this.rolesApi.list({ page, pageSize, orderBy: 'name', ascending: true }).subscribe({
+        next: (res: any) => {
+          const items: RoleViewModel[] = res.items || [];
+          buffer.push(...items);
+          const hasNext = !!res.has_next_page;
+          if (hasNext) {
+            page += 1;
+            fetchPage();
+          } else {
             this.allRoles = buffer;
             this.applyFilter();
             this.loading = false;
-          },
-        });
+          }
+        },
+        error: () => {
+          // em caso de erro, mostra o que já tiver
+          this.allRoles = buffer;
+          this.applyFilter();
+          this.loading = false;
+        },
+      });
     };
     fetchPage();
   }
@@ -97,9 +87,7 @@ export class PermissionsComponent implements OnInit {
       const name = (r.name || '').toLowerCase();
       const desc = (r.description || '').toLowerCase();
 
-      const passSearch = term
-        ? name.includes(term) || desc.includes(term)
-        : true;
+      const passSearch = term ? name.includes(term) || desc.includes(term) : true;
       return passSearch;
     });
     this.recalculate();
@@ -126,5 +114,3 @@ export class PermissionsComponent implements OnInit {
     this.goTo(this.currentPage + 1);
   }
 }
-
-

@@ -1,5 +1,15 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import { addTaskSuccess, deleteTaskSuccess, fetchKanbanListData, fetchKanbanListFailure, fetchKanbanListSuccess, fetchTaskListData, fetchTaskListFailure, fetchTaskListSuccess, updateTaskSuccess } from './task_action';
+import {
+  addTaskSuccess,
+  deleteTaskSuccess,
+  fetchKanbanListData,
+  fetchKanbanListFailure,
+  fetchKanbanListSuccess,
+  fetchTaskListData,
+  fetchTaskListFailure,
+  fetchTaskListSuccess,
+  updateTaskSuccess,
+} from './task_action';
 
 export interface TaskState {
   Task: any[];
@@ -33,13 +43,15 @@ export const TaskReducer = createReducer(
 
   on(updateTaskSuccess, (state, { updatedData }) => {
     return {
-      ...state, Task: state.Task.map((Tasks) => Tasks.taskId === updatedData.taskId ? updatedData : Tasks), error: null
+      ...state,
+      Task: state.Task.map((Tasks) => (Tasks.taskId === updatedData.taskId ? updatedData : Tasks)),
+      error: null,
     };
   }),
 
   on(deleteTaskSuccess, (state, { id }) => {
     const updatedTask = state.Task.filter((Task) => {
-      return !id.includes(Task._id)
+      return !id.includes(Task._id);
     });
     return { ...state, Task: updatedTask, error: null };
   }),
@@ -54,7 +66,6 @@ export const TaskReducer = createReducer(
   on(fetchKanbanListFailure, (state, { error }) => {
     return { ...state, error, loading: false };
   }),
-
 );
 
 // Selector

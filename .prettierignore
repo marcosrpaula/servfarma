@@ -1,0 +1,8 @@
+.angular
+coverage
+dist
+node_modules
+package-lock.json
+yarn.lock
+**/*.min.js
+**/generated/**

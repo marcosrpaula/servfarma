@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, UntypedFormControl, Validators } from '@angular/forms';
 
 // Sweet Alert
 import Swal from 'sweetalert2';
@@ -9,28 +9,26 @@ import Swal from 'sweetalert2';
 import { DatePipe } from '@angular/common';
 
 // Rest Api Service
-import { restApiService } from "../../../core/services/rest-api.service";
-import { GlobalComponent } from '../../../global-component';
-import { RootReducerState } from 'src/app/store';
 import { Store } from '@ngrx/store';
-import { PaginationService } from 'src/app/core/services/pagination.service';
-import { addTask, deleteTask, fetchTaskListData, updateTask } from 'src/app/store/Task/task_action';
-import { selectTaskData, selectTaskLoading } from 'src/app/store/Task/task_selector';
 import { cloneDeep } from 'lodash';
 import { AssignedData } from 'src/app/core/data';
+import { PaginationService } from 'src/app/core/services/pagination.service';
+import { RootReducerState } from 'src/app/store';
+import { addTask, deleteTask, fetchTaskListData, updateTask } from 'src/app/store/Task/task_action';
+import { selectTaskData, selectTaskLoading } from 'src/app/store/Task/task_selector';
+import { GlobalComponent } from '../../../global-component';
 
 @Component({
-    selector: 'app-list-view',
-    templateUrl: './list-view.component.html',
-    styleUrls: ['./list-view.component.scss'],
-    standalone: false
+  selector: 'app-list-view',
+  templateUrl: './list-view.component.html',
+  styleUrls: ['./list-view.component.scss'],
+  standalone: false,
 })
 
 /**
  * ListView Component
  */
 export class ListViewComponent {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   submitted = false;
@@ -53,22 +51,21 @@ export class ListViewComponent {
   searchResults: any;
   subItem: any;
 
-  constructor(private modalService: NgbModal,
+  constructor(
+    private modalService: NgbModal,
     public service: PaginationService,
     private formBuilder: UntypedFormBuilder,
     private store: Store<{ data: RootReducerState }>,
-    private datePipe: DatePipe) {
-    this.subItem = []
+    private datePipe: DatePipe,
+  ) {
+    this.subItem = [];
   }
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Tasks' },
-      { label: 'Tasks List', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Tasks' }, { label: 'Tasks List', active: true }];
 
     /**
      * Form Validation
@@ -81,7 +78,7 @@ export class ListViewComponent {
       creater: ['', [Validators.required]],
       dueDate: ['', [Validators.required]],
       status: ['', [Validators.required]],
-      priority: ['', [Validators.required]]
+      priority: ['', [Validators.required]],
     });
 
     /**
@@ -98,11 +95,10 @@ export class ListViewComponent {
     this.store.select(selectTaskData).subscribe((data) => {
       this.tasks = data;
       this.alltasks = cloneDeep(data);
-      this.tasks = this.service.changePage(this.alltasks)
+      this.tasks = this.service.changePage(this.alltasks);
     });
 
-    this.AssignedData = AssignedData
-
+    this.AssignedData = AssignedData;
   }
 
   num: number = 0;
@@ -114,39 +110,38 @@ export class ListViewComponent {
   };
 
   changePage() {
-    this.tasks = this.service.changePage(this.alltasks)
+    this.tasks = this.service.changePage(this.alltasks);
   }
 
   onSort(column: any) {
-    this.tasks = this.service.onSort(column, this.tasks)
+    this.tasks = this.service.onSort(column, this.tasks);
   }
 
   /**
-  * Open modal
-  * @param content modal content
-  */
+   * Open modal
+   * @param content modal content
+   */
   openModal(content: any) {
     this.submitted = false;
     this.modalService.open(content, { size: 'md', centered: true });
   }
 
   /**
- * Form data get
- */
+   * Form data get
+   */
   get form() {
     return this.tasksForm.controls;
   }
 
   /**
-  * Save user
-  */
+   * Save user
+   */
   saveUser() {
     if (this.tasksForm.valid) {
       if (this.tasksForm.get('taskId')?.value) {
         const updatedData = { subItem: this.econtent.subItem, ...this.tasksForm.value };
         this.store.dispatch(updateTask({ updatedData }));
-      }
-      else {
+      } else {
         const taskId = (this.alltasks.length + 1).toString();
         this.tasksForm.controls['taskId'].setValue(taskId);
         this.tasksForm.controls['ids'].setValue(taskId);
@@ -169,7 +164,7 @@ export class ListViewComponent {
       this.modalService.dismissAll();
     }
     this.tasksForm.reset();
-    this.submitted = true
+    this.submitted = true;
   }
 
   onCheckboxChange(e: any) {
@@ -178,7 +173,7 @@ export class ListViewComponent {
         if (this.subItem && this.subItem.includes(this.AssignedData[i])) {
           this.subItem = this.subItem.filter((item: any) => item !== this.AssignedData[i]);
         } else {
-          this.subItem.push(this.AssignedData[i])
+          this.subItem.push(this.AssignedData[i]);
         }
       }
     }
@@ -194,7 +189,7 @@ export class ListViewComponent {
     var modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
     modelTitle.innerHTML = 'Edit Task';
     var updateBtn = document.getElementById('add-btn') as HTMLAreaElement;
-    updateBtn.innerHTML = "Update";
+    updateBtn.innerHTML = 'Update';
     this.econtent = this.alltasks[id];
     this.tasksForm.controls['project'].setValue(this.econtent.project);
     this.tasksForm.controls['task'].setValue(this.econtent.task);
@@ -222,17 +217,17 @@ export class ListViewComponent {
     } else {
       this.store.dispatch(deleteTask({ id: this.checkedValGet.toString() }));
     }
-    this.deleteId = ''
-    this.masterSelected = false
+    this.deleteId = '';
+    this.masterSelected = false;
   }
 
   /**
-  * Multiple Delete
-  */
+   * Multiple Delete
+   */
   checkedValGet: any[] = [];
   deleteMultiple(content: any) {
     var checkboxes: any = document.getElementsByName('checkAll');
-    var result
+    var result;
     var checkedVal: any[] = [];
     for (var i = 0; i < checkboxes.length; i++) {
       if (checkboxes[i].checked) {
@@ -242,42 +237,44 @@ export class ListViewComponent {
     }
     if (checkedVal.length > 0) {
       this.modalService.open(content, { centered: true });
-    }
-    else {
-      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb', });
+    } else {
+      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb' });
     }
     this.checkedValGet = checkedVal;
   }
 
-
   // The master checkbox will check/ uncheck all items
   checkUncheckAll(ev: any) {
-    this.tasks.forEach((x: { state: any; }) => x.state = ev.target.checked)
+    this.tasks.forEach((x: { state: any }) => (x.state = ev.target.checked));
     var checkedVal: any[] = [];
-    var result
+    var result;
     for (var i = 0; i < this.tasks.length; i++) {
       if (this.tasks[i].state == true) {
         result = this.tasks[i];
         checkedVal.push(result);
       }
     }
-    this.checkedValGet = checkedVal
-    checkedVal.length > 0 ? (document.getElementById("remove-actions") as HTMLElement).style.display = "block" : (document.getElementById("remove-actions") as HTMLElement).style.display = "none";
+    this.checkedValGet = checkedVal;
+    checkedVal.length > 0
+      ? ((document.getElementById('remove-actions') as HTMLElement).style.display = 'block')
+      : ((document.getElementById('remove-actions') as HTMLElement).style.display = 'none');
   }
 
   // Filtering
-  isstatus?: any
+  isstatus?: any;
   SearchData() {
-    var status = document.getElementById("idStatus") as HTMLInputElement;
-    var payment = document.getElementById("idPayment") as HTMLInputElement;
-    var date = document.getElementById("isDate") as HTMLInputElement;
-    var dateVal = date.value ? this.datePipe.transform(new Date(date.value), "yyyy-MM-dd") : '';
-    if (status.value != 'all' && status.value != '' || dateVal != '') {
+    var status = document.getElementById('idStatus') as HTMLInputElement;
+    var payment = document.getElementById('idPayment') as HTMLInputElement;
+    var date = document.getElementById('isDate') as HTMLInputElement;
+    var dateVal = date.value ? this.datePipe.transform(new Date(date.value), 'yyyy-MM-dd') : '';
+    if ((status.value != 'all' && status.value != '') || dateVal != '') {
       this.tasks = this.content.filter((task: any) => {
-        return task.status === status.value || this.datePipe.transform(new Date(task.dueDate), "yyyy-MM-dd") == dateVal;
+        return (
+          task.status === status.value ||
+          this.datePipe.transform(new Date(task.dueDate), 'yyyy-MM-dd') == dateVal
+        );
       });
-    }
-    else {
+    } else {
       this.tasks = this.content;
     }
   }
@@ -292,7 +289,7 @@ export class ListViewComponent {
         item.status.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     });
-    this.tasks = this.service.changePage(this.searchResults)
+    this.tasks = this.service.changePage(this.searchResults);
   }
 
   statusFilter() {
@@ -301,8 +298,7 @@ export class ListViewComponent {
         return task.status === this.status;
       });
     } else {
-      this.tasks = this.service.changePage(this.alltasks)
+      this.tasks = this.service.changePage(this.alltasks);
     }
   }
-
 }

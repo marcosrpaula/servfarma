@@ -1,39 +1,43 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ExploreComponent } from './explore/explore.component';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ExploreComponent } from './explore/explore.component';
 
-// Bootstrap 
-import { NgbDropdownModule, NgbPaginationModule, NgbTypeaheadModule, NgbProgressbarModule, NgbNavModule, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+// Bootstrap
+import {
+  NgbCollapseModule,
+  NgbDropdownModule,
+  NgbNavModule,
+  NgbPaginationModule,
+  NgbProgressbarModule,
+  NgbTypeaheadModule,
+} from '@ng-bootstrap/ng-bootstrap';
 
 // Ngx Sliders
 import { NgxSliderModule } from 'ngx-slider-v2';
 
 // Drop Zone
-import { DropzoneModule } from 'ngx-dropzone-wrapper';
-import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
-import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { DropzoneConfigInterface, DropzoneModule } from 'ngx-dropzone-wrapper';
 
 // Simplebar
 import { SimplebarAngularModule } from 'simplebar-angular';
 
 // Component pages
-import { NftMarketplaceRoutingModule } from "./nft-marketplace-routing.module";
 import { SharedModule } from '../../shared/shared.module';
 import { AuctionComponent } from './auction/auction.component';
-import { WalletComponent } from './wallet/wallet.component';
-import { CreatorsComponent } from './creators/creators.component';
-import { CreateComponent } from './create/create.component';
 import { CollectionsComponent } from './collections/collections.component';
+import { CreateComponent } from './create/create.component';
+import { CreatorsComponent } from './creators/creators.component';
 import { ItemDetailsComponent } from './item-details/item-details.component';
 import { MarketplaceComponent } from './marketplace/marketplace.component';
+import { NftMarketplaceRoutingModule } from './nft-marketplace-routing.module';
 import { RankingComponent } from './ranking/ranking.component';
-
+import { WalletComponent } from './wallet/wallet.component';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: 'https://httpbin.org/post',
   maxFilesize: 50,
-  acceptedFiles: 'image/*'
+  acceptedFiles: 'image/*',
 };
 
 @NgModule({
@@ -46,7 +50,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     CollectionsComponent,
     ItemDetailsComponent,
     MarketplaceComponent,
-    RankingComponent
+    RankingComponent,
   ],
   imports: [
     CommonModule,
@@ -63,6 +67,6 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     NgxSliderModule,
     DropzoneModule,
     SimplebarAngularModule,
-  ]
+  ],
 })
-export class NftMarketplaceModule { }
+export class NftMarketplaceModule {}

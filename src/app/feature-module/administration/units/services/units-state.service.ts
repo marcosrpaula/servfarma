@@ -1,80 +1,38 @@
 import { Injectable } from '@angular/core';
 import { UnitSortableField, UnitViewModel } from '../../../../shared/models/units';
+import {
+  EntityListState,
+  EntityListStateService,
+  ListSortState,
+} from '../../../../shared/state/entity-list-state.service';
 
-interface UnitsListState {
-  tableData: UnitViewModel[];
-  totalItems: number;
-  pageSize: number;
-  backendPage: number;
-  filtroNome: string;
-  filtroAtivo: '' | 'true' | 'false';
-  orderBy: UnitSortableField;
-  ascending: boolean;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status';
-  lastRequestSignature?: string;
-  lastPagerKey?: string;
+export type UnitSortLabel = 'CreatedDate' | 'Name' | 'Status';
+
+export interface UnitListFiltersState {
+  name: string;
+  isActive: '' | 'true' | 'false';
+}
+
+export interface UnitsListState
+  extends EntityListState<UnitViewModel, UnitListFiltersState, UnitSortableField> {
+  sort: ListSortState<UnitSortableField> & { label: UnitSortLabel };
 }
 
 @Injectable({ providedIn: 'root' })
-export class UnitsStateService {
-  private readonly cache = new Map<string, UnitViewModel>();
-  private listState: UnitsListState | null = null;
-
-  upsert(unit: UnitViewModel): void {
-    this.cache.set(unit.id, { ...unit });
+export class UnitsStateService extends EntityListStateService<
+  UnitViewModel,
+  UnitListFiltersState,
+  UnitSortableField
+> {
+  override setListState(state: UnitsListState): void {
+    super.setListState(state);
   }
 
-  setMany(units: UnitViewModel[]): void {
-    units.forEach(unit => this.upsert(unit));
+  override getListState(): UnitsListState | null {
+    return super.getListState() as UnitsListState | null;
   }
 
-  getById(id: string | null | undefined): UnitViewModel | undefined {
-    if (!id) {
-      return undefined;
-    }
-    const found = this.cache.get(id);
-    return found ? { ...found } : undefined;
-  }
-
-  setListState(state: UnitsListState): void {
-    this.listState = {
-      ...state,
-      tableData: state.tableData.map(unit => ({ ...unit })),
-    };
-  }
-
-  getListState(): UnitsListState | null {
-    if (!this.listState) {
-      return null;
-    }
-    return {
-      ...this.listState,
-      tableData: this.listState.tableData.map(unit => ({ ...unit })),
-    };
-  }
-
-  updateListItem(updated: UnitViewModel): void {
-    this.upsert(updated);
-    if (!this.listState) {
-      return;
-    }
-    if (!this.listState.tableData.some(unit => unit.id === updated.id)) {
-      return;
-    }
-    this.listState = {
-      ...this.listState,
-      tableData: this.listState.tableData.map(unit =>
-        unit.id === updated.id ? { ...updated } : { ...unit }
-      ),
-    };
-  }
-
-  clearListState(): void {
-    this.listState = null;
-  }
-
-  clear(): void {
-    this.cache.clear();
-    this.listState = null;
+  override cloneFilters(filters: UnitListFiltersState): UnitListFiltersState {
+    return { ...filters };
   }
 }

@@ -1,8 +1,8 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BanksComponent } from './banks/banks.component';
-import { BankUpsertComponent } from './bank-upsert/bank-upsert.component';
 import { PermissionGuard } from '../../../core/access-control/permission.guard';
+import { BankUpsertComponent } from './bank-upsert/bank-upsert.component';
+import { BanksComponent } from './banks/banks.component';
 
 const routes: Routes = [
   {
@@ -36,6 +36,3 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class BanksRoutingModule {}
-
-
-

@@ -1,18 +1,18 @@
 import { Component, OnDestroy } from '@angular/core';
-import { routes } from '../../../shared/routes/routes';
-import { SideBar, SideBarMenu } from '../../../shared/models/models';
 import { NavigationEnd, Router } from '@angular/router';
-import { DataService } from '../../../shared/data/data.service';
-import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 import { CommonService } from '../../../shared/common/common.service';
+import { DataService } from '../../../shared/data/data.service';
+import { SideBar, SideBarMenu } from '../../../shared/models/models';
+import { routes } from '../../../shared/routes/routes';
+import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 
 @Component({
-    selector: 'app-stacked-sidebar',
-    templateUrl: './stacked-sidebar.component.html',
-    styleUrl: './stacked-sidebar.component.scss',
-    standalone: false
+  selector: 'app-stacked-sidebar',
+  templateUrl: './stacked-sidebar.component.html',
+  styleUrl: './stacked-sidebar.component.scss',
+  standalone: false,
 })
-export class StackedSidebarComponent implements OnDestroy{
+export class StackedSidebarComponent implements OnDestroy {
   public routes = routes;
   showSubMenusTab = true;
   openMenuItem: any = null;
@@ -26,7 +26,7 @@ export class StackedSidebarComponent implements OnDestroy{
     public router: Router,
     private data: DataService,
     private sideBar: SideBarService,
-    private common: CommonService
+    private common: CommonService,
   ) {
     this.common.base.subscribe((res: string) => {
       this.base = res;
@@ -60,9 +60,9 @@ export class StackedSidebarComponent implements OnDestroy{
     //   else this.showSubMenusTab = false;
     // });
   }
-public menuToggle() {
-  this.showSubMenusTab = !this.showSubMenusTab;
-}
+  public menuToggle() {
+    this.showSubMenusTab = !this.showSubMenusTab;
+  }
   public showTabs(mainTittle: SideBarMenu): void {
     this.side_bar_data.map((mainMenus: SideBarMenu) => {
       if (mainTittle.menuValue === mainMenus.menuValue) {

@@ -1,4 +1,4 @@
-import { ListRequestParams } from "./api/base-view.model";
+import { ListRequestParams } from './api/base-view.model';
 
 export interface UnitViewModel {
   id: string;
@@ -12,7 +12,7 @@ export interface UnitViewModel {
 
 export interface UnitDetailsViewModel extends UnitViewModel {}
 
-export type UnitSortableField = "created_at" | "name" | "is_active";
+export type UnitSortableField = 'created_at' | 'name' | 'is_active';
 
 export interface UnitListFilters {
   name?: string;

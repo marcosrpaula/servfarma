@@ -2,17 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
-    selector: 'app-basic',
-    templateUrl: './basic.component.html',
-    styleUrls: ['./basic.component.scss'],
-    standalone: false
+  selector: 'app-basic',
+  templateUrl: './basic.component.html',
+  styleUrls: ['./basic.component.scss'],
+  standalone: false,
 })
 
 /**
  * Pass-Reset Basic Component
  */
 export class BasicComponent implements OnInit {
-
   // Login Form
   passresetForm!: UntypedFormGroup;
   submitted = false;
@@ -22,24 +21,26 @@ export class BasicComponent implements OnInit {
   // set the current year
   year: number = new Date().getFullYear();
 
-  constructor(private formBuilder: UntypedFormBuilder) { }
+  constructor(private formBuilder: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     /**
      * Form Validatyion
      */
-     this.passresetForm = this.formBuilder.group({
-      email: ['', [Validators.required]]
+    this.passresetForm = this.formBuilder.group({
+      email: ['', [Validators.required]],
     });
   }
 
   // convenience getter for easy access to form fields
-  get f() { return this.passresetForm.controls; }
+  get f() {
+    return this.passresetForm.controls;
+  }
 
   /**
    * Form submit
    */
-   onSubmit() {
+  onSubmit() {
     this.submitted = true;
 
     // stop here if form is invalid
@@ -47,5 +48,4 @@ export class BasicComponent implements OnInit {
       return;
     }
   }
-
 }

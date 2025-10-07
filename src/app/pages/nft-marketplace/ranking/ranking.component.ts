@@ -1,25 +1,22 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Component } from '@angular/core';
+import { UntypedFormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UntypedFormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 
-import { rankingModel } from './ranking.model';
 import { rankingData } from 'src/app/core/data';
 import { PaginationService } from 'src/app/core/services/pagination.service';
+import { rankingModel } from './ranking.model';
 
 @Component({
-    selector: 'app-ranking',
-    templateUrl: './ranking.component.html',
-    styleUrls: ['./ranking.component.scss'],
-    standalone: false
+  selector: 'app-ranking',
+  templateUrl: './ranking.component.html',
+  styleUrls: ['./ranking.component.scss'],
+  standalone: false,
 })
 
 /**
  * Ranking Component
  */
 export class RankingComponent {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
@@ -29,31 +26,31 @@ export class RankingComponent {
   searchTerm: any;
   allrankingData!: any[];
 
-  constructor(private modalService: NgbModal, public service: PaginationService, private formBuilder: UntypedFormBuilder) {
-  }
+  constructor(
+    private modalService: NgbModal,
+    public service: PaginationService,
+    private formBuilder: UntypedFormBuilder,
+  ) {}
 
   ngOnInit(): void {
     /**
-   * BreadCrumb
-   */
-    this.breadCrumbItems = [
-      { label: 'NFT Marketplace' },
-      { label: 'Ranking', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'NFT Marketplace' }, { label: 'Ranking', active: true }];
 
     // FetchData
-    this.allrankingData = rankingData
-    this.rankingData = this.service.changePage(rankingData)
+    this.allrankingData = rankingData;
+    this.rankingData = this.service.changePage(rankingData);
   }
 
   // Pagination
   changePage() {
-    this.rankingData = this.service.changePage(rankingData)
+    this.rankingData = this.service.changePage(rankingData);
   }
 
   // Sort Data
   onSort(column: any) {
-    this.rankingData = this.service.onSort(column, this.rankingData)
+    this.rankingData = this.service.onSort(column, this.rankingData);
   }
 
   // Search Data
@@ -67,7 +64,6 @@ export class RankingComponent {
         item.floor_price.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     });
-    this.rankingData = this.service.changePage(this.searchResults)
+    this.rankingData = this.service.changePage(this.searchResults);
   }
-
 }

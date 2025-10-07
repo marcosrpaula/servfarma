@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { DataService } from '../../../shared/data/data.service';
 
 @Component({
-    selector: 'app-collapse-header',
-    templateUrl: './collapse-header.component.html',
-    styleUrl: './collapse-header.component.scss',
-    standalone: false
+  selector: 'app-collapse-header',
+  templateUrl: './collapse-header.component.html',
+  styleUrl: './collapse-header.component.scss',
+  standalone: false,
 })
 export class CollapseHeaderComponent {
   public isCollapsed = false;

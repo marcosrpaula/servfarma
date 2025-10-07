@@ -1,30 +1,24 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 // Routing
-import { CandidateListsRoutingModule } from './candidate-lists-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { CandidateListsRoutingModule } from './candidate-lists-routing.module';
 
-import { ListViewComponent } from './list-view/list-view.component';
 import { GridViewComponent } from './grid-view/grid-view.component';
-
-
+import { ListViewComponent } from './list-view/list-view.component';
 
 @NgModule({
-  declarations: [
-    ListViewComponent,
-    GridViewComponent
-  ],
+  declarations: [ListViewComponent, GridViewComponent],
   imports: [
     CommonModule,
     CandidateListsRoutingModule,
     SharedModule,
     NgbPaginationModule,
     FormsModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
-export class CandidateListsModule { }
+export class CandidateListsModule {}

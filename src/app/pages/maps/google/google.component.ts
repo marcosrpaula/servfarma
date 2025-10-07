@@ -1,25 +1,23 @@
-import { Component, OnInit, ViewChild, Input, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 
 interface MarkerProperties {
   position: {
     lat: number;
     lng: number;
-  }
-};
+  };
+}
 
 @Component({
-    selector: 'app-google',
-    templateUrl: './google.component.html',
-    styleUrls: ['./google.component.scss'],
-    standalone: false
+  selector: 'app-google',
+  templateUrl: './google.component.html',
+  styleUrls: ['./google.component.scss'],
+  standalone: false,
 })
 
 /**
  * Google Maps Component
  */
 export class GoogleComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
@@ -31,17 +29,13 @@ export class GoogleComponent implements OnInit {
   @Input() scrollwheel: boolean = false;
   center: any;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: any) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Maps' },
-      { label: 'Google Maps', active: true }
-    ];
-
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Maps' }, { label: 'Google Maps', active: true }];
   }
 
   mapOptions: google.maps.MapOptions = {
@@ -52,8 +46,6 @@ export class GoogleComponent implements OnInit {
   markers: MarkerProperties[] = [
     { position: { lat: 48.8584, lng: 2.2945 } }, // Eiffel Tower
     { position: { lat: 48.8606, lng: 2.3376 } }, // Louvre Museum
-    { position: { lat: 48.8530, lng: 2.3499 } }, // Cathédrale Notre-Dame de Paris
+    { position: { lat: 48.853, lng: 2.3499 } }, // Cathédrale Notre-Dame de Paris
   ];
-
-
 }

@@ -1,31 +1,29 @@
-import { Component, PipeTransform, QueryList, ViewChildren } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Component, QueryList, ViewChildren } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UntypedFormBuilder, UntypedFormGroup, FormArray, Validators, FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 // Sweet Alert
 import Swal from 'sweetalert2';
 
-import { ListJsModel, paginationModel } from './listjs.model';
-import { OrdersService } from './listjs.service';
-import { NgbdListSortableHeader, listSortEvent } from './listjs-sortable.directive';
 import { FuzzyList, dataattribute, existingList, paginationlist } from 'src/app/core/data';
+import { NgbdListSortableHeader, listSortEvent } from './listjs-sortable.directive';
+import { ListJsModel } from './listjs.model';
+import { OrdersService } from './listjs.service';
 
 @Component({
-    selector: 'app-listjs',
-    templateUrl: './listjs.component.html',
-    styleUrls: ['./listjs.component.scss'],
-    providers: [OrdersService, DecimalPipe],
-    standalone: false
+  selector: 'app-listjs',
+  templateUrl: './listjs.component.html',
+  styleUrls: ['./listjs.component.scss'],
+  providers: [OrdersService, DecimalPipe],
+  standalone: false,
 })
 
 /**
  * Listjs table Component
  */
 export class ListjsComponent {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   submitted = false;
@@ -56,19 +54,21 @@ export class ListjsComponent {
   total: Observable<number>;
   @ViewChildren(NgbdListSortableHeader) headers!: QueryList<NgbdListSortableHeader>;
 
-  constructor(private modalService: NgbModal, public service: OrdersService, private formBuilder: UntypedFormBuilder, private pipe: DecimalPipe) {
+  constructor(
+    private modalService: NgbModal,
+    public service: OrdersService,
+    private formBuilder: UntypedFormBuilder,
+    private pipe: DecimalPipe,
+  ) {
     this.ListJsList = service.countries$;
     this.total = service.total$;
   }
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Tables' },
-      { label: 'Listjs', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Tables' }, { label: 'Listjs', active: true }];
 
     /**
      * Form Validation
@@ -79,23 +79,22 @@ export class ListjsComponent {
       email: ['', [Validators.required]],
       phone: ['', [Validators.required]],
       date: ['', [Validators.required]],
-      status: ['', [Validators.required]]
+      status: ['', [Validators.required]],
     });
-
 
     /**
      * fetches data
      */
-    this.ListJsList.subscribe(x => {
+    this.ListJsList.subscribe((x) => {
       this.ListJsDatas = Object.assign([], x);
     });
 
-    this.attributedata = dataattribute
-    this.existingData = existingList
-    this.fuzzyData = FuzzyList
+    this.attributedata = dataattribute;
+    this.existingData = existingList;
+    this.fuzzyData = FuzzyList;
 
-    this.paginationDatas = paginationlist
-    this.totalRecords = this.paginationDatas.length
+    this.paginationDatas = paginationlist;
+    this.totalRecords = this.paginationDatas.length;
 
     this.startIndex = (this.page - 1) * this.pageSize + 1;
     this.endIndex = (this.page - 1) * this.pageSize + this.pageSize;
@@ -106,8 +105,8 @@ export class ListjsComponent {
   }
 
   /**
- * User grid data fetches
- */
+   * User grid data fetches
+   */
   //  private _fetchData() {
   //   this.ListJsData = ListJs;
   //   this.ListJsDatas = Object.assign([], this.ListJsData);
@@ -130,8 +129,8 @@ export class ListjsComponent {
   }
 
   /**
-  * Pagination
-  */
+   * Pagination
+   */
   loadPage() {
     this.startIndex = (this.page - 1) * this.pageSize + 1;
     this.endIndex = (this.page - 1) * this.pageSize + this.pageSize;
@@ -142,19 +141,23 @@ export class ListjsComponent {
   }
 
   /**
-    * Save saveListJs
-    */
+   * Save saveListJs
+   */
   saveListJs() {
     if (this.listJsForm.valid) {
       if (this.listJsForm.get('ids')?.value) {
-        this.ListJsDatas = this.ListJsDatas.map((data: { id: any; }) => data.id === this.listJsForm.get('ids')?.value ? { ...data, ...this.listJsForm.value } : data)
-        // ListJs = this.ListJsDatas    
+        this.ListJsDatas = this.ListJsDatas.map((data: { id: any }) =>
+          data.id === this.listJsForm.get('ids')?.value
+            ? { ...data, ...this.listJsForm.value }
+            : data,
+        );
+        // ListJs = this.ListJsDatas
       } else {
         const customer_name = this.listJsForm.get('customer_name')?.value;
         const email = this.listJsForm.get('email')?.value;
         const phone = this.listJsForm.get('phone')?.value;
         const date = '14 Apr, 2021';
-        const status_color = "success";
+        const status_color = 'success';
         const status = this.listJsForm.get('status')?.value;
         this.ListJsDatas.push({
           customer_name,
@@ -162,27 +165,26 @@ export class ListjsComponent {
           phone,
           date,
           status_color,
-          status
+          status,
         });
-        this.modalService.dismissAll()
+        this.modalService.dismissAll();
       }
     }
     this.modalService.dismissAll();
     setTimeout(() => {
       this.listJsForm.reset();
     }, 2000);
-    this.submitted = true
+    this.submitted = true;
   }
-
 
   // The master checkbox will check/ uncheck all items
   checkUncheckAll(ev: any) {
-    this.ListJsDatas.forEach((x: { state: any; }) => x.state = ev.target.checked)
+    this.ListJsDatas.forEach((x: { state: any }) => (x.state = ev.target.checked));
   }
 
   /**
-  * Confirmation mail model
-  */
+   * Confirmation mail model
+   */
   deleteId: any;
   confirm(content: any, id: any) {
     this.deleteId = id;
@@ -190,12 +192,12 @@ export class ListjsComponent {
   }
 
   /**
-  * Multiple Delete
-  */
+   * Multiple Delete
+   */
   checkedValGet: any[] = [];
   deleteMultiple(content: any) {
     var checkboxes: any = document.getElementsByName('checkAll');
-    var result
+    var result;
     var checkedVal: any[] = [];
     for (var i = 0; i < checkboxes.length; i++) {
       if (checkboxes[i].checked) {
@@ -205,20 +207,17 @@ export class ListjsComponent {
     }
     if (checkedVal.length > 0) {
       this.modalService.open(content, { centered: true });
-    }
-    else {
-      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb', });
+    } else {
+      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb' });
     }
     this.checkedValGet = checkedVal;
-
   }
 
   // Delete Data
   deleteData(id: any) {
     if (id) {
       document.getElementById('lj_' + id)?.remove();
-    }
-    else {
+    } else {
       this.checkedValGet.forEach((item: any) => {
         document.getElementById('lj_' + item)?.remove();
       });
@@ -226,15 +225,15 @@ export class ListjsComponent {
   }
 
   /**
-  * Open modal
-  * @param content modal content
-  */
+   * Open modal
+   * @param content modal content
+   */
   editModal(content: any, id: any) {
     this.submitted = false;
     this.modalService.open(content, { size: 'md', centered: true });
     var updateBtn = document.getElementById('add-btn') as HTMLAreaElement;
-    updateBtn.innerHTML = "Update";
-    var listData = this.ListJsDatas.filter((data: { id: any; }) => data.id === id);
+    updateBtn.innerHTML = 'Update';
+    var listData = this.ListJsDatas.filter((data: { id: any }) => data.id === id);
     this.listJsForm.controls['customer_name'].setValue(listData[0].customer_name);
     this.listJsForm.controls['email'].setValue(listData[0].email);
     this.listJsForm.controls['phone'].setValue(listData[0].phone);
@@ -243,13 +242,13 @@ export class ListjsComponent {
     this.listJsForm.controls['ids'].setValue(listData[0].id);
   }
   /**
-  * Sort table data
-  * @param param0 sort the column
-  *
-  */
+   * Sort table data
+   * @param param0 sort the column
+   *
+   */
   onSort({ column, direction }: listSortEvent) {
     // resetting other headers
-    this.headers.forEach(header => {
+    this.headers.forEach((header) => {
       if (header.listsortable !== column) {
         header.direction = '';
       }
@@ -258,6 +257,4 @@ export class ListjsComponent {
     this.service.sortColumn = column;
     this.service.sortDirection = direction;
   }
-
-
 }

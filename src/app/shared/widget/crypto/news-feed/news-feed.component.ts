@@ -1,28 +1,27 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-news-feed',
-    templateUrl: './news-feed.component.html',
-    styleUrls: ['./news-feed.component.scss'],
-    standalone: false
+  selector: 'app-news-feed',
+  templateUrl: './news-feed.component.html',
+  styleUrls: ['./news-feed.component.scss'],
+  standalone: false,
 })
 
 /**
  * News Feed Component
  */
 export class NewsFeedComponent implements OnInit {
+  // News Feed
+  @Input() NewsFeed:
+    | Array<{
+        image?: string;
+        content?: string;
+        date?: string;
+        time?: string;
+      }>
+    | undefined;
 
-   // News Feed
-   @Input() NewsFeed: Array<{
-    image?: string;
-    content?: string;
-    date?: string;
-    time?: string;
-  }> | undefined;
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

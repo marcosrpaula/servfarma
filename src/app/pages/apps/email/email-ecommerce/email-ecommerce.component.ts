@@ -1,35 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-email-ecommerce',
-    templateUrl: './email-ecommerce.component.html',
-    styleUrls: ['./email-ecommerce.component.scss'],
-    standalone: false
+  selector: 'app-email-ecommerce',
+  templateUrl: './email-ecommerce.component.html',
+  styleUrls: ['./email-ecommerce.component.scss'],
+  standalone: false,
 })
 
 /**
  * Email Ecommerce Component
  */
 export class EmailEcommerceComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     /**
      * BreadCrumb
      */
-     this.breadCrumbItems = [
-      { label: 'Email' },
-      { label: 'Ecommerce Action', active: true }
-    ];
+    this.breadCrumbItems = [{ label: 'Email' }, { label: 'Ecommerce Action', active: true }];
   }
 
   // Click Scroll Top
-  inView(ele:any){
-    ele.scrollIntoView({behavior:"smooth", block:"start", inline:"start"})
+  inView(ele: any) {
+    ele.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
   }
-
 }

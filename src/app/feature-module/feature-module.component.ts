@@ -1,17 +1,17 @@
-import { Component, ViewEncapsulation , OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonService } from '../shared/common/common.service';
-import { SettingService } from '../shared/settings/settings.service';
 import { DataService } from '../shared/data/data.service';
+import { SettingService } from '../shared/settings/settings.service';
 import { SideBarService } from '../shared/side-bar/side-bar.service';
 
 @Component({
-    selector: 'app-feature-module',
-    templateUrl: './feature-module.component.html',
-    styleUrl: './feature-module.component.scss',
-    encapsulation: ViewEncapsulation.None,
-    standalone: false
+  selector: 'app-feature-module',
+  templateUrl: './feature-module.component.html',
+  styleUrl: './feature-module.component.scss',
+  encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
-export class FeatureModuleComponent implements OnInit{
+export class FeatureModuleComponent implements OnInit {
   base = '';
   page = '';
   last = '';
@@ -21,21 +21,61 @@ export class FeatureModuleComponent implements OnInit{
   layoutMode = '1';
   layoutWidth = '1';
   sidebarSize = '1';
-  topbarColor='white';
-  primaryColor='1';
-  withoutWrapperPagesArray = ['login','login-2','login-3','register','register-2','register-3', 'forgot-password','forgot-password-2','forgot-password-3', 'reset-password', 'reset-password-2', 'reset-password-3', 'email-verification', 'email-verification-2', 'email-verification-3', 'two-step-verification', 'two-step-verification-2', 'two-step-verification-3','success','success-2','success-3','under-construction','under-maintenance','coming-soon','lock-screen','error-404','error-500'];
-  withoutLayoutArray = ['layout-horizontal','layout-hovered','layout-detached','layout-horizontal-overlay',
-    'layout-horizontal-single','layout-two-column','layout-modern','layout-without-header','layout-vertical-transparent',
-    'layout-horizontal-sidemenu','layout-horizontal-box','layout-dark','layout-box','layout-rtl'
+  topbarColor = 'white';
+  primaryColor = '1';
+  withoutWrapperPagesArray = [
+    'login',
+    'login-2',
+    'login-3',
+    'register',
+    'register-2',
+    'register-3',
+    'forgot-password',
+    'forgot-password-2',
+    'forgot-password-3',
+    'reset-password',
+    'reset-password-2',
+    'reset-password-3',
+    'email-verification',
+    'email-verification-2',
+    'email-verification-3',
+    'two-step-verification',
+    'two-step-verification-2',
+    'two-step-verification-3',
+    'success',
+    'success-2',
+    'success-3',
+    'under-construction',
+    'under-maintenance',
+    'coming-soon',
+    'lock-screen',
+    'error-404',
+    'error-500',
   ];
-  withoutWrapperPages:boolean|null = false;
-  withoutLayouts:boolean|null = false;
+  withoutLayoutArray = [
+    'layout-horizontal',
+    'layout-hovered',
+    'layout-detached',
+    'layout-horizontal-overlay',
+    'layout-horizontal-single',
+    'layout-two-column',
+    'layout-modern',
+    'layout-without-header',
+    'layout-vertical-transparent',
+    'layout-horizontal-sidemenu',
+    'layout-horizontal-box',
+    'layout-dark',
+    'layout-box',
+    'layout-rtl',
+  ];
+  withoutWrapperPages: boolean | null = false;
+  withoutLayouts: boolean | null = false;
   showPreloader = false;
   showPreloaderState = '';
   selectedColor = '84, 109, 254, 1';
   selectedColor1 = '555, 555, 555, 1';
-  horizontalColor='555, 555, 555, 1';
-  dthemeColor= '84, 109, 254, 1';
+  horizontalColor = '555, 555, 555, 1';
+  dthemeColor = '84, 109, 254, 1';
   constructor(
     private common: CommonService,
     public settings: SettingService,
@@ -50,14 +90,13 @@ export class FeatureModuleComponent implements OnInit{
       this.withoutWrapperPages = this.withoutWrapperPagesArray.includes(this.base);
       this.withoutLayouts = this.withoutLayoutArray.includes(this.base);
 
-      if(this.showPreloaderState === '1'){
+      if (this.showPreloaderState === '1') {
         this.showPreloader = true;
         setTimeout(() => {
           this.showPreloader = false;
         }, 2000);
-      }else {
+      } else {
         this.showPreloader = false;
-
       }
     });
     this.common.page.subscribe((res: string) => {
@@ -136,7 +175,7 @@ export class FeatureModuleComponent implements OnInit{
     }
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.data.collapse$.subscribe((collapse: boolean) => {
       this.isCollapsed = collapse;
     });
@@ -144,5 +183,5 @@ export class FeatureModuleComponent implements OnInit{
     // setTimeout(() => {
     //   this.showPreloader = false;
     // }, 2000);
-}
+  }
 }

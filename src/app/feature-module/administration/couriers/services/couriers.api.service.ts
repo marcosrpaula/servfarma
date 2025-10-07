@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
@@ -10,14 +10,10 @@ import {
   ListCouriersParams,
   ServedCityInput,
 } from '../../../../shared/models/couriers';
-import {
-  PagedResult,
-  RawPagedResult,
-  mapRawPaged,
-} from '../../../../shared/models/pagination';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import { buildHttpParams } from '../../../../shared/utils/http-params';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class CouriersApiService {
   private readonly baseUrl = `${environment.apiBaseUrl}/api/v1/couriers`;
 
@@ -52,22 +48,20 @@ export class CouriersApiService {
     return this.http.put<CourierWithCitiesViewModel>(`${this.baseUrl}/${id}`, input);
   }
 
-  addServedCities(
-    id: string,
-    payload: ServedCityInput
-  ): Observable<CourierWithCitiesViewModel> {
+  addServedCities(id: string, payload: ServedCityInput): Observable<CourierWithCitiesViewModel> {
     return this.http.post<CourierWithCitiesViewModel>(
       `${this.baseUrl}/${id}/served-cities`,
-      payload
+      payload,
     );
   }
 
-  removeServedCities(
-    id: string,
-    payload: ServedCityInput
-  ): Observable<CourierWithCitiesViewModel> {
-    return this.http.request<CourierWithCitiesViewModel>("DELETE", `${this.baseUrl}/${id}/served-cities`, {
-      body: payload,
-    });
+  removeServedCities(id: string, payload: ServedCityInput): Observable<CourierWithCitiesViewModel> {
+    return this.http.request<CourierWithCitiesViewModel>(
+      'DELETE',
+      `${this.baseUrl}/${id}/served-cities`,
+      {
+        body: payload,
+      },
+    );
   }
 }

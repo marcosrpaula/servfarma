@@ -25,12 +25,15 @@
       </div>
 
       <div class="card-body border-bottom border-bottom-dashed">
-        <div class="row g-3 align-items-end">
+        <form
+          class="row g-3 align-items-end"
+          [formGroup]="filtersForm"
+          (ngSubmit)="aplicarFiltros()"
+        >
           <div class="col-xxl-3 col-lg-3 col-md-6 col-sm-6">
             <div class="search-box w-100">
               <input
-                [(ngModel)]="filtroNome"
-                (keyup.enter)="aplicarFiltros()"
+                formControlName="name"
                 type="text"
                 class="form-control"
                 placeholder="Buscar por nome"
@@ -41,19 +44,18 @@
           <div class="col-xxl-3 col-lg-3 col-md-6 col-sm-6">
             <div class="search-box w-100">
               <input
-                [(ngModel)]="filtroCodigo"
-                (keyup.enter)="aplicarFiltros()"
+                formControlName="bankCode"
                 type="text"
                 class="form-control"
-                placeholder="Buscar por codigo"
+                placeholder="Buscar por código"
               />
               <i class="ri-search-line search-icon"></i>
             </div>
           </div>
           <div class="col-xxl-3 col-lg-3 col-md-6 col-sm-6">
             <div class="w-100">
-              <select class="form-select" [(ngModel)]="filtroAtivo">
-                <option value="" selected>Todos</option>
+              <select class="form-select" formControlName="isActive">
+                <option value="">Status</option>
                 <option value="true">Ativo</option>
                 <option value="false">Inativo</option>
               </select>
@@ -61,17 +63,21 @@
           </div>
           <div class="col-xxl-3 col-lg-3 col-md-6 col-sm-12">
             <div class="d-flex flex-wrap align-items-center gap-2 justify-content-md-end w-100">
-              <button type="button" class="btn btn-primary d-inline-flex align-items-center" (click)="aplicarFiltros()">
+              <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
                 <i class="ri-search-line me-1"></i>
                 <span>Aplicar</span>
               </button>
-              <button type="button" class="btn btn-soft-secondary d-inline-flex align-items-center" (click)="limparFiltros()">
+              <button
+                type="button"
+                class="btn btn-soft-secondary d-inline-flex align-items-center"
+                (click)="limparFiltros()"
+              >
                 <i class="ri-refresh-line me-1"></i>
                 <span>Limpar</span>
               </button>
             </div>
           </div>
-        </div>
+        </form>
       </div>
 
       <div class="card-body">
@@ -101,110 +107,133 @@
             <thead class="table-light text-muted">
               <tr>
                 <th
-                  scope="col"
                   class="sort"
-                  (click)="toggleSort('name')"
-                  (keydown.enter)="toggleSort('name')"
+                  (click)="toggleSort('Name')"
+                  (keydown.enter)="toggleSort('Name')"
                   role="button"
                   tabindex="0"
                 >
                   Nome
-                  <span class="sort-icon"><i *ngIf="orderBy === 'name'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'Name'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
                 <th
-                  scope="col"
                   class="sort"
-                  (click)="toggleSort('bank_code')"
-                  (keydown.enter)="toggleSort('bank_code')"
+                  (click)="toggleSort('Code')"
+                  (keydown.enter)="toggleSort('Code')"
                   role="button"
                   tabindex="0"
                 >
-                  Codigo
-                  <span class="sort-icon"><i *ngIf="orderBy === 'bank_code'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  Código
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'Code'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
                 <th
-                  scope="col"
                   class="sort"
-                  (click)="toggleSort('created_at')"
-                  (keydown.enter)="toggleSort('created_at')"
+                  (click)="toggleSort('CreatedDate')"
+                  (keydown.enter)="toggleSort('CreatedDate')"
                   role="button"
                   tabindex="0"
                 >
                   Criado em
-                  <span class="sort-icon"><i *ngIf="orderBy === 'created_at'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'CreatedDate'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
                 <th
-                  scope="col"
                   class="sort"
-                  (click)="toggleSort('is_active')"
-                  (keydown.enter)="toggleSort('is_active')"
+                  (click)="toggleSort('Status')"
+                  (keydown.enter)="toggleSort('Status')"
                   role="button"
                   tabindex="0"
                 >
                   Status
-                  <span class="sort-icon"><i *ngIf="orderBy === 'is_active'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i></span>
+                  <span class="sort-icon">
+                    <i
+                      *ngIf="orderLabel === 'Status'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
+                  </span>
                 </th>
-                <th scope="col" class="text-end">Acoes</th>
+                <th class="text-end">Ações</th>
               </tr>
             </thead>
             <tbody>
-              @if (carregando) {
-              <tr>
-                <td colspan="5" class="py-5 text-center">
-                  <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Aguarde...</span>
-                  </div>
-                </td>
-              </tr>
-              } @else {
-                @if (tableData.length === 0) {
+              @for (row of tableData(); track row.id) {
+                <tr>
+                  <td>
+                    <h6 class="fw-medium mb-0">{{ row.name }}</h6>
+                  </td>
+                  <td>{{ row.bankCode || '-' }}</td>
+                  <td>{{ row.createdAt | date: 'short' }}</td>
+                  <td>
+                    <span
+                      class="badge d-inline-flex align-items-center"
+                      [ngClass]="
+                        row.isActive
+                          ? 'badge-soft-success text-success'
+                          : 'badge-soft-danger text-danger'
+                      "
+                    >
+                      <i class="ri-circle-fill fs-8 me-1"></i
+                      >{{ row.isActive ? 'Ativo' : 'Inativo' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="hstack justify-content-end gap-2">
+                      <a
+                        class="btn btn-sm btn-soft-info"
+                        *appHasReadOnlyPermission="'banks'"
+                        [routerLink]="[row.id, 'view']"
+                        [state]="{ bank: row }"
+                        placement="top"
+                        tooltip="Visualizar"
+                      >
+                        <i class="ri-eye-line"></i>
+                      </a>
+                      <a
+                        class="btn btn-sm btn-soft-warning"
+                        *appHasPermission="{ module: 'banks', level: 'write' }"
+                        [routerLink]="[row.id, 'edit']"
+                        placement="top"
+                        tooltip="Editar"
+                      >
+                        <i class="ri-edit-line"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (carregando()) {
+                <tr>
+                  <td colspan="5" class="py-5 text-center">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Aguarde...</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+              @if (semResultados()) {
                 <tr>
                   <td colspan="5" class="py-5 text-center">
                     <h5 class="text-muted mb-0">Nenhum registro encontrado</h5>
                   </td>
                 </tr>
-                } @else {
-                  @for (row of tableData; track row) {
-                  <tr>
-                    <td>
-                      <h6 class="fw-medium mb-0">{{ row.name }}</h6>
-                    </td>
-                    <td>{{ row.bankCode || '-' }}</td>
-                    <td>{{ row.createdAt | date: 'short' }}</td>
-                    <td>
-                      <span
-                        class="badge d-inline-flex align-items-center"
-                        [ngClass]="row.isActive ? 'badge-soft-success text-success' : 'badge-soft-danger text-danger'"
-                      >
-                        <i class="ri-circle-fill fs-8 me-1"></i>{{ row.isActive ? 'Ativo' : 'Inativo' }}
-                      </span>
-                    </td>
-                    <td>
-                      <div class="hstack justify-content-end gap-2">
-                        <a
-                          class="btn btn-sm btn-soft-info"
-                          *appHasReadOnlyPermission="'banks'"
-                          [routerLink]="[row.id, 'view']"
-                          [state]="{ bank: row }"
-                          placement="top"
-                          tooltip="Visualizar"
-                        >
-                          <i class="ri-eye-line"></i>
-                        </a>
-                        <a
-                          class="btn btn-sm btn-soft-warning"
-                          *appHasPermission="{ module: 'banks', level: 'write' }"
-                          [routerLink]="[row.id, 'edit']"
-                          placement="top"
-                          tooltip="Editar"
-                        >
-                          <i class="ri-edit-line"></i>
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                  }
-                }
               }
             </tbody>
           </table>

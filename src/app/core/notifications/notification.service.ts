@@ -1,5 +1,5 @@
-﻿import { Injectable, NgZone } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Injectable, NgZone } from '@angular/core';
 import { MessageService } from 'primeng/api';
 
 export interface ValidationErrorEntry {
@@ -20,7 +20,10 @@ export type NormalizedHttpError = HttpErrorResponse & { normalizedError: Normali
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  constructor(private readonly messageService: MessageService, private readonly zone: NgZone) {}
+  constructor(
+    private readonly messageService: MessageService,
+    private readonly zone: NgZone,
+  ) {}
 
   success(detail: string, summary = 'Operação concluída'): void {
     this.zone.run(() => {
@@ -55,7 +58,7 @@ export class NotificationService {
       if (normalized.validationErrors.length > 0) {
         const detail = this.composeValidationDetail(
           normalized.message,
-          normalized.validationErrors
+          normalized.validationErrors,
         );
         this.messageService.clear('validation');
         this.messageService.add({
@@ -104,7 +107,7 @@ export class NotificationService {
       if (rawErrors && typeof rawErrors === 'object') {
         Object.entries(rawErrors).forEach(([field, fieldErrors]) => {
           const messages = Array.isArray(fieldErrors)
-            ? fieldErrors.map(item => String(item))
+            ? fieldErrors.map((item) => String(item))
             : [String(fieldErrors)];
           validationErrors.push({ field, messages });
         });
@@ -178,7 +181,7 @@ export class NotificationService {
 
   private composeValidationDetail(
     message: string | undefined,
-    entries: ValidationErrorEntry[]
+    entries: ValidationErrorEntry[],
   ): string {
     const normalizedMessage =
       message && message.trim().length > 0
@@ -188,13 +191,13 @@ export class NotificationService {
     if (items.length === 0) {
       return normalizedMessage;
     }
-    const bulletList = items.map(item => `• ${item}`).join('\n');
+    const bulletList = items.map((item) => `• ${item}`).join('\n');
     return `${normalizedMessage}\n${bulletList}`;
   }
 
   private normalizeEntries(entries: ValidationErrorEntry[]): string[] {
     return entries
-      .map(entry => {
+      .map((entry) => {
         const label = entry.field ? this.formatField(entry.field) : '';
         const messages = this.normalizeMessages(entry);
         const text = messages.join(' ');
@@ -203,14 +206,14 @@ export class NotificationService {
         }
         return label ? `${label}: ${text}` : text;
       })
-      .filter(item => item.trim().length > 0);
+      .filter((item) => item.trim().length > 0);
   }
 
   private formatField(field: string): string {
     return field
       .replace(/[_-]+/g, ' ')
       .split(' ')
-      .map(chunk => (chunk ? chunk[0].toUpperCase() + chunk.slice(1).toLowerCase() : chunk))
+      .map((chunk) => (chunk ? chunk[0].toUpperCase() + chunk.slice(1).toLowerCase() : chunk))
       .join(' ')
       .trim();
   }
@@ -221,8 +224,8 @@ export class NotificationService {
     }
 
     return error.messages
-      .map(message => this.normalizeMessage(message))
-      .filter(text => text.trim().length > 0);
+      .map((message) => this.normalizeMessage(message))
+      .filter((text) => text.trim().length > 0);
   }
 
   private normalizeMessage(message: string | undefined): string {

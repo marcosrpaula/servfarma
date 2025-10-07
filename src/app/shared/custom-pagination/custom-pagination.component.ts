@@ -1,11 +1,6 @@
-﻿import { Component } from '@angular/core';
-import {
-  pageSelection,
-  pageSize,
-  pageSizeCal,
-  PaginationService,
-} from './pagination.service';
+import { Component } from '@angular/core';
 import { routes } from '../routes/routes';
+import { pageSelection, pageSize, pageSizeCal, PaginationService } from './pagination.service';
 
 @Component({
   selector: 'app-custom-pagination',
@@ -45,12 +40,7 @@ export class CustomPaginationComponent {
       }
     });
     this.pagination.calculatePageSize.subscribe((res: pageSizeCal) => {
-      this.calculateTotalPages(
-        res.totalData,
-        res.pageSize,
-        res.tableData,
-        res.serialNumberArray,
-      );
+      this.calculateTotalPages(res.totalData, res.pageSize, res.tableData, res.serialNumberArray);
     });
     this.pagination.changePagesize.subscribe((res: pageSize) => {
       this.changePageSize(res.pageSize);
@@ -145,4 +135,3 @@ export class CustomPaginationComponent {
     }
   }
 }
-

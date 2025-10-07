@@ -3,17 +3,16 @@ import { interval } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-item-details',
-    templateUrl: './item-details.component.html',
-    styleUrls: ['./item-details.component.scss'],
-    standalone: false
+  selector: 'app-item-details',
+  templateUrl: './item-details.component.html',
+  styleUrls: ['./item-details.component.scss'],
+  standalone: false,
 })
 
 /**
  * ItemDetails Component
  */
 export class ItemDetailsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   // set the current year
@@ -25,7 +24,7 @@ export class ItemDetailsComponent implements OnInit {
   _minutes?: number;
   _seconds?: number;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     // Date Set
@@ -36,22 +35,23 @@ export class ItemDetailsComponent implements OnInit {
     /**
      * Count date set
      */
-    interval(1000).pipe(map((x) => {
-      this._diff = Date.parse(this._trialEndsAt) - Date.parse(new Date().toString());
-    })).subscribe((x) => {
-      this._days = this.getDays(this._diff);
-      this._hours = this.getHours(this._diff);
-      this._minutes = this.getMinutes(this._diff);
-      this._seconds = this.getSeconds(this._diff);
-    });
+    interval(1000)
+      .pipe(
+        map((x) => {
+          this._diff = Date.parse(this._trialEndsAt) - Date.parse(new Date().toString());
+        }),
+      )
+      .subscribe((x) => {
+        this._days = this.getDays(this._diff);
+        this._hours = this.getHours(this._diff);
+        this._minutes = this.getMinutes(this._diff);
+        this._seconds = this.getSeconds(this._diff);
+      });
 
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'NFT Marketplace' },
-      { label: 'Item Details', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'NFT Marketplace' }, { label: 'Item Details', active: true }];
   }
 
   /**
@@ -81,5 +81,4 @@ export class ItemDetailsComponent implements OnInit {
   getSeconds(t: number) {
     return Math.floor((t / 1000) % 60);
   }
-
 }

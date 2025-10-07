@@ -1,15 +1,14 @@
 import {
-  ChartComponent,
   ApexAxisChartSeries,
   ApexChart,
-  ApexFill,
-  ApexXAxis,
   ApexDataLabels,
-  ApexYAxis,
+  ApexFill,
+  ApexTheme,
   ApexTitleSubtitle,
   ApexTooltip,
-  ApexTheme
-} from "ng-apexcharts";
+  ApexXAxis,
+  ApexYAxis,
+} from 'ng-apexcharts';
 
 export type ChartOptions = {
   series?: ApexAxisChartSeries | any;
@@ -21,5 +20,5 @@ export type ChartOptions = {
   dataLabels?: ApexDataLabels;
   colors?: string[];
   tooltip?: ApexTooltip;
-  theme?: ApexTheme
+  theme?: ApexTheme;
 };

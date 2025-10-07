@@ -2,37 +2,33 @@ import { Component, OnInit } from '@angular/core';
 import { chatMessagesData } from 'src/app/core/data/advancedForm';
 
 @Component({
-    selector: 'app-advanced',
-    templateUrl: './advanced.component.html',
-    styleUrls: ['./advanced.component.scss'],
-    standalone: false
+  selector: 'app-advanced',
+  templateUrl: './advanced.component.html',
+  styleUrls: ['./advanced.component.scss'],
+  standalone: false,
 })
 
 /**
  * Advanced Component
  */
 export class AdvancedComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-     this.breadCrumbItems = [
-      { label: 'Forms' },
-      { label: 'Form Advanced', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Forms' }, { label: 'Form Advanced', active: true }];
   }
 
   /**
    * Default Select2
    */
-   selectedAccount = 'This is a placeholder';
-   public Default = chatMessagesData;
+  selectedAccount = 'This is a placeholder';
+  public Default = chatMessagesData;
 
   keyword = 'name';
   // Fruit Data
@@ -76,7 +72,7 @@ export class AdvancedComponent implements OnInit {
     {
       id: 10,
       name: 'Orange',
-    }
+    },
   ];
 
   // Cars Data
@@ -148,24 +144,23 @@ export class AdvancedComponent implements OnInit {
     {
       id: 17,
       name: 'Volkswagen',
-    }
+    },
   ];
 
-  selectEvent(item: any) {  }
+  selectEvent(item: any) {}
   onChangeSearch(search: string) {}
-  onFocused(e: any) { }
+  onFocused(e: any) {}
 
-  
   // Default
   counter = 0;
   increment() {
     this.counter++;
   }
-  
+
   decrement() {
     this.counter--;
   }
-  
+
   // Light
   lightcounter = 5;
   lightincrement() {
@@ -255,5 +250,4 @@ export class AdvancedComponent implements OnInit {
   dangerincrement() {
     this.dangercounter++;
   }
-
 }

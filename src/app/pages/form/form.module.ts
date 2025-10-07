@@ -1,5 +1,5 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 // Select Droup down
@@ -11,7 +11,7 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 // Color Picker
 import { ColorPickerModule } from 'ngx-color-picker';
 // Mask
-import { NgxMaskDirective, NgxMaskPipe, provideNgxMask, IConfig } from 'ngx-mask';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 // Ngx Sliders
 import { NgxSliderModule } from 'ngx-slider-v2';
 //Wizard
@@ -20,36 +20,34 @@ import { NgStepperModule } from 'angular-ng-stepper';
 // Ck Editer
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 // Drop Zone
-import { DropzoneModule } from 'ngx-dropzone-wrapper';
-import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
-import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { DropzoneConfigInterface, DropzoneModule } from 'ngx-dropzone-wrapper';
 // Auto Complate
 import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 
 // Load Icons
-import { defineElement } from "@lordicon/element";
+import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
 
 // Component pages
-import { FormRoutingModule } from './form-routing.module';
 import { SharedModule } from '../../shared/shared.module';
-import { BasicComponent } from './basic/basic.component';
-import { SelectComponent } from './select/select.component';
-import { CheckboxsRadiosComponent } from './checkboxs-radios/checkboxs-radios.component';
-import { PickersComponent } from './pickers/pickers.component';
-import { MasksComponent } from './masks/masks.component';
 import { AdvancedComponent } from './advanced/advanced.component';
-import { RangeSlidersComponent } from './range-sliders/range-sliders.component';
-import { ValidationComponent } from './validation/validation.component';
-import { WizardComponent } from './wizard/wizard.component';
+import { BasicComponent } from './basic/basic.component';
+import { CheckboxsRadiosComponent } from './checkboxs-radios/checkboxs-radios.component';
 import { EditorsComponent } from './editors/editors.component';
 import { FileUploadsComponent } from './file-uploads/file-uploads.component';
+import { FormRoutingModule } from './form-routing.module';
 import { LayoutsComponent } from './layouts/layouts.component';
+import { MasksComponent } from './masks/masks.component';
+import { PickersComponent } from './pickers/pickers.component';
+import { RangeSlidersComponent } from './range-sliders/range-sliders.component';
+import { SelectComponent } from './select/select.component';
+import { ValidationComponent } from './validation/validation.component';
+import { WizardComponent } from './wizard/wizard.component';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: 'https://httpbin.org/post',
   maxFilesize: 50,
-  acceptedFiles: 'image/*'
+  acceptedFiles: 'image/*',
 };
 
 @NgModule({
@@ -65,7 +63,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     WizardComponent,
     EditorsComponent,
     FileUploadsComponent,
-    LayoutsComponent
+    LayoutsComponent,
   ],
   imports: [
     CommonModule,
@@ -88,10 +86,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     SharedModule,
     DropzoneModule,
   ],
-  providers: [
-    provideNgxMask(),
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  providers: [provideNgxMask()],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class FormModule {
   constructor() {

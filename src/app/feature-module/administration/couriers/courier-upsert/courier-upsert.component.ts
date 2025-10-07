@@ -1,26 +1,19 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import {
   AbstractControl,
-  FormArray,
   FormBuilder,
-  FormControl,
   FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { CouriersApiService } from '../services/couriers.api.service';
-import { CouriersStateService } from '../services/couriers-state.service';
-import {
-  CourierCompaniesApiService,
-} from '../../courier-companies/services/courier-companies.api.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
-import { SharedModule } from '../../../../shared/shared.module';
 import {
-  CitySimpleViewModel, CityViewModel,
+  CitySimpleViewModel,
+  CityViewModel,
   StateSimpleViewModel,
 } from '../../../../shared/models/addresses';
 import {
@@ -30,6 +23,10 @@ import {
   CourierWithCitiesViewModel,
   ServedCityInput,
 } from '../../../../shared/models/couriers';
+import { SharedModule } from '../../../../shared/shared.module';
+import { CourierCompaniesApiService } from '../../courier-companies/services/courier-companies.api.service';
+import { CouriersStateService } from '../services/couriers-state.service';
+import { CouriersApiService } from '../services/couriers.api.service';
 const requireAtLeastOneSelection = (control: AbstractControl): ValidationErrors | null => {
   const value = control.value;
   if (Array.isArray(value)) {
@@ -42,7 +39,7 @@ const requireAtLeastOneSelection = (control: AbstractControl): ValidationErrors 
   selector: 'app-courier-upsert',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, SharedModule],
-  templateUrl: './courier-upsert.component.html'
+  templateUrl: './courier-upsert.component.html',
 })
 export class CourierUpsertComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -53,7 +50,7 @@ export class CourierUpsertComponent implements OnInit {
   private courierCompaniesApi = inject(CourierCompaniesApiService);
   private locationsApi = inject(LocationsApiService);
   private notifications = inject(NotificationService);
-  
+
   id = signal<string | null>(null);
   isReadOnly = signal(false);
   title = computed(() => {
@@ -124,7 +121,9 @@ export class CourierUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const courier = this.resolveCourierForReadOnly();
         if (!courier) {
-          this.notifications.error('Nao foi possivel carregar os dados do entregador para visualizacao. Abra novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados do entregador para visualizacao. Abra novamente a partir da listagem.',
+          );
           this.router.navigate(['/couriers']);
           return;
         }
@@ -206,8 +205,8 @@ export class CourierUpsertComponent implements OnInit {
     const courierCompanyIds: string[] = Array.isArray(value.courierCompanyIds)
       ? value.courierCompanyIds.filter((id: string) => !!id).map((id: string) => String(id))
       : value.courierCompanyIds
-      ? [String(value.courierCompanyIds)]
-      : [];
+        ? [String(value.courierCompanyIds)]
+        : [];
 
     if (!courierCompanyIds.length) {
       companiesControl?.setErrors({ required: true });
@@ -226,7 +225,10 @@ export class CourierUpsertComponent implements OnInit {
       code: value.code || null,
       observation: value.observation || null,
       adValoremRule:
-        adValoremRate !== null && adValoremRate !== '' && adValoremMin !== null && adValoremMin !== ''
+        adValoremRate !== null &&
+        adValoremRate !== '' &&
+        adValoremMin !== null &&
+        adValoremMin !== ''
           ? {
               rate: Number(adValoremRate),
               minGoodsValue: Number(adValoremMin),
@@ -330,7 +332,7 @@ export class CourierUpsertComponent implements OnInit {
           referencePoint: address.referencePoint ?? '',
           neighborhood: address.neighborhood ?? '',
         },
-        { emitEvent: false }
+        { emitEvent: false },
       );
       this.applyPendingAddressSelection();
     } else {
@@ -345,7 +347,7 @@ export class CourierUpsertComponent implements OnInit {
           referencePoint: '',
           neighborhood: '',
         },
-        { emitEvent: false }
+        { emitEvent: false },
       );
       this.form.get('address.stateId')?.setValue('', { emitEvent: false });
       this.form.get('address.cityId')?.setValue('', { emitEvent: false });
@@ -370,7 +372,9 @@ export class CourierUpsertComponent implements OnInit {
       return { ...fromNavigation };
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const candidate = (history.state as Record<string, unknown>)['courier'] as CourierViewModel | undefined;
+      const candidate = (history.state as Record<string, unknown>)['courier'] as
+        | CourierViewModel
+        | undefined;
       if (candidate) {
         return { ...candidate };
       }
@@ -385,7 +389,9 @@ export class CourierUpsertComponent implements OnInit {
     if (!this.states || this.states.length === 0) {
       return;
     }
-    const matching = this.states.find((s) => s.abbreviation === this.pendingAddressStateAbbreviation);
+    const matching = this.states.find(
+      (s) => s.abbreviation === this.pendingAddressStateAbbreviation,
+    );
     if (matching) {
       this.form.get('address.stateId')?.setValue(matching.id, { emitEvent: false });
       this.loadAddressCities(matching, true);
@@ -400,7 +406,7 @@ export class CourierUpsertComponent implements OnInit {
         this.states = res.items || [];
         if (this.pendingAddressStateAbbreviation) {
           const state = this.states.find(
-            (s) => s.abbreviation === this.pendingAddressStateAbbreviation
+            (s) => s.abbreviation === this.pendingAddressStateAbbreviation,
           );
           if (state) {
             this.form.get('address.stateId')?.setValue(state.id, { emitEvent: false });
@@ -442,15 +448,3 @@ export class CourierUpsertComponent implements OnInit {
       });
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,38 +1,36 @@
-import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 
 // Calendar option
-import { CalendarOptions, DateSelectArg, EventClickArg, EventApi } from '@fullcalendar/core';
-import interactionPlugin from '@fullcalendar/interaction';
+import { CalendarOptions, EventApi, EventClickArg, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
-import { EventInput } from '@fullcalendar/core';
+import timeGridPlugin from '@fullcalendar/timegrid';
 
 // BootStrap
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UntypedFormBuilder, Validators, UntypedFormGroup } from '@angular/forms';
 // Sweet Alert
 import Swal from 'sweetalert2';
 
 // Calendar Services
-import { restApiService } from "../../../../core/services/rest-api.service";
+import { restApiService } from '../../../../core/services/rest-api.service';
 
 import { DatePipe } from '@angular/common';
 import { calendarEvents, category } from 'src/app/core/data';
 import { createEventId } from 'src/app/core/data/calendar';
 
 @Component({
-    selector: 'app-calendar',
-    templateUrl: './calendar.component.html',
-    styleUrls: ['./calendar.component.scss'],
-    standalone: false
+  selector: 'app-calendar',
+  templateUrl: './calendar.component.html',
+  styleUrls: ['./calendar.component.scss'],
+  standalone: false,
 })
 
 /**
  * Calendar Component
  */
 export class CalendarComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
@@ -43,23 +41,25 @@ export class CalendarComponent implements OnInit {
   newEventDate: any;
   category!: any[];
   submitted = false;
-  isEditMode: boolean = false
+  isEditMode: boolean = false;
   // Calendar click Event
   formData!: UntypedFormGroup;
   @ViewChild('editmodalShow') editmodalShow!: TemplateRef<any>;
-  @ViewChild('modalShow') modalShow !: TemplateRef<any>;
+  @ViewChild('modalShow') modalShow!: TemplateRef<any>;
 
-  constructor(private modalService: NgbModal, private formBuilder: UntypedFormBuilder, private changeDetector: ChangeDetectorRef,
-    private datePipe: DatePipe, private restApiService: restApiService) { }
+  constructor(
+    private modalService: NgbModal,
+    private formBuilder: UntypedFormBuilder,
+    private changeDetector: ChangeDetectorRef,
+    private datePipe: DatePipe,
+    private restApiService: restApiService,
+  ) {}
 
   ngOnInit(): void {
     /**
      * BreadCrumb
      */
-    this.breadCrumbItems = [
-      { label: 'Apps' },
-      { label: 'Calendar', active: true }
-    ];
+    this.breadCrumbItems = [{ label: 'Apps' }, { label: 'Calendar', active: true }];
 
     // Validation
     this.formData = this.formBuilder.group({
@@ -69,7 +69,7 @@ export class CalendarComponent implements OnInit {
       description: ['', [Validators.required]],
       date: ['', Validators.required],
       start: ['', Validators.required],
-      end: ['', Validators.required]
+      end: ['', Validators.required],
     });
 
     this._fetchData();
@@ -83,35 +83,34 @@ export class CalendarComponent implements OnInit {
     this.category = category;
 
     // Calender Event Data
-    // this.calendarEvents = calendarEvents; 
-    this.restApiService.getCalendarData().subscribe(
-      data => {
-        const users = JSON.parse(data);
-        this.calendarEvents = users.data;
-        this.calendarOptions.initialEvents = this.calendarEvents.map(
-          (evt: any) => {
-            return { date: evt.start, title: evt.title, className: evt.className, location: evt.location, description: evt.description }
-          })
+    // this.calendarEvents = calendarEvents;
+    this.restApiService.getCalendarData().subscribe((data) => {
+      const users = JSON.parse(data);
+      this.calendarEvents = users.data;
+      this.calendarOptions.initialEvents = this.calendarEvents.map((evt: any) => {
+        return {
+          date: evt.start,
+          title: evt.title,
+          className: evt.className,
+          location: evt.location,
+          description: evt.description,
+        };
       });
+    });
   }
 
   /***
-  * Calender Set
-  */
+   * Calender Set
+   */
   calendarOptions: CalendarOptions = {
-    plugins: [
-      interactionPlugin,
-      dayGridPlugin,
-      timeGridPlugin,
-      listPlugin,
-    ],
+    plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
     headerToolbar: {
       right: 'dayGridMonth,dayGridWeek,dayGridDay,listWeek',
       center: 'title',
-      left: 'prev,next today'
+      left: 'prev,next today',
     },
-    initialView: "dayGridMonth",
-    themeSystem: "bootstrap",
+    initialView: 'dayGridMonth',
+    themeSystem: 'bootstrap',
     initialEvents: this.calendarEvents || calendarEvents,
     weekends: true,
     editable: true,
@@ -128,10 +127,10 @@ export class CalendarComponent implements OnInit {
    */
   openModal(event?: any) {
     this.submitted = false;
-    this.newEventDate = event,
+    ((this.newEventDate = event),
       this.formBuilder.group({
-        editDate: this.newEventDate.date
-      })
+        editDate: this.newEventDate.date,
+      }));
     this.modalService.open(this.modalShow, { centered: true });
   }
 
@@ -148,7 +147,7 @@ export class CalendarComponent implements OnInit {
       document.getElementById('form-event')?.classList.add('view-event');
       var modaltitle = document.querySelector('.modal-title') as HTMLAreaElement;
       modaltitle.innerHTML = this.editEvent.title;
-      (document.getElementById('btn-save-event') as HTMLElement).setAttribute("hidden", "true");
+      (document.getElementById('btn-save-event') as HTMLElement).setAttribute('hidden', 'true');
     }, 100);
 
     this.formData = this.formBuilder.group({
@@ -157,8 +156,8 @@ export class CalendarComponent implements OnInit {
       location: clickInfo.event.extendedProps['location'],
       description: clickInfo.event.extendedProps['description'],
       date: clickInfo.event.start,
-      start: (clickInfo.event.start ? clickInfo.event.start : ''),
-      end: (clickInfo.event.end ? clickInfo.event.end : '')
+      start: clickInfo.event.start ? clickInfo.event.start : '',
+      end: clickInfo.event.end ? clickInfo.event.end : '',
     });
     this.modalService.open(this.modalShow, { centered: true });
   }
@@ -169,15 +168,15 @@ export class CalendarComponent implements OnInit {
       document.getElementById('form-event')?.classList.add('view-event');
       var editbtn = document.querySelector('#edit-event-btn') as HTMLAreaElement;
       editbtn.innerHTML = 'Edit';
-      (document.getElementById('btn-save-event') as HTMLElement).setAttribute("hidden", "true");
+      (document.getElementById('btn-save-event') as HTMLElement).setAttribute('hidden', 'true');
     } else {
       document.getElementById('form-event')?.classList.remove('view-event');
-      (document.getElementById('btn-save-event') as HTMLElement).removeAttribute("hidden");
+      (document.getElementById('btn-save-event') as HTMLElement).removeAttribute('hidden');
 
       var modalbtn = document.querySelector('#btn-save-event') as HTMLAreaElement;
-      modalbtn.innerHTML = "Update Event"
+      modalbtn.innerHTML = 'Update Event';
       var editbtn = document.querySelector('#edit-event-btn') as HTMLAreaElement;
-      editbtn.innerHTML = 'Cancel'
+      editbtn.innerHTML = 'Cancel';
     }
   }
 
@@ -186,7 +185,6 @@ export class CalendarComponent implements OnInit {
    * @param events events
    */
   handleEvents(events: EventApi[]) {
-
     this.currentEvents = events;
     this.changeDetector.detectChanges();
   }
@@ -202,7 +200,7 @@ export class CalendarComponent implements OnInit {
       description: '',
       date: '',
       start: '',
-      end: ''
+      end: '',
     });
     this.modalService.dismissAll();
   }
@@ -240,10 +238,9 @@ export class CalendarComponent implements OnInit {
     return this.formData.controls;
   }
 
-
   /**
-  * Save the event
-  */
+   * Save the event
+   */
 
   saveEvent() {
     if (document.querySelector('#btn-save-event')?.innerHTML == 'Add Event') {
@@ -251,8 +248,8 @@ export class CalendarComponent implements OnInit {
         const className = this.formData.get('category')!.value;
         const title = this.formData.get('title')!.value;
         const location = this.formData.get('location')!.value;
-        const description = this.formData.get('description')!.value
-        const date = this.formData.get('date')!.value
+        const description = this.formData.get('description')!.value;
+        const date = this.formData.get('date')!.value;
         const starttime = this.formData.get('start')!.value;
         const endtime = this.formData.get('end')!.value;
         const yy = new Date(date).getFullYear();
@@ -272,7 +269,7 @@ export class CalendarComponent implements OnInit {
           end,
           location,
           description,
-          className: className
+          className: className,
         });
         this.position();
         this.formData = this.formBuilder.group({
@@ -282,13 +279,13 @@ export class CalendarComponent implements OnInit {
           description: '',
           date: '',
           start: '',
-          end: ''
+          end: '',
         });
         this.modalService.dismissAll();
         this.submitted = true;
       }
     } else {
-      this.editEventSave()
+      this.editEventSave();
     }
   }
 
@@ -296,7 +293,6 @@ export class CalendarComponent implements OnInit {
    * save edit event data
    */
   editEventSave() {
-
     const editTitle = this.formData.get('title')!.value;
     const editCategory = this.formData.get('category')!.value;
     const editdate = this.formData.get('date')!.value;
@@ -305,9 +301,7 @@ export class CalendarComponent implements OnInit {
     const editlocation = this.formData.get('location')!.value;
     const editdescription = this.formData.get('description')!.value;
 
-    const editId = this.calendarEvents.findIndex(
-      (x) => x.id + '' === this.editEvent.id + ''
-    );
+    const editId = this.calendarEvents.findIndex((x) => x.id + '' === this.editEvent.id + '');
 
     this.editEvent.setProp('title', editTitle);
     this.editEvent.setProp('classNames', editCategory);
@@ -333,7 +327,7 @@ export class CalendarComponent implements OnInit {
       description: '',
       date: '',
       start: '',
-      end: ''
+      end: '',
     });
     this.modalService.dismissAll();
   }
@@ -344,7 +338,7 @@ export class CalendarComponent implements OnInit {
   confirm() {
     Swal.fire({
       title: 'Are you sure?',
-      text: 'You won\'t be able to revert this!',
+      text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#34c38f',
@@ -365,6 +359,4 @@ export class CalendarComponent implements OnInit {
     this.editEvent.remove();
     this.modalService.dismissAll();
   }
-
-
 }

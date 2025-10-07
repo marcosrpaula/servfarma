@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnInit, NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { NgbDropdownModule, NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 
 // Simple bar
@@ -12,20 +12,19 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
 import { ScrollToModule } from '@nicky-lenaers/ngx-scroll-to';
 
 // Load Icon
-import { defineElement } from "@lordicon/element";
+import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
 
 // Component pages
-import { AsvanceUiRoutingModule } from './advance-ui-routing.module';
 import { SharedModule } from '../../shared/shared.module';
-import { SweetalertsComponent } from './sweetalerts/sweetalerts.component';
-import { ScrollbarComponent } from './scrollbar/scrollbar.component';
-import { TourComponent } from './tour/tour.component';
-import { SwipersComponent } from './swiper/swiper.component';
-import { RatingsComponent } from './ratings/ratings.component';
+import { AsvanceUiRoutingModule } from './advance-ui-routing.module';
 import { HighlightComponent } from './highlight/highlight.component';
+import { RatingsComponent } from './ratings/ratings.component';
+import { ScrollbarComponent } from './scrollbar/scrollbar.component';
 import { ScrollspyComponent } from './scrollspy/scrollspy.component';
-
+import { SweetalertsComponent } from './sweetalerts/sweetalerts.component';
+import { SwipersComponent } from './swiper/swiper.component';
+import { TourComponent } from './tour/tour.component';
 
 @NgModule({
   declarations: [
@@ -45,9 +44,9 @@ import { ScrollspyComponent } from './scrollspy/scrollspy.component';
     AsvanceUiRoutingModule,
     SlickCarouselModule,
     SharedModule,
-    ScrollToModule.forRoot()
+    ScrollToModule.forRoot(),
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AdvanceUiModule {
   constructor() {

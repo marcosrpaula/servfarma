@@ -1,22 +1,18 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { environment } from "../../../../config/environment";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../../config/environment';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import {
   ListReturnUnitsParams,
   ReturnUnitInput,
   ReturnUnitViewModel,
-} from "../../../../shared/models/return-units";
-export type { ListReturnUnitsParams } from "../../../../shared/models/return-units";
-import {
-  PagedResult,
-  RawPagedResult,
-  mapRawPaged,
-} from "../../../../shared/models/pagination";
-import { buildHttpParams } from "../../../../shared/utils/http-params";
+} from '../../../../shared/models/return-units';
+import { buildHttpParams } from '../../../../shared/utils/http-params';
+export type { ListReturnUnitsParams } from '../../../../shared/models/return-units';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ReturnUnitsApiService {
   private readonly baseUrl = `${environment.apiBaseUrl}/api/v1/return-units`;
 

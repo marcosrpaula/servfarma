@@ -1,7 +1,13 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbTooltipModule, NgbProgressbarModule, NgbDropdownModule, NgbNavModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbNavModule,
+  NgbPaginationModule,
+  NgbProgressbarModule,
+  NgbTooltipModule,
+} from '@ng-bootstrap/ng-bootstrap';
 
 // Feather Icon
 import { FeatherModule } from 'angular-feather';
@@ -13,35 +19,29 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 // Flat Picker
 import { FlatpickrModule } from 'angularx-flatpickr';
 // File Uploads
-import { DropzoneModule } from 'ngx-dropzone-wrapper';
-import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
-import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { DropzoneConfigInterface, DropzoneModule } from 'ngx-dropzone-wrapper';
 // Ng Select
 import { NgSelectModule } from '@ng-select/ng-select';
 
 // Load Icon
-import { defineElement } from "@lordicon/element";
+import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
 
 // Component Pages
-import { ProjectsRoutingModule } from './projects-routing.module';
 import { SharedModule } from '../../shared/shared.module';
+import { CreateComponent } from './create/create.component';
 import { ListComponent } from './list/list.component';
 import { OverviewComponent } from './overview/overview.component';
-import { CreateComponent } from './create/create.component';
+import { ProjectsRoutingModule } from './projects-routing.module';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: 'https://httpbin.org/post',
   maxFilesize: 50,
-  acceptedFiles: 'image/*'
+  acceptedFiles: 'image/*',
 };
 
 @NgModule({
-  declarations: [
-    ListComponent,
-    OverviewComponent,
-    CreateComponent
-  ],
+  declarations: [ListComponent, OverviewComponent, CreateComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -58,9 +58,9 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     DropzoneModule,
     NgSelectModule,
     ProjectsRoutingModule,
-    SharedModule
+    SharedModule,
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ProjectsModule {
   constructor() {

@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import {
   ListUsersParams,
-  UserViewModel,
   UserDetailsViewModel,
+  UserViewModel,
 } from '../../../../shared/models/users';
-import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import { buildHttpParams } from '../../../../shared/utils/http-params';
 
 export interface CreateUserDto {
@@ -42,7 +42,7 @@ export class UsersApiService {
     });
     return this.http
       .get<RawPagedResult<UserViewModel>>(this.baseUrl, { params: httpParams })
-      .pipe(map(res => mapRawPaged<UserViewModel>(res)));
+      .pipe(map((res) => mapRawPaged<UserViewModel>(res)));
   }
 
   getById(id: string): Observable<UserDetailsViewModel> {

@@ -1,20 +1,34 @@
-﻿import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NonNullableFormBuilder } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 import { PaginationService } from '../../../../shared/custom-pagination/pagination.service';
 import {
-  SuppliesApiService,
   ListSuppliesParams,
-} from '../services/supplies.api.service';
-import {
   SimpleItemViewModel,
   SupplySortableField,
   SupplyType,
 } from '../../../../shared/models/supplies';
-import { SuppliesStateService } from '../services/supplies-state.service';
+import {
+  SuppliesListState,
+  SuppliesStateService,
+  SupplyListFiltersState,
+  SupplySortLabel,
+} from '../services/supplies-state.service';
+import { SuppliesApiService } from '../services/supplies.api.service';
 
 function supplyTypeLabel(type: SupplyType): string {
   switch (type) {
     case SupplyType.SecurityEnvelope:
-      return 'Envelope de Seguranca';
+      return 'Envelope de Segurança';
     case SupplyType.Label:
       return 'Etiqueta';
     case SupplyType.Receipt:
@@ -42,83 +56,78 @@ function supplyEditPath(type: SupplyType): string {
   return 'refrigerated-package';
 }
 
+const SORT_FIELD_MAP: Record<SupplySortLabel, SupplySortableField> = {
+  CreatedDate: 'createdAt',
+  Name: 'name',
+  Status: 'isActive',
+};
+
 @Component({
   selector: 'app-supplies',
   templateUrl: './supplies.component.html',
   styleUrls: ['./supplies.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class SuppliesComponent implements OnInit {
-  breadCrumbItems = [
-    { label: 'Catalogos' },
-    { label: 'Suprimentos', active: true },
-  ];
-  supplyTypeLabel = supplyTypeLabel;
-  supplyEditPath = supplyEditPath;
+  private readonly api = inject(SuppliesApiService);
+  private readonly pagination = inject(PaginationService);
+  private readonly suppliesState = inject(SuppliesStateService);
+  private readonly fb = inject(NonNullableFormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
-  tableData: SimpleItemViewModel[] = [];
+  readonly breadCrumbItems = [{ label: 'Catálogos' }, { label: 'Suprimentos', active: true }];
+  readonly supplyTypeLabel = supplyTypeLabel;
+  readonly supplyEditPath = supplyEditPath;
+
+  readonly filtersForm = this.fb.group({
+    name: [''],
+    isActive: ['' as '' | 'true' | 'false'],
+  });
+
+  readonly tableData = signal<SimpleItemViewModel[]>([]);
+  readonly carregando = signal(false);
+  readonly semResultados = computed(() => !this.carregando() && this.tableData().length === 0);
+
   pageSize = 10;
   backendPage = 1;
   totalItems = 0;
 
-  filtroNome = '';
-  filtroAtivo: '' | 'true' | 'false' = '';
-
   orderBy: SupplySortableField = 'createdAt';
   ascending = false;
-  orderLabel: 'CreatedDate' | 'Name' | 'Status' = 'CreatedDate';
+  orderLabel: SupplySortLabel = 'CreatedDate';
 
-  carregando = false;
   private lastPagerKey = '';
   private lastRequestSignature = '';
   private allowPagerUpdates = false;
 
-  constructor(
-    private api: SuppliesApiService,
-    private pagination: PaginationService,
-    private suppliesState: SuppliesStateService,
-  ) {
-    this.pagination.tablePageSize.subscribe(({ skip, pageSize }) => {
-      if (!this.allowPagerUpdates) {
-        return;
-      }
-      const size = typeof pageSize === 'number' && pageSize > 0 ? pageSize : this.pageSize || 10;
-      const newPage = Math.floor((typeof skip === 'number' ? skip : 0) / size) + 1;
-      const pagerKey = `${newPage}|${size}`;
-      if (pagerKey === this.lastPagerKey) return;
-      this.lastPagerKey = pagerKey;
-      this.pageSize = size;
-      this.backendPage = newPage;
-      this.loadPage();
-    });
+  get SupplyType(): typeof SupplyType {
+    return SupplyType;
   }
 
   ngOnInit(): void {
+    this.pagination.tablePageSize
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ skip, pageSize }) => {
+        if (!this.allowPagerUpdates) {
+          return;
+        }
+        const size = typeof pageSize === 'number' && pageSize > 0 ? pageSize : this.pageSize || 10;
+        const skipValue = typeof skip === 'number' && skip >= 0 ? skip : 0;
+        const newPage = Math.floor(skipValue / size) + 1;
+        const pagerKey = `${newPage}|${size}`;
+        if (pagerKey === this.lastPagerKey) {
+          return;
+        }
+        this.lastPagerKey = pagerKey;
+        this.pageSize = size;
+        this.backendPage = newPage;
+        this.loadPage();
+      });
+
     const savedState = this.suppliesState.getListState();
     if (savedState) {
-      this.totalItems = savedState.totalItems;
-      this.pageSize = savedState.pageSize;
-      this.backendPage = savedState.backendPage;
-      this.filtroNome = savedState.filtroNome;
-      this.filtroAtivo = savedState.filtroAtivo;
-      this.orderBy = savedState.orderBy;
-      this.ascending = savedState.ascending;
-      this.orderLabel = savedState.orderLabel;
-      this.tableData = savedState.tableData;
-      this.lastRequestSignature = savedState.lastRequestSignature ?? '';
-      this.lastPagerKey = savedState.lastPagerKey ?? `${this.backendPage}|${this.pageSize}`;
-      this.pagination.calculatePageSize.next({
-        totalData: this.totalItems,
-        pageSize: this.pageSize,
-        tableData: this.tableData,
-        serialNumberArray: [],
-      });
-      this.pagination.tablePageSize.next({
-        skip: (this.backendPage - 1) * this.pageSize,
-        limit: this.backendPage * this.pageSize,
-        pageSize: this.pageSize,
-      });
-      this.allowPagerUpdates = true;
+      this.restoreFromState(savedState);
       return;
     }
 
@@ -132,31 +141,19 @@ export class SuppliesComponent implements OnInit {
     this.loadPage();
   }
 
-  toggleSort(field: 'CreatedDate' | 'Name' | 'Status') {
+  toggleSort(field: SupplySortLabel): void {
     if (this.orderLabel === field) {
       this.ascending = !this.ascending;
     } else {
       this.orderLabel = field;
       this.ascending = true;
     }
-    this.orderBy = this.mapOrderField(field);
+    this.orderBy = SORT_FIELD_MAP[field];
     this.backendPage = 1;
     this.loadPage();
   }
 
-  private mapOrderField(field: 'CreatedDate' | 'Name' | 'Status'): SupplySortableField {
-    switch (field) {
-      case 'Name':
-        return 'name';
-      case 'Status':
-        return 'isActive';
-      case 'CreatedDate':
-      default:
-        return 'createdAt';
-    }
-  }
-
-  changePageSize(size: number) {
+  changePageSize(size: number): void {
     this.pageSize = Number(size) || 10;
     this.backendPage = 1;
     this.pagination.tablePageSize.next({
@@ -166,73 +163,119 @@ export class SuppliesComponent implements OnInit {
     });
   }
 
-  aplicarFiltros() {
+  aplicarFiltros(): void {
     this.backendPage = 1;
+    this.lastRequestSignature = '';
     this.loadPage();
   }
 
-  limparFiltros() {
-    this.filtroNome = '';
-    this.filtroAtivo = '';
+  limparFiltros(): void {
+    this.filtersForm.setValue({
+      name: '',
+      isActive: '',
+    });
     this.backendPage = 1;
+    this.lastRequestSignature = '';
     this.loadPage();
   }
 
-  get SupplyType() {
-    return SupplyType;
+  private restoreFromState(state: SuppliesListState): void {
+    this.totalItems = state.totalItems;
+    this.pageSize = state.pageSize;
+    this.backendPage = state.backendPage;
+    this.orderBy = state.sort.field;
+    this.orderLabel = state.sort.label;
+    this.ascending = state.sort.ascending;
+    this.tableData.set(state.items);
+    this.filtersForm.setValue(
+      {
+        name: state.filters.name,
+        isActive: state.filters.isActive,
+      },
+      { emitEvent: false },
+    );
+    this.lastRequestSignature = state.lastRequestSignature ?? '';
+    this.lastPagerKey = state.lastPagerKey ?? `${this.backendPage}|${this.pageSize}`;
+
+    this.pagination.calculatePageSize.next({
+      totalData: this.totalItems,
+      pageSize: this.pageSize,
+      tableData: state.items,
+      serialNumberArray: [],
+    });
+    this.pagination.tablePageSize.next({
+      skip: (this.backendPage - 1) * this.pageSize,
+      limit: this.backendPage * this.pageSize,
+      pageSize: this.pageSize,
+    });
+    this.allowPagerUpdates = true;
   }
 
-  private loadPage() {
-    this.carregando = true;
+  private loadPage(): void {
+    this.carregando.set(true);
     this.lastPagerKey = `${this.backendPage}|${this.pageSize}`;
+
+    const filters = this.getFilters();
     const params: ListSuppliesParams = {
       page: this.backendPage,
       pageSize: this.pageSize,
       orderBy: this.orderBy,
       ascending: this.ascending,
+      name: filters.name || undefined,
+      isActive: filters.isActive === '' ? undefined : filters.isActive === 'true',
     };
-
-    if (this.filtroNome) params.name = this.filtroNome;
-    if (this.filtroAtivo !== '') params.isActive = this.filtroAtivo === 'true';
 
     const signature = JSON.stringify(params);
     if (signature === this.lastRequestSignature) {
-      this.carregando = false;
+      this.carregando.set(false);
       return;
     }
-
     this.lastRequestSignature = signature;
 
-    this.api.list(params).subscribe({
-      next: (res) => {
-        this.totalItems = res.totalCount ?? 0;
-        this.tableData = res.items || [];
-        this.suppliesState.setMany(this.tableData);
-        this.suppliesState.setListState({
-          tableData: this.tableData,
-          totalItems: this.totalItems,
-          pageSize: this.pageSize,
-          backendPage: this.backendPage,
-          filtroNome: this.filtroNome,
-          filtroAtivo: this.filtroAtivo,
-          orderBy: this.orderBy,
-          ascending: this.ascending,
-          orderLabel: this.orderLabel,
-          lastRequestSignature: this.lastRequestSignature,
-          lastPagerKey: this.lastPagerKey,
-        });
-        this.pagination.calculatePageSize.next({
-          totalData: this.totalItems,
-          pageSize: this.pageSize,
-          tableData: this.tableData,
-          serialNumberArray: [],
-        });
-        this.carregando = false;
-      },
-      error: () => {
-        this.carregando = false;
-      },
-    });
+    this.api
+      .list(params)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.carregando.set(false)),
+      )
+      .subscribe({
+        next: (res) => {
+          this.totalItems = res.totalCount ?? 0;
+          const items = res.items ?? [];
+          this.tableData.set(items);
+          this.suppliesState.setMany(items);
+          this.suppliesState.setListState({
+            items,
+            totalItems: this.totalItems,
+            pageSize: this.pageSize,
+            backendPage: this.backendPage,
+            filters,
+            sort: {
+              field: this.orderBy,
+              label: this.orderLabel,
+              ascending: this.ascending,
+            },
+            lastRequestSignature: this.lastRequestSignature,
+            lastPagerKey: this.lastPagerKey,
+          });
+          this.pagination.calculatePageSize.next({
+            totalData: this.totalItems,
+            pageSize: this.pageSize,
+            tableData: items,
+            serialNumberArray: [],
+          });
+        },
+        error: () => {
+          this.lastRequestSignature = '';
+        },
+      });
+  }
+
+  private getFilters(): SupplyListFiltersState {
+    const { name, isActive } = this.filtersForm.getRawValue();
+    return {
+      name: name.trim(),
+      isActive,
+    };
   }
 }
-

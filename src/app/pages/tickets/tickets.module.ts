@@ -1,7 +1,12 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbPaginationModule, NgbTypeaheadModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbDropdownModule,
+  NgbPaginationModule,
+  NgbTooltipModule,
+  NgbTypeaheadModule,
+} from '@ng-bootstrap/ng-bootstrap';
 
 // Counter
 import { CountUpModule } from 'ngx-countup';
@@ -11,23 +16,19 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { SimplebarAngularModule } from 'simplebar-angular';
 
 // Load Icons
-import { defineElement } from "@lordicon/element";
+import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
 
 // Component pages
-import { TicketsRoutingModule } from './tickets-routing.module';
 import { SharedModule } from '../../shared/shared.module';
-import { ListComponent } from './list/list.component';
 import { DetailsComponent } from './details/details.component';
-
+import { ListComponent } from './list/list.component';
+import { TicketsRoutingModule } from './tickets-routing.module';
 
 import { DatePipe } from '@angular/common';
 
 @NgModule({
-  declarations: [
-    ListComponent,
-    DetailsComponent,
-  ],
+  declarations: [ListComponent, DetailsComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -40,12 +41,10 @@ import { DatePipe } from '@angular/common';
     FlatpickrModule,
     SimplebarAngularModule,
     TicketsRoutingModule,
-    SharedModule
+    SharedModule,
   ],
-  providers: [
-    DatePipe
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  providers: [DatePipe],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class TicketsModule {
   constructor() {

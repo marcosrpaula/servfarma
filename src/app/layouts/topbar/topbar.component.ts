@@ -1,22 +1,15 @@
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  OnDestroy,
-  OnInit,
-  Output,
-} from "@angular/core";
-import { DOCUMENT } from "@angular/common";
-import { AuthenticationService } from "../../core/services/auth.service";
-import { Router } from "@angular/router";
-import { TokenStorageService } from "../../core/services/token-storage.service";
-import { KeycloakAuthService } from "../../auth/keycloak/keycloak.service";
+import { DOCUMENT } from '@angular/common';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { KeycloakAuthService } from '../../auth/keycloak/keycloak.service';
+import { AuthenticationService } from '../../core/services/auth.service';
+import { TokenStorageService } from '../../core/services/token-storage.service';
 
 @Component({
-    selector: "app-topbar",
-    templateUrl: "./topbar.component.html",
-    styleUrls: ["./topbar.component.scss"],
-    standalone: false
+  selector: 'app-topbar',
+  templateUrl: './topbar.component.html',
+  styleUrls: ['./topbar.component.scss'],
+  standalone: false,
 })
 export class TopbarComponent implements OnInit, OnDestroy {
   @Output() mobileMenuButtonClicked = new EventEmitter<void>();
@@ -34,15 +27,13 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private authService: AuthenticationService,
     private router: Router,
     private tokenStorage: TokenStorageService,
-    private keycloak: KeycloakAuthService
+    private keycloak: KeycloakAuthService,
   ) {}
 
   ngOnInit(): void {
     this.element = this.document.documentElement;
     this.updateFromStoredUser();
-    this.detachAuthListener = this.keycloak.onAuthStateChanged(() =>
-      this.updateFromKeycloak()
-    );
+    this.detachAuthListener = this.keycloak.onAuthStateChanged(() => this.updateFromKeycloak());
     this.updateFromKeycloak();
   }
 
@@ -192,7 +183,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
       ];
 
       for (const attr of attributeCandidates) {
-        if (Array.isArray(attr) && attr.length && typeof attr[0] === 'string' && attr[0].trim().length) {
+        if (
+          Array.isArray(attr) &&
+          attr.length &&
+          typeof attr[0] === 'string' &&
+          attr[0].trim().length
+        ) {
           return attr[0].trim();
         }
         if (typeof attr === 'string' && attr.trim().length) {
@@ -214,7 +210,11 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.document.body.classList.toggle('fullscreen-enable');
     const docEl: any = this.element;
 
-    if (!this.document.fullscreenElement && !docEl?.mozFullScreenElement && !docEl?.webkitFullscreenElement) {
+    if (
+      !this.document.fullscreenElement &&
+      !docEl?.mozFullScreenElement &&
+      !docEl?.webkitFullscreenElement
+    ) {
       if (docEl?.requestFullscreen) {
         docEl.requestFullscreen();
       } else if (docEl?.mozRequestFullScreen) {
@@ -239,23 +239,21 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(["/auth/login"]);
+    this.router.navigate(['/auth/login']);
   }
 
   windowScroll(): void {
-    const backToTop = this.document.getElementById("back-to-top");
+    const backToTop = this.document.getElementById('back-to-top');
     if (this.document.body.scrollTop > 100 || this.document.documentElement.scrollTop > 100) {
       if (backToTop) {
-        backToTop.style.display = "block";
+        backToTop.style.display = 'block';
       }
       this.document.getElementById('page-topbar')?.classList.add('topbar-shadow');
     } else {
       if (backToTop) {
-        backToTop.style.display = "none";
+        backToTop.style.display = 'none';
       }
       this.document.getElementById('page-topbar')?.classList.remove('topbar-shadow');
     }
   }
 }
-
-

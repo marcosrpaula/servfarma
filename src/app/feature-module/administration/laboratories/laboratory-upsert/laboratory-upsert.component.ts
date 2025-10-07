@@ -1,12 +1,19 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LaboratoriesApiService, CreateLaboratoryDto, UpdateLaboratoryDto } from '../services/laboratories.api.service';
-import { LaboratoriesStateService } from '../services/laboratories-state.service';
-import { LaboratoryDetailsViewModel, LaboratoryViewModel } from '../../../../shared/models/laboratories';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import {
+  LaboratoryDetailsViewModel,
+  LaboratoryViewModel,
+} from '../../../../shared/models/laboratories';
 import { SharedModule } from '../../../../shared/shared.module';
+import { LaboratoriesStateService } from '../services/laboratories-state.service';
+import {
+  CreateLaboratoryDto,
+  LaboratoriesApiService,
+  UpdateLaboratoryDto,
+} from '../services/laboratories.api.service';
 
 @Component({
   selector: 'app-laboratory-upsert',
@@ -56,7 +63,9 @@ export class LaboratoryUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const laboratory = this.resolveLaboratoryForReadOnly();
         if (!laboratory) {
-          this.notifications.error('Nao foi possivel carregar os dados do laboratorio para visualizacao. Acesse novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados do laboratorio para visualizacao. Acesse novamente a partir da listagem.',
+          );
           this.router.navigate(['/laboratories']);
           return;
         }
@@ -127,14 +136,18 @@ export class LaboratoryUpsertComponent implements OnInit {
         error: failure,
       });
     }
-
   }
 
   cancel(): void {
     this.router.navigate(['/laboratories']);
   }
 
-  private patchForm(laboratory: Pick<LaboratoryViewModel, 'tradeName' | 'legalName' | 'document' | 'observation' | 'isActive'>): void {
+  private patchForm(
+    laboratory: Pick<
+      LaboratoryViewModel,
+      'tradeName' | 'legalName' | 'document' | 'observation' | 'isActive'
+    >,
+  ): void {
     this.form.patchValue({
       tradeName: laboratory?.tradeName ?? '',
       legalName: laboratory?.legalName ?? '',
@@ -160,7 +173,9 @@ export class LaboratoryUpsertComponent implements OnInit {
       return { ...candidate };
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const historyCandidate = (history.state as Record<string, unknown>)['laboratory'] as LaboratoryViewModel | undefined;
+      const historyCandidate = (history.state as Record<string, unknown>)['laboratory'] as
+        | LaboratoryViewModel
+        | undefined;
       if (historyCandidate) {
         return { ...historyCandidate };
       }

@@ -1,17 +1,16 @@
-﻿import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { SuppliesApiService } from '../services/supplies.api.service';
-import { DryPackageInput, PackageViewModel, SimpleItemViewModel } from '../../../../shared/models/supplies';
-import { SuppliesStateService } from '../services/supplies-state.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import {
+  DryPackageInput,
+  PackageViewModel,
+  SimpleItemViewModel,
+} from '../../../../shared/models/supplies';
 import { SharedModule } from '../../../../shared/shared.module';
+import { SuppliesStateService } from '../services/supplies-state.service';
+import { SuppliesApiService } from '../services/supplies.api.service';
 
 @Component({
   selector: 'app-dry-package-upsert',
@@ -62,7 +61,9 @@ export class DryPackageUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const pkg = this.resolvePackageForReadOnly();
         if (!pkg) {
-          this.notifications.error('Nao foi possivel carregar os dados do pacote para visualizacao. Acesse novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados do pacote para visualizacao. Acesse novamente a partir da listagem.',
+          );
           this.router.navigate(['/supplies']);
           return;
         }
@@ -148,12 +149,18 @@ export class DryPackageUpsertComponent implements OnInit {
 
   private getPackageFromNavigationState(): PackageViewModel | undefined {
     const nav = this.router.getCurrentNavigation();
-    const candidate = nav?.extras?.state?.['supply'] as (PackageViewModel | SimpleItemViewModel | undefined);
+    const candidate = nav?.extras?.state?.['supply'] as
+      | PackageViewModel
+      | SimpleItemViewModel
+      | undefined;
     if (candidate) {
       return this.toPackageViewModel(candidate);
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const historyCandidate = (history.state as Record<string, unknown>)['supply'] as (PackageViewModel | SimpleItemViewModel | undefined);
+      const historyCandidate = (history.state as Record<string, unknown>)['supply'] as
+        | PackageViewModel
+        | SimpleItemViewModel
+        | undefined;
       if (historyCandidate) {
         return this.toPackageViewModel(historyCandidate);
       }
@@ -181,4 +188,3 @@ export class DryPackageUpsertComponent implements OnInit {
     };
   }
 }
-

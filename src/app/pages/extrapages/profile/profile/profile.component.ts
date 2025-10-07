@@ -1,35 +1,35 @@
 import { Component } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UntypedFormBuilder } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { TokenStorageService } from '../../../../core/services/token-storage.service';
 
-
-import { projectListModel, documentModel } from './profile.model';
 import { document, projectList } from 'src/app/core/data';
 import { PaginationService } from 'src/app/core/services/pagination.service';
+import { documentModel, projectListModel } from './profile.model';
 
 @Component({
-    selector: 'app-profile',
-    templateUrl: './profile.component.html',
-    styleUrls: ['./profile.component.scss'],
-    standalone: false
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.scss'],
+  standalone: false,
 })
 
 /**
  * Profile Component
  */
 export class ProfileComponent {
-
   projectList!: projectListModel[];
   document!: documentModel[];
   userData: any;
   allprojectList: any;
 
-
-  constructor(private formBuilder: UntypedFormBuilder, private modalService: NgbModal, private TokenStorageService: TokenStorageService, public service: PaginationService) {
-
-  }
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private modalService: NgbModal,
+    private TokenStorageService: TokenStorageService,
+    public service: PaginationService,
+  ) {}
 
   ngOnInit(): void {
     this.userData = this.TokenStorageService.getUser();
@@ -61,13 +61,13 @@ export class ProfileComponent {
       },
       1200: {
         slidesPerView: 3,
-      }
-    }
+      },
+    },
   };
 
   // Pagination
   changePage() {
-    this.projectList = this.service.changePage(this.allprojectList)
+    this.projectList = this.service.changePage(this.allprojectList);
   }
 
   /**
@@ -81,8 +81,7 @@ export class ProfileComponent {
 
   // Delete Data
   deleteData(id: any) {
-    this.document.slice(id, 1)
-    this.modalService.dismissAll()
+    this.document.slice(id, 1);
+    this.modalService.dismissAll();
   }
-
 }

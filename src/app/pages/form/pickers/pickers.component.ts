@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-pickers',
-    templateUrl: './pickers.component.html',
-    styleUrls: ['./pickers.component.scss'],
-    standalone: false
+  selector: 'app-pickers',
+  templateUrl: './pickers.component.html',
+  styleUrls: ['./pickers.component.scss'],
+  standalone: false,
 })
 
 /**
  * Pickers Component
  */
 export class PickersComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   componentcolor!: string;
@@ -20,18 +19,14 @@ export class PickersComponent implements OnInit {
 
   modelValueAsDate: Date = new Date();
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-     this.breadCrumbItems = [
-      { label: 'Forms' },
-      { label: 'Pickers', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Forms' }, { label: 'Pickers', active: true }];
   }
 
   inlineDatePicker: Date = new Date();
-
 }

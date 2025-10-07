@@ -1,7 +1,13 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbPaginationModule, NgbTypeaheadModule, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbAccordionModule,
+  NgbDropdownModule,
+  NgbPaginationModule,
+  NgbTooltipModule,
+  NgbTypeaheadModule,
+} from '@ng-bootstrap/ng-bootstrap';
 
 // Flat Picker
 import { FlatpickrModule } from 'angularx-flatpickr';
@@ -10,18 +16,18 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 // Load Icons
-import { defineElement } from "@lordicon/element";
+import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
 
 // Component pages
-import { CRMRoutingModule } from './crm-routing.module';
 import { SharedModule } from '../../shared/shared.module';
-import { ContactsComponent } from './contacts/contacts.component';
 import { CompaniesComponent } from './companies/companies.component';
+import { ContactsComponent } from './contacts/contacts.component';
+import { CRMRoutingModule } from './crm-routing.module';
 import { DealsComponent } from './deals/deals.component';
 import { LeadsComponent } from './leads/leads.component';
 
-import { SortByCrmPipe } from "../crm/sort-by.pipe";
+import { SortByCrmPipe } from '../crm/sort-by.pipe';
 
 import { DatePipe } from '@angular/common';
 
@@ -31,7 +37,7 @@ import { DatePipe } from '@angular/common';
     CompaniesComponent,
     DealsComponent,
     LeadsComponent,
-    SortByCrmPipe
+    SortByCrmPipe,
   ],
   imports: [
     CommonModule,
@@ -45,12 +51,10 @@ import { DatePipe } from '@angular/common';
     FlatpickrModule,
     NgSelectModule,
     CRMRoutingModule,
-    SharedModule
+    SharedModule,
   ],
-  providers: [
-    DatePipe
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  providers: [DatePipe],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class CrmModule {
   constructor() {

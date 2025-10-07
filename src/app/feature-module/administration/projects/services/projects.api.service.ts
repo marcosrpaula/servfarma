@@ -1,22 +1,18 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { environment } from "../../../../config/environment";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../../config/environment';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import {
   ListProjectsParams,
   ProjectInput,
   ProjectViewModel,
-} from "../../../../shared/models/projects";
-export type { ListProjectsParams } from "../../../../shared/models/projects";
-import {
-  PagedResult,
-  RawPagedResult,
-  mapRawPaged,
-} from "../../../../shared/models/pagination";
-import { buildHttpParams } from "../../../../shared/utils/http-params";
+} from '../../../../shared/models/projects';
+import { buildHttpParams } from '../../../../shared/utils/http-params';
+export type { ListProjectsParams } from '../../../../shared/models/projects';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class ProjectsApiService {
   private readonly baseUrl = `${environment.apiBaseUrl}/api/v1/projects`;
 
@@ -64,8 +60,7 @@ export class ProjectsApiService {
             sampleStock: input.stock.sampleStock,
             blockedStock: input.stock.blockedStock,
             blockSimilarLot: input.stock.blockSimilarLot,
-            blockBeforeExpirationInMonths:
-              input.stock.blockBeforeExpirationInMonths,
+            blockBeforeExpirationInMonths: input.stock.blockBeforeExpirationInMonths,
           }
         : null,
       allowedServiceTypes: input.allowedServiceTypes,

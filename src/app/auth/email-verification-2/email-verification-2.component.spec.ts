@@ -8,9 +8,8 @@ describe('EmailVerification2Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EmailVerification2Component]
-    })
-    .compileComponents();
+      declarations: [EmailVerification2Component],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(EmailVerification2Component);
     component = fixture.componentInstance;

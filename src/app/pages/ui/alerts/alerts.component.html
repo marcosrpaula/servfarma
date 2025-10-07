@@ -9,10 +9,16 @@
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="default" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="default" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="default"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
         <p class="text-muted">Use the <code>alert </code>class to show a default alert.</p>
@@ -31,19 +37,22 @@
 
               <h6>Success Alert</h6>
               <ngb-alert [dismissible]="false" type="success">
-                <strong> Yey! Everything worked! </strong> A simple <b>success alert</b> —check it out!
+                <strong> Yey! Everything worked! </strong> A simple <b>success alert</b> —check it
+                out!
               </ngb-alert>
 
               <h6>Danger Alert</h6>
               <ngb-alert class="mb-xl-0" [dismissible]="false" type="danger">
-                <strong> Something is very wrong! </strong> A simple <b>danger alert</b> —check it out!
+                <strong> Something is very wrong! </strong> A simple <b>danger alert</b> —check it
+                out!
               </ngb-alert>
             </div>
 
             <div class="col-xl-6">
               <h6>Warning Alert</h6>
               <ngb-alert [dismissible]="false" type="warning">
-                <strong> Uh oh, something went wrong </strong> A simple <b>warning alert</b> —check it out!
+                <strong> Uh oh, something went wrong </strong> A simple <b>warning alert</b> —check
+                it out!
               </ngb-alert>
 
               <h6>Info Alert</h6>
@@ -106,8 +115,10 @@
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -119,10 +130,16 @@
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="borderless-alerts" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="borderless-alerts" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="borderless-alerts"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
         <p class="text-muted">Use the <code>border-0</code> class to set alert without border.</p>
@@ -142,7 +159,8 @@
 
               <h6>Success Alert</h6>
               <ngb-alert class="border-0" [dismissible]="false" type="success">
-                <strong> Yey! Everything worked! </strong> A simple <b>success alert</b> —check it out!
+                <strong> Yey! Everything worked! </strong> A simple <b>success alert</b> —check it
+                out!
               </ngb-alert>
 
               <h6>Danger Alert</h6>
@@ -154,7 +172,8 @@
             <div class="col-xl-6">
               <h6>Warning Alert</h6>
               <ngb-alert class="border-0" [dismissible]="false" type="warning">
-                <strong> Uh oh, something went wrong </strong> A simple <b>warning alert</b> —check it out!
+                <strong> Uh oh, something went wrong </strong> A simple <b>warning alert</b> —check
+                it out!
               </ngb-alert>
 
               <h6>Info Alert</h6>
@@ -218,8 +237,10 @@
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -231,40 +252,55 @@
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="1" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="1" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="1"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>alert-dismissible</code> class to add dismissing button to the alert.
+        <p class="text-muted">
+          Use the <code>alert-dismissible</code> class to add dismissing button to the alert.
         </p>
         <div class="live-preview">
-
           <div class="row">
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="custom-alert">
-                    A simple {{color.color}} alert—check it out!
-                  </ngb-alert>
-                </div>
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="custom-alert"
+                    >
+                      A simple {{ color.color }} alert—check it out!
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
 
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of dismissingData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="custom-alert">
-                    <!-- A simple {{color.color}} alert—check it out! -->
-                    <strong>Hi!</strong> A simple <b>Dismissible {{color.color}} alert</b> —check it out!
-                  </ngb-alert>
-                </div>
+                @for (color of dismissingData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="custom-alert"
+                    >
+                      <!-- A simple {{color.color}} alert—check it out! -->
+                      <strong>Hi!</strong> A simple
+                      <b>Dismissible {{ color.color }} alert</b> —check it out!
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
@@ -322,8 +358,10 @@
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -335,73 +373,89 @@
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="2" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="2" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="2"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>alert-link</code> class at &lt;a&gt; tag to show matching colored links
-          within the given alert.</p>
+        <p class="text-muted">
+          Use the <code>alert-link</code> class at &lt;a&gt; tag to show matching colored links
+          within the given alert.
+        </p>
 
         <div class="live-preview">
           <div class="row">
             <div class="col-xl-6">
               <h6>Primary Alert</h6>
               <ngb-alert [dismissible]="false" type="primary">
-                A simple Primary alert with <a href="javascript:void(0);" class="alert-link">an example
-                  link</a>. Give it a click if you like.
+                A simple Primary alert with
+                <a href="javascript:void(0);" class="alert-link">an example link</a>. Give it a
+                click if you like.
               </ngb-alert>
 
               <h6>Secondary Alert</h6>
               <ngb-alert [dismissible]="false" type="secondary">
-                A simple Secondary alert with <a href="javascript:void(0);" class="alert-link">an example
-                  link</a>. Give it a click if you like.
+                A simple Secondary alert with
+                <a href="javascript:void(0);" class="alert-link">an example link</a>. Give it a
+                click if you like.
               </ngb-alert>
 
               <h6>Success Alert</h6>
               <ngb-alert [dismissible]="false" type="success">
-                A simple Success alert with <a href="javascript:void(0);" class="alert-link">an example
-                  link</a>. Give it a click if you like.
+                A simple Success alert with
+                <a href="javascript:void(0);" class="alert-link">an example link</a>. Give it a
+                click if you like.
               </ngb-alert>
 
               <h6>Danger Alert</h6>
               <ngb-alert [dismissible]="false" type="danger" class="mb-xl-0">
-                A simple Danger alert with <a href="javascript:void(0);" class="alert-link">an example
-                  link</a>. Give it a click if you like.
+                A simple Danger alert with
+                <a href="javascript:void(0);" class="alert-link">an example link</a>. Give it a
+                click if you like.
               </ngb-alert>
             </div>
 
             <div class="col-xl-6">
               <h6>Warning Alert</h6>
               <ngb-alert [dismissible]="false" type="warning">
-                A simple Warning alert with <a href="javascript:void(0);" class="alert-link">an example
-                  link</a>. Give it a click if you like.
+                A simple Warning alert with
+                <a href="javascript:void(0);" class="alert-link">an example link</a>. Give it a
+                click if you like.
               </ngb-alert>
 
               <h6>Info Alert</h6>
               <ngb-alert [dismissible]="false" type="info">
-                A simple Info alert with <a href="javascript:void(0);" class="alert-link">an example
-                  link</a>. Give it a click if you like.
+                A simple Info alert with
+                <a href="javascript:void(0);" class="alert-link">an example link</a>. Give it a
+                click if you like.
               </ngb-alert>
 
               <h6>Light Alert</h6>
               <ngb-alert [dismissible]="false" type="light">
-                A simple Info alert with <a href="javascript:void(0);" class="alert-link">an example
-                  link</a>. Give it a click if you like.
+                A simple Info alert with
+                <a href="javascript:void(0);" class="alert-link">an example link</a>. Give it a
+                click if you like.
               </ngb-alert>
 
               <h6>Dark Alert</h6>
               <ngb-alert [dismissible]="false" type="dark" class="mb-xl-0">
-                A simple Dark alert with <a href="javascript:void(0);" class="alert-link">an example
-                  link</a>. Give it a click if you like.
+                A simple Dark alert with
+                <a href="javascript:void(0);" class="alert-link">an example link</a>. Give it a
+                click if you like.
               </ngb-alert>
             </div>
           </div>
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary&quot; role=&quot;alert&quot;&gt;
 A simple &lt;b&gt;Primary alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot;alert-link&quot;&gt;an example link&lt;/a&gt;. Give it a click if you like.
@@ -443,8 +497,10 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -456,29 +512,44 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="3" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="3" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="3"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
         <div id="liveAlertPlaceholder" class="custom-alert">
-          @if(successMessage){
-          <ngb-alert #selfClosingAlert type="success" (closed)="successMessage = ''">{{
-            successMessage }}</ngb-alert>
+          @if (successMessage) {
+            <ngb-alert #selfClosingAlert type="success" (closed)="successMessage = ''">{{
+              successMessage
+            }}</ngb-alert>
           }
         </div>
-        <button type="button" class="btn btn-primary" id="liveAlertBtn" (click)="changeSuccessMessage()">Show live
-          alert</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="liveAlertBtn"
+          (click)="changeSuccessMessage()"
+        >
+          Show live alert
+        </button>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;div id=&quot;liveAlertPlaceholder&quot;&gt;&lt;/div&gt;
 &lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; id=&quot;liveAlertBtn&quot;&gt;Show live alert&lt;/button&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -490,38 +561,55 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="4" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="4" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="4"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>border-2 bg-body-secondary</code> class to set an alert with outline.</p>
+        <p class="text-muted">
+          Use the <code>border-2 bg-body-secondary</code> class to set an alert with outline.
+        </p>
 
         <div class="live-preview">
           <div class="row">
             <div class="col-xl-6">
-              <div class="d-flex flex-column gap-3">+
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible border-2 bg-body-secondary fade show custom-alert mb-0">
-                    <strong> Hi! </strong> - Outline <b>{{color.color}} alert</b> example
-                  </ngb-alert>
-                </div>
+              <div class="d-flex flex-column gap-3">
+                +
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible border-2 bg-body-secondary fade show custom-alert mb-0"
+                    >
+                      <strong> Hi! </strong> - Outline <b>{{ color.color }} alert</b> example
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
 
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of dismissingData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible border-2 bg-body-secondary fade show custom-alert mb-0">
-                    <strong> Hi! </strong> - Outline <b>{{color.color}} alert</b> example
-                  </ngb-alert>
-                </div>
+                @for (color of dismissingData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible border-2 bg-body-secondary fade show custom-alert mb-0"
+                    >
+                      <strong> Hi! </strong> - Outline <b>{{ color.color }} alert</b> example
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
@@ -529,7 +617,7 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary alert-dismissible border-2 bg-body-secondary fade show&quot; role=&quot;alert&quot;&gt;
 &lt;strong&gt; Hi! &lt;/strong&gt; - Outline &lt;b&gt;primary alert&lt;/b&gt; example
@@ -573,8 +661,10 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -586,41 +676,59 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="5" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="5" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="5"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>alert-border-left </code> class to set an alert with the left border &
-          outline.</p>
+        <p class="text-muted">
+          Use the <code>alert-border-left </code> class to set an alert with the left border &
+          outline.
+        </p>
 
         <div class="live-preview">
           <div class="row">
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert alert-primary alert-border-left alert-dismissible fade show custom-alert">
-                    <i class="{{color.icon}} me-3 align-middle fs-16"></i><strong>{{color.color}}</strong>
-                    - Left border alert
-                  </ngb-alert>
-                </div>
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert alert-primary alert-border-left alert-dismissible fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} me-3 align-middle fs-16"></i
+                      ><strong>{{ color.color }}</strong>
+                      - Left border alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
 
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of dismissingData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert alert-primary alert-border-left alert-dismissible fade show custom-alert">
-                    <i class="{{color.icon}} me-3 align-middle fs-16"></i><strong>{{color.color}}</strong>
-                    - Left border alert
-                  </ngb-alert>
-                </div>
+                @for (color of dismissingData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert alert-primary alert-border-left alert-dismissible fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} me-3 align-middle fs-16"></i
+                      ><strong>{{ color.color }}</strong>
+                      - Left border alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
@@ -628,7 +736,7 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary alert-border-left alert-dismissible fade show&quot; role=&quot;alert&quot;&gt;
 &lt;i class=&quot;ri-user-smile-line me-3 align-middle&quot;&gt;&lt;/i&gt; &lt;strong&gt;Primary&lt;/strong&gt; - Left border alert
@@ -678,8 +786,10 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -691,39 +801,59 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="6" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="6" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="6"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>alert-label-icon</code> class to set an alert with a label icon.</p>
+        <p class="text-muted">
+          Use the <code>alert-label-icon</code> class to set an alert with a label icon.
+        </p>
         <div class="live-preview">
           <div class="row">
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible bg-{{color.color}}  text-{{color.text}} alert-label-icon fade show custom-alert">
-                    <i class="{{color.icon}} label-icon"></i><strong>{{color.color}}</strong>
-                    - Left border alert
-                  </ngb-alert>
-                </div>
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible bg-{{ color.color }}  text-{{
+                        color.text
+                      }} alert-label-icon fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} label-icon"></i><strong>{{ color.color }}</strong>
+                      - Left border alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
 
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of dismissingData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible bg-{{color.color}} text-{{color.text}} alert-label-icon fade show custom-alert">
-                    <i class="{{color.icon}} label-icon"></i><strong>{{color.color}}</strong>
-                    - Left border alert
-                  </ngb-alert>
-                </div>
+                @for (color of dismissingData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible bg-{{ color.color }} text-{{
+                        color.text
+                      }} alert-label-icon fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} label-icon"></i><strong>{{ color.color }}</strong>
+                      - Left border alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
@@ -731,7 +861,7 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary alert-dismissible bg-primary  text-white alert-label-icon fade show&quot; role=&quot;alert&quot;&gt;
 &lt;i class=&quot;ri-user-smile-line label-icon&quot;&gt;&lt;/i&gt;&lt;strong&gt;Primary&lt;/strong&gt; - Label icon alert
@@ -780,10 +910,11 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;button type=&quot;button&quot; class=&quot;btn-close btn-close-white&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;
 &lt;/div&gt;
 </code></pre>
-
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -795,75 +926,98 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="7" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="7" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="7"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>alert-additional</code> class and Use the <code>alert-</code> class to HTML
-          elements like headings, paragraphs, dividers etc.</p>
+        <p class="text-muted">
+          Use the <code>alert-additional</code> class and Use the <code>alert-</code> class to HTML
+          elements like headings, paragraphs, dividers etc.
+        </p>
         <div class="live-preview">
           <div class="row">
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible alert-additional fade show custom-alert">
-                    <div class="alert-body">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <i class="ri-notification-off-line fs-16 align-middle"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h5 class="alert-heading">Yey! Everything worked!</h5>
-                          <p class="mb-0">This alert needs your attention, but it's not super important.</p>
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible alert-additional fade show custom-alert"
+                    >
+                      <div class="alert-body">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <i class="ri-notification-off-line fs-16 align-middle"></i>
+                          </div>
+                          <div class="flex-grow-1">
+                            <h5 class="alert-heading">Yey! Everything worked!</h5>
+                            <p class="mb-0">
+                              This alert needs your attention, but it's not super important.
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="alert-content">
-                      <p class="mb-0">Whenever you need to, be sure to use margin
-                        utilities to keep things nice and tidy.</p>
-                    </div>
-                  </ngb-alert>
-                </div>
+                      <div class="alert-content">
+                        <p class="mb-0">
+                          Whenever you need to, be sure to use margin utilities to keep things nice
+                          and tidy.
+                        </p>
+                      </div>
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
 
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of dismissingData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible alert-additional fade show custom-alert">
-                    <div class="alert-body">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <i class="ri-notification-off-line fs-16 align-middle"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h5 class="alert-heading">Yey! Everything worked!</h5>
-                          <p class="mb-0">This alert needs your attention, but it's not super important.</p>
+                @for (color of dismissingData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible alert-additional fade show custom-alert"
+                    >
+                      <div class="alert-body">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <i class="ri-notification-off-line fs-16 align-middle"></i>
+                          </div>
+                          <div class="flex-grow-1">
+                            <h5 class="alert-heading">Yey! Everything worked!</h5>
+                            <p class="mb-0">
+                              This alert needs your attention, but it's not super important.
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="alert-content">
-                      <p class="mb-0">Whenever you need to, be sure to use margin
-                        utilities to keep things nice and tidy.</p>
-                    </div>
-                  </ngb-alert>
-                </div>
+                      <div class="alert-content">
+                        <p class="mb-0">
+                          Whenever you need to, be sure to use margin utilities to keep things nice
+                          and tidy.
+                        </p>
+                      </div>
+                    </ngb-alert>
+                  </div>
                 }
               </div>
-
             </div>
           </div>
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary alert-dismissible alert-additional fade show&quot; role=&quot;alert&quot;&gt;
 &lt;div class=&quot;alert-body&quot;&gt;
@@ -940,8 +1094,10 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;/div&gt;
 &lt;/div&gt;</code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -953,40 +1109,58 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="8" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="8" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="8"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>alert-top-border</code> class to set an alert with the top border and
-          outline.</p>
+        <p class="text-muted">
+          Use the <code>alert-top-border</code> class to set an alert with the top border and
+          outline.
+        </p>
         <div class="live-preview">
           <div class="row">
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-top-border alert-dismissible fade show custom-alert">
-                    <i class="{{color.icon}} me-3 align-middle fs-16 text-{{color.color}}"></i><strong>{{color.color}}</strong>
-                    - Top border alert
-                  </ngb-alert>
-                </div>
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-top-border alert-dismissible fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} me-3 align-middle fs-16 text-{{ color.color }}"></i
+                      ><strong>{{ color.color }}</strong>
+                      - Top border alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
 
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of dismissingData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-top-border alert-dismissible fade show custom-alert">
-                    <i class="{{color.icon}} me-3 align-middle fs-16 text-warning"></i><strong>{{color.color}}</strong>
-                    - Top border alert
-                  </ngb-alert>
-                </div>
+                @for (color of dismissingData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-top-border alert-dismissible fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} me-3 align-middle fs-16 text-warning"></i
+                      ><strong>{{ color.color }}</strong>
+                      - Top border alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
@@ -994,7 +1168,7 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary alert-top-border alert-dismissible fade show&quot; role=&quot;alert&quot;&gt;
 &lt;i class=&quot;ri-user-smile-line me-3 align-middle fs-16 text-primary&quot;&gt;&lt;/i&gt;&lt;strong&gt;Primary&lt;/strong&gt; - Top border alert
@@ -1044,8 +1218,10 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -1057,41 +1233,56 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="9" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="9" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="9"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>alert-label-icon label-arrow</code> class to show an alert with label icon
-          and arrow.</p>
+        <p class="text-muted">
+          Use the <code>alert-label-icon label-arrow</code> class to show an alert with label icon
+          and arrow.
+        </p>
         <div class="live-preview">
-
           <div class="row">
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible alert-label-icon label-arrow fade show custom-alert">
-                    <i class="{{color.icon}} label-icon"></i><strong>{{color.color}}</strong> -
-                    Label icon arrow alert
-                  </ngb-alert>
-                </div>
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible alert-label-icon label-arrow fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} label-icon"></i
+                      ><strong>{{ color.color }}</strong> - Label icon arrow alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
 
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible alert-label-icon label-arrow fade show custom-alert">
-                    <i class="{{color.icon}} label-icon"></i><strong>{{color.color}}</strong> -
-                    Label icon arrow alert
-                  </ngb-alert>
-                </div>
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible alert-label-icon label-arrow fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} label-icon"></i
+                      ><strong>{{ color.color }}</strong> - Label icon arrow alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
@@ -1099,7 +1290,7 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary alert-dismissible alert-label-icon label-arrow fade show&quot; role=&quot;alert&quot;&gt;
 &lt;i class=&quot;ri-user-smile-line label-icon&quot;&gt;&lt;/i&gt;&lt;strong&gt;Primary&lt;/strong&gt; - Label icon arrow  alert
@@ -1149,8 +1340,10 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -1162,50 +1355,64 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="10" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="10" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="10"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>alert-label-icon rounded-label</code> class to set an alert with a rounded
-          label icon.</p>
+        <p class="text-muted">
+          Use the <code>alert-label-icon rounded-label</code> class to set an alert with a rounded
+          label icon.
+        </p>
         <div class="live-preview">
-
           <div class="row">
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of defaultData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible alert-label-icon rounded-label fade show custom-alert">
-                    <i class="{{color.icon}} label-icon"></i><strong>{{color.color}}</strong> -
-                    Rounded label alert
-                  </ngb-alert>
-                </div>
+                @for (color of defaultData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible alert-label-icon rounded-label fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} label-icon"></i
+                      ><strong>{{ color.color }}</strong> - Rounded label alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
 
             <div class="col-xl-6">
               <div class="d-flex flex-column gap-3">
-                @for ( color of dismissingData; track $index) {
-                <div>
-                  <h6>{{color.color}} Alert</h6>
-                  <ngb-alert type="{{color.color}}" (close)="close(color, defaultData)" class="alert-dismissible alert-label-icon rounded-label fade show custom-alert">
-                    <i class="{{color.icon}} label-icon"></i><strong>{{color.color}}</strong> -
-                    Rounded label alert
-                  </ngb-alert>
-                </div>
+                @for (color of dismissingData; track $index) {
+                  <div>
+                    <h6>{{ color.color }} Alert</h6>
+                    <ngb-alert
+                      type="{{ color.color }}"
+                      (close)="close(color, defaultData)"
+                      class="alert-dismissible alert-label-icon rounded-label fade show custom-alert"
+                    >
+                      <i class="{{ color.icon }} label-icon"></i
+                      ><strong>{{ color.color }}</strong> - Rounded label alert
+                    </ngb-alert>
+                  </div>
                 }
               </div>
             </div>
-
           </div>
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary alert-dismissible alert-label-icon rounded-label fade show&quot; role=&quot;alert&quot;&gt;
 &lt;i class=&quot;ri-user-smile-line label-icon&quot;&gt;&lt;/i&gt;&lt;strong&gt;Primary&lt;/strong&gt; - Rounded label alert
@@ -1255,8 +1462,10 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>
 
@@ -1268,42 +1477,69 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
         <div class="flex-shrink-0">
           <div class="form-check form-switch form-switch-right form-switch-md">
             <label for="solid-alerts-code" class="form-label text-muted">Show Code</label>
-            <input class="form-check-input code-switcher" type="checkbox" id="solid-alerts-code" (click)="ShowCode($event)">
+            <input
+              class="form-check-input code-switcher"
+              type="checkbox"
+              id="solid-alerts-code"
+              (click)="ShowCode($event)"
+            />
           </div>
         </div>
-      </div><!-- end card header -->
+      </div>
+      <!-- end card header -->
 
       <div class="card-body">
-        <p class="text-muted">Use the <code>bg-*, border-* & text-white </code> class to set an alert with solid style.
+        <p class="text-muted">
+          Use the <code>bg-*, border-* & text-white </code> class to set an alert with solid style.
         </p>
 
         <div class="live-preview">
           <div class="row">
             <div class="col-xl-6">
               <h6>Primary Solid Alert</h6>
-              <ngb-alert class="bg-primary border-primary text-white" [dismissible]="false" type="primary">
+              <ngb-alert
+                class="bg-primary border-primary text-white"
+                [dismissible]="false"
+                type="primary"
+              >
                 <strong>Hi!</strong> - Solid <b>primary alert</b> example
               </ngb-alert>
 
               <h6>Secondary Solid Alert</h6>
-              <ngb-alert class="bg-secondary border-secondary text-white" [dismissible]="false" type="secondary">
+              <ngb-alert
+                class="bg-secondary border-secondary text-white"
+                [dismissible]="false"
+                type="secondary"
+              >
                 <strong>How are you!</strong> - Solid <b>secondary alert</b> example
               </ngb-alert>
 
               <h6>Success Solid Alert</h6>
-              <ngb-alert class="bg-success border-success text-white" [dismissible]="false" type="success">
+              <ngb-alert
+                class="bg-success border-success text-white"
+                [dismissible]="false"
+                type="success"
+              >
                 <strong>Yey! Everything worked! </strong> - Solid <b>success alert</b> example
               </ngb-alert>
 
               <h6>Danger Solid Alert</h6>
-              <ngb-alert class="bg-danger border-danger text-white mb-xl-0" [dismissible]="false" type="danger">
+              <ngb-alert
+                class="bg-danger border-danger text-white mb-xl-0"
+                [dismissible]="false"
+                type="danger"
+              >
                 <strong>Something is very wrong!</strong> - Solid <b>danger alert</b> example
               </ngb-alert>
             </div>
 
             <div class="col-xl-6">
               <h6>Warning Solid Alert</h6>
-              <ngb-alert class="bg-warning border-warning text-white" [dismissible]="false" type="warning">
+              <ngb-alert
+                class="bg-warning border-warning text-white"
+                [dismissible]="false"
+                type="warning"
+              >
                 <strong>Uh oh, something went wrong!</strong> - Solid <b>warning alert</b> example
               </ngb-alert>
 
@@ -1318,16 +1554,19 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
               </ngb-alert>
 
               <h6>Dark Solid Alert</h6>
-              <ngb-alert class="bg-dark border-dark text-white mb-0" [dismissible]="false" type="dark">
+              <ngb-alert
+                class="bg-dark border-dark text-white mb-0"
+                [dismissible]="false"
+                type="dark"
+              >
                 <strong>Did you know?</strong> - Solid <b>dark alert</b> example
               </ngb-alert>
-
             </div>
           </div>
         </div>
 
         <div class="d-none code-view">
-          <pre class="language-markup" style="max-height: 260px;">
+          <pre class="language-markup" style="max-height: 260px">
 <code>&lt;!-- Primary Alert --&gt;
 &lt;div class=&quot;alert alert-primary bg-primary, border-primary & text-white&quot; role=&quot;alert&quot;&gt;
 &lt;strong&gt;Hi!&lt;/strong&gt; - Solid &lt;b&gt;primary alert&lt;/b&gt; example
@@ -1369,7 +1608,9 @@ A simple &lt;b&gt;Dark alert&lt;/b&gt; with &lt;a href=&quot;#&quot; class=&quot
 &lt;/div&gt;
 </code></pre>
         </div>
-      </div><!-- end card-body -->
-    </div><!-- end card -->
+      </div>
+      <!-- end card-body -->
+    </div>
+    <!-- end card -->
   </div>
 </div>

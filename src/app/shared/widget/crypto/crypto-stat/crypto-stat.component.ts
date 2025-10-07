@@ -1,27 +1,25 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-crypto-stat',
-    templateUrl: './crypto-stat.component.html',
-    styleUrls: ['./crypto-stat.component.scss'],
-    standalone: false
+  selector: 'app-crypto-stat',
+  templateUrl: './crypto-stat.component.html',
+  styleUrls: ['./crypto-stat.component.scss'],
+  standalone: false,
 })
 
 /**
- * Crypto Stat Component 
+ * Crypto Stat Component
  */
 export class CryptoStatComponent implements OnInit {
-
   @Input() title: string | undefined;
   @Input() value: any | undefined;
   @Input() icon: string | undefined;
   @Input() persantage: string | undefined;
   @Input() profit: string | undefined;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   num: number = 0;
   option = {
@@ -30,5 +28,4 @@ export class CryptoStatComponent implements OnInit {
     duration: 2,
     decimalPlaces: 2,
   };
-
 }

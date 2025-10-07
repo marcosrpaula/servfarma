@@ -1,26 +1,25 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // Range Slider
 import { Options } from 'ngx-slider-v2';
 
-import { exploreModel } from './explore.model';
-import { PaginationService } from 'src/app/core/services/pagination.service';
 import { exploreData } from 'src/app/core/data';
+import { PaginationService } from 'src/app/core/services/pagination.service';
+import { exploreModel } from './explore.model';
 
 @Component({
-    selector: 'app-explore',
-    templateUrl: './explore.component.html',
-    styleUrls: ['./explore.component.scss'],
-    standalone: false
+  selector: 'app-explore',
+  templateUrl: './explore.component.html',
+  styleUrls: ['./explore.component.scss'],
+  standalone: false,
 })
 
 /**
  * Explore Component
  */
 export class ExploreComponent {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
@@ -34,29 +33,28 @@ export class ExploreComponent {
   type: any = '';
   sale_type: any = '';
 
-  constructor(private modalService: NgbModal, public service: PaginationService, private formBuilder: UntypedFormBuilder) {
-  }
+  constructor(
+    private modalService: NgbModal,
+    public service: PaginationService,
+    private formBuilder: UntypedFormBuilder,
+  ) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'NFT Marketplace' },
-      { label: 'Explore Now', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'NFT Marketplace' }, { label: 'Explore Now', active: true }];
 
     // FetchData
     this.basicData = exploreData;
   }
-
 
   // Range Slider Data
   value = 0;
   highValue = 1000;
   options: Options = {
     floor: 0,
-    ceil: 2000
+    ceil: 2000,
   };
 
   /**
@@ -75,7 +73,7 @@ export class ExploreComponent {
         item.type.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     });
-    this.basicData = this.service.changePage(this.searchResults)
+    this.basicData = this.service.changePage(this.searchResults);
   }
 
   categoryFilter() {
@@ -101,5 +99,4 @@ export class ExploreComponent {
       this.basicData = exploreData;
     }
   }
-
 }

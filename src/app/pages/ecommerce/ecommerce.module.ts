@@ -1,10 +1,18 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbPaginationModule, NgbTypeaheadModule, NgbDropdownModule, NgbNavModule, NgbAccordionModule, NgbRatingModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+  NgbAccordionModule,
+  NgbDropdownModule,
+  NgbNavModule,
+  NgbPaginationModule,
+  NgbRatingModule,
+  NgbTooltipModule,
+  NgbTypeaheadModule,
+} from '@ng-bootstrap/ng-bootstrap';
 
 // Mask
-import { NgxMaskDirective, NgxMaskPipe, provideNgxMask, IConfig } from 'ngx-mask'
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 // Range Slider
 import { NgxSliderModule } from 'ngx-slider-v2';
@@ -16,9 +24,7 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
 // Ck Editer
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 // File Uploads
-import { DropzoneModule } from 'ngx-dropzone-wrapper';
-import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
-import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { DROPZONE_CONFIG, DropzoneConfigInterface, DropzoneModule } from 'ngx-dropzone-wrapper';
 // Flat Picker
 import { FlatpickrModule } from 'angularx-flatpickr';
 // Ng Select
@@ -30,29 +36,29 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { CountUpModule } from 'ngx-countup';
 
 // Load Icon
-import { defineElement } from "@lordicon/element";
+import { defineElement } from '@lordicon/element';
 import lottie from 'lottie-web';
 
 // Component Pages
-import { EcommerceRoutingModule } from './ecommerce-routing.module';
 import { SharedModule } from '../../shared/shared.module';
-import { ProductsComponent } from './products/products.component';
-import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { AddProductComponent } from './add-product/add-product.component';
-import { OrdersComponent } from './orders/orders.component';
-import { OrdersDetailsComponent } from './orders-details/orders-details.component';
-import { CustomersComponent } from './customers/customers.component';
 import { CartComponent } from './cart/cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
-import { SellersComponent } from './sellers/sellers.component';
+import { CustomersComponent } from './customers/customers.component';
+import { EcommerceRoutingModule } from './ecommerce-routing.module';
+import { OrdersDetailsComponent } from './orders-details/orders-details.component';
+import { OrdersComponent } from './orders/orders.component';
+import { ProductDetailComponent } from './product-detail/product-detail.component';
+import { ProductsComponent } from './products/products.component';
 import { SellerDetailsComponent } from './seller-details/seller-details.component';
+import { SellersComponent } from './sellers/sellers.component';
 
 import { DatePipe } from '@angular/common';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: 'https://httpbin.org/post',
   maxFilesize: 50,
-  acceptedFiles: 'image/*'
+  acceptedFiles: 'image/*',
 };
 
 @NgModule({
@@ -66,7 +72,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     CartComponent,
     CheckoutComponent,
     SellersComponent,
-    SellerDetailsComponent
+    SellerDetailsComponent,
   ],
   imports: [
     CommonModule,
@@ -91,17 +97,17 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     EcommerceRoutingModule,
     SharedModule,
     NgxMaskDirective,
-    NgxMaskPipe
+    NgxMaskPipe,
   ],
   providers: [
     provideNgxMask(),
     DatePipe,
     {
       provide: DROPZONE_CONFIG,
-      useValue: DEFAULT_DROPZONE_CONFIG
-    }
+      useValue: DEFAULT_DROPZONE_CONFIG,
+    },
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class EcommerceModule {
   constructor() {

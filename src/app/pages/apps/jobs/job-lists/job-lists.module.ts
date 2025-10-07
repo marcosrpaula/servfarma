@@ -1,14 +1,18 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  NgbDropdownModule,
+  NgbPaginationModule,
+  NgbTooltipModule,
+} from '@ng-bootstrap/ng-bootstrap';
 
 // Flat Picker
 import { FlatpickrModule } from 'angularx-flatpickr';
 
 // routing
-import { JobListsRoutingModule } from './job-lists-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { JobListsRoutingModule } from './job-lists-routing.module';
 
 // component
 import { ListComponent } from './list/list.component';
@@ -19,11 +23,7 @@ import { GridComponent } from './grid/grid.component';
 import { OverviewComponent } from './overview/overview.component';
 
 @NgModule({
-  declarations: [
-    ListComponent,
-    GridComponent,
-    OverviewComponent
-  ],
+  declarations: [ListComponent, GridComponent, OverviewComponent],
   imports: [
     CommonModule,
     JobListsRoutingModule,
@@ -34,7 +34,7 @@ import { OverviewComponent } from './overview/overview.component';
     ReactiveFormsModule,
     FlatpickrModule.forRoot(),
     NgbDropdownModule,
-    NgbTooltipModule
-  ]
+    NgbTooltipModule,
+  ],
 })
-export class JobListsModule { }
+export class JobListsModule {}

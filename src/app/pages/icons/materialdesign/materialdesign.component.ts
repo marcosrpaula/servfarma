@@ -1,35 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastService } from '../toast-service';
 import { icons } from 'src/app/core/data';
+import { ToastService } from '../toast-service';
 
 @Component({
-    selector: 'app-materialdesign',
-    templateUrl: './materialdesign.component.html',
-    styleUrls: ['./materialdesign.component.scss'],
-    standalone: false
+  selector: 'app-materialdesign',
+  templateUrl: './materialdesign.component.html',
+  styleUrls: ['./materialdesign.component.scss'],
+  standalone: false,
 })
 
 /**
  * Materialdesign Component
  */
 export class MaterialdesignComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   icons!: Array<{}>;
   iconsCount = 0;
   newIconsCount = 0;
 
-  constructor(public toastService: ToastService) { }
+  constructor(public toastService: ToastService) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Icons' },
-      { label: 'Material Design', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Icons' }, { label: 'Material Design', active: true }];
 
     setTimeout(() => {
       this.icons = icons;
@@ -50,12 +46,11 @@ export class MaterialdesignComponent implements OnInit {
         this.iconsCount++;
       });
     }, 300);
-
   }
 
   /***
-  * change icon version
-  */
+   * change icon version
+   */
   isNew(icon: any) {
     return icon.version === '5.5.55';
   }
@@ -81,14 +76,19 @@ export class MaterialdesignComponent implements OnInit {
   }
 
   copytext(event: any) {
-    var element = event.target.innerHTML
+    var element = event.target.innerHTML;
     navigator.clipboard.writeText(element);
-    this.toastService.show(element + ' icon Copied Successfully !!!', { classname: 'bg-success text-center text-white', delay: 5000 });
+    this.toastService.show(element + ' icon Copied Successfully !!!', {
+      classname: 'bg-success text-center text-white',
+      delay: 5000,
+    });
   }
 
   copyicon(icon: any) {
     navigator.clipboard.writeText(icon);
-    this.toastService.show(icon + ' icon Copied Successfully !!!', { classname: 'bg-success text-center text-white', delay: 5000 });
+    this.toastService.show(icon + ' icon Copied Successfully !!!', {
+      classname: 'bg-success text-center text-white',
+      delay: 5000,
+    });
   }
-
 }

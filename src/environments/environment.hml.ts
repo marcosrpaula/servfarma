@@ -1,4 +1,4 @@
-﻿export const environment = {
+export const environment = {
   production: true,
   defaultauth: 'keycloak',
   apiBaseUrl: 'http://localhost:5164',
@@ -15,6 +15,6 @@
     storageBucket: '',
     messagingSenderId: '',
     appId: '',
-    measurementId: ''
-  }
+    measurementId: '',
+  },
 };

@@ -1,35 +1,35 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { FeatureModuleComponent } from './feature-module.component';
-import { PermissionGuard } from '../core/access-control/permission.guard';
-import { SigninComponent } from '../auth/signin/signin.component';
-import { SignupComponent } from '../auth/signup/signup.component';
-import { OtpComponent } from '../auth/otp/otp.component';
-import { ForgotPasswordComponent } from '../auth/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from '../auth/reset-password/reset-password.component';
-import { SuccessComponent } from '../auth/success/success.component';
-import { Login2Component } from '../auth/login-2/login-2.component';
-import { Login3Component } from '../auth/login-3/login-3.component';
-import { ForgotPassword2Component } from '../auth/forgot-password-2/forgot-password-2.component';
-import { ForgotPassword3Component } from '../auth/forgot-password-3/forgot-password-3.component';
-import { ResetPassword2Component } from '../auth/reset-password-2/reset-password-2.component';
-import { ResetPassword3Component } from '../auth/reset-password-3/reset-password-3.component';
-import { RegisterComponent } from '../auth/register/register.component';
-import { Register2Component } from '../auth/register-2/register-2.component';
-import { Register3Component } from '../auth/register-3/register-3.component';
-import { EmailVerificationComponent } from '../auth/email-verification/email-verification.component';
 import { EmailVerification2Component } from '../auth/email-verification-2/email-verification-2.component';
 import { EmailVerification3Component } from '../auth/email-verification-3/email-verification-3.component';
-import { TwoStepVerificationComponent } from '../auth/two-step-verification/two-step-verification.component';
-import { TwoStepVerification2Component } from '../auth/two-step-verification-2/two-step-verification-2.component';
-import { TwoStepVerification3Component } from '../auth/two-step-verification-3/two-step-verification-3.component';
-import { PasswordStrengthComponent } from '../auth/password-strength/password-strength.component';
-import { Success3Component } from '../auth/success-3/success-3.component';
-import { Success2Component } from '../auth/success-2/success-2.component';
-import { LockScreenComponent } from '../auth/lock-screen/lock-screen.component';
+import { EmailVerificationComponent } from '../auth/email-verification/email-verification.component';
 import { Error404Component } from '../auth/error-404/error-404.component';
 import { Error500Component } from '../auth/error-500/error-500.component';
+import { ForgotPassword2Component } from '../auth/forgot-password-2/forgot-password-2.component';
+import { ForgotPassword3Component } from '../auth/forgot-password-3/forgot-password-3.component';
+import { ForgotPasswordComponent } from '../auth/forgot-password/forgot-password.component';
+import { LockScreenComponent } from '../auth/lock-screen/lock-screen.component';
+import { Login2Component } from '../auth/login-2/login-2.component';
+import { Login3Component } from '../auth/login-3/login-3.component';
+import { OtpComponent } from '../auth/otp/otp.component';
+import { PasswordStrengthComponent } from '../auth/password-strength/password-strength.component';
+import { Register2Component } from '../auth/register-2/register-2.component';
+import { Register3Component } from '../auth/register-3/register-3.component';
+import { RegisterComponent } from '../auth/register/register.component';
+import { ResetPassword2Component } from '../auth/reset-password-2/reset-password-2.component';
+import { ResetPassword3Component } from '../auth/reset-password-3/reset-password-3.component';
+import { ResetPasswordComponent } from '../auth/reset-password/reset-password.component';
+import { SigninComponent } from '../auth/signin/signin.component';
+import { SignupComponent } from '../auth/signup/signup.component';
+import { Success2Component } from '../auth/success-2/success-2.component';
+import { Success3Component } from '../auth/success-3/success-3.component';
+import { SuccessComponent } from '../auth/success/success.component';
+import { TwoStepVerification2Component } from '../auth/two-step-verification-2/two-step-verification-2.component';
+import { TwoStepVerification3Component } from '../auth/two-step-verification-3/two-step-verification-3.component';
+import { TwoStepVerificationComponent } from '../auth/two-step-verification/two-step-verification.component';
+import { PermissionGuard } from '../core/access-control/permission.guard';
 import { ModalDashboardComponent } from './dashboard/modal-dashboard/modal-dashboard.component';
+import { FeatureModuleComponent } from './feature-module.component';
 
 const routes: Routes = [
   {
@@ -149,8 +149,7 @@ const routes: Routes = [
       },
       {
         path: 'dashboard',
-        loadChildren: () =>
-          import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+        loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
       },
       { path: 'layout-horizontal', component: ModalDashboardComponent },
       { path: 'layout-detached', component: ModalDashboardComponent },
@@ -178,9 +177,7 @@ const routes: Routes = [
         canMatch: [PermissionGuard],
         data: { permission: { module: 'banks', level: 'read' } },
         loadChildren: () =>
-          import('./administration/banks/banks.module').then(
-            (m) => m.BanksModule
-          ),
+          import('./administration/banks/banks.module').then((m) => m.BanksModule),
       },
       {
         path: 'laboratories',
@@ -188,7 +185,7 @@ const routes: Routes = [
         data: { permission: { module: 'laboratories', level: 'read' } },
         loadChildren: () =>
           import('./administration/laboratories/laboratories.module').then(
-            (m) => m.LaboratoriesModule
+            (m) => m.LaboratoriesModule,
           ),
       },
       {
@@ -197,7 +194,7 @@ const routes: Routes = [
         data: { permission: { module: 'couriers', level: 'read' } },
         loadChildren: () =>
           import('./administration/courier-companies/courier-companies.module').then(
-            (m) => m.CourierCompaniesModule
+            (m) => m.CourierCompaniesModule,
           ),
       },
       {
@@ -205,9 +202,7 @@ const routes: Routes = [
         canMatch: [PermissionGuard],
         data: { permission: { module: 'couriers', level: 'read' } },
         loadChildren: () =>
-          import('./administration/couriers/couriers.module').then(
-            (m) => m.CouriersModule
-          ),
+          import('./administration/couriers/couriers.module').then((m) => m.CouriersModule),
       },
       {
         path: 'return-units',
@@ -215,7 +210,7 @@ const routes: Routes = [
         data: { permission: { module: 'return-units', level: 'read' } },
         loadChildren: () =>
           import('./administration/return-units/return-units.module').then(
-            (m) => m.ReturnUnitsModule
+            (m) => m.ReturnUnitsModule,
           ),
       },
       {
@@ -223,32 +218,32 @@ const routes: Routes = [
         canMatch: [PermissionGuard],
         data: { permission: { module: 'projects', level: 'read' } },
         loadChildren: () =>
-          import('./administration/projects/projects.module').then(
-            (m) => m.ProjectsModule
-          ),
+          import('./administration/projects/projects.module').then((m) => m.ProjectsModule),
       },
       {
         path: 'supplies',
         canMatch: [PermissionGuard],
         data: { permission: { module: 'supplies', level: 'read' } },
         loadChildren: () =>
-          import('./administration/supplies/supplies.module').then(
-            (m) => m.SuppliesModule
-          ),
+          import('./administration/supplies/supplies.module').then((m) => m.SuppliesModule),
       },
       {
         path: 'user-management',
         canMatch: [PermissionGuard],
         data: { permission: ['users:read', 'roles:read'], permissionMode: 'any' },
         loadChildren: () =>
-          import('./administration/user-management/user-management.module').then((m) => m.UserManagementModule),
+          import('./administration/user-management/user-management.module').then(
+            (m) => m.UserManagementModule,
+          ),
       },
       {
         path: 'pharmaceutical-forms',
         canMatch: [PermissionGuard],
         data: { permission: { module: 'pharmaceutical-forms', level: 'read' } },
         loadChildren: () =>
-          import('./administration/pharmaceutical-forms/pharmaceutical-forms.module').then((m) => m.PharmaceuticalFormsModule),
+          import('./administration/pharmaceutical-forms/pharmaceutical-forms.module').then(
+            (m) => m.PharmaceuticalFormsModule,
+          ),
       },
       {
         path: 'units',
@@ -266,4 +261,3 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class FeatureModuleRoutingModule {}
-

@@ -1,4 +1,4 @@
-﻿import { MenuItem } from './menu.model';
+import { MenuItem } from './menu.model';
 
 export const MENU: MenuItem[] = [
   {
@@ -36,7 +36,12 @@ export const MENU: MenuItem[] = [
     isCollapsed: true,
     subItems: [
       { id: 401, label: 'Usuários', link: '/user-management/users', parentId: 4 },
-      { id: 402, label: 'Perfis & Permissões', link: '/user-management/roles-permissions', parentId: 4 },
+      {
+        id: 402,
+        label: 'Perfis & Permissões',
+        link: '/user-management/roles-permissions',
+        parentId: 4,
+      },
     ],
   },
 ];

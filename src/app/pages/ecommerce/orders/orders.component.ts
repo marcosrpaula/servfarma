@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
-import { NgbModal, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { NgbModal, NgbNavChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 // Date Format
-import { DatePipe } from '@angular/common';
 
 // Csv File Export
 import { ngxCsv } from 'ngx-csv/ngx-csv';
@@ -11,26 +10,29 @@ import { ngxCsv } from 'ngx-csv/ngx-csv';
 import Swal from 'sweetalert2';
 
 // Rest Api Service
-import { restApiService } from "../../../core/services/rest-api.service";
-import { addOrder, deleteOrder, fetchorderListData, updateOrder } from 'src/app/store/Ecommerce/ecommerce_action';
-import { RootReducerState } from 'src/app/store';
 import { Store } from '@ngrx/store';
-import { selectDataLoading, selectOrderData } from 'src/app/store/Ecommerce/ecommerce_selector';
 import { cloneDeep } from 'lodash';
 import { PaginationService } from 'src/app/core/services/pagination.service';
+import { RootReducerState } from 'src/app/store';
+import {
+  addOrder,
+  deleteOrder,
+  fetchorderListData,
+  updateOrder,
+} from 'src/app/store/Ecommerce/ecommerce_action';
+import { selectDataLoading, selectOrderData } from 'src/app/store/Ecommerce/ecommerce_selector';
 
 @Component({
-    selector: 'app-orders',
-    templateUrl: './orders.component.html',
-    styleUrls: ['./orders.component.scss'],
-    standalone: false
+  selector: 'app-orders',
+  templateUrl: './orders.component.html',
+  styleUrls: ['./orders.component.scss'],
+  standalone: false,
 })
 
 /**
  * Orders Component
  */
 export class OrdersComponent {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   ordersForm!: UntypedFormGroup;
@@ -60,19 +62,18 @@ export class OrdersComponent {
   searchResults: any;
   searchTerm: any;
 
-  constructor(private modalService: NgbModal, private formBuilder: UntypedFormBuilder,
+  constructor(
+    private modalService: NgbModal,
+    private formBuilder: UntypedFormBuilder,
     public service: PaginationService,
-    private store: Store<{ data: RootReducerState }>) {
-  }
+    private store: Store<{ data: RootReducerState }>,
+  ) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Ecommerce' },
-      { label: 'Orders', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Ecommerce' }, { label: 'Orders', active: true }];
 
     /**
      * Form Validation
@@ -86,7 +87,7 @@ export class OrdersComponent {
       orderDate: ['', [Validators.required]],
       amount: ['', [Validators.required]],
       payment: ['', [Validators.required]],
-      status: ['', [Validators.required]]
+      status: ['', [Validators.required]],
     });
 
     // Fetch Data
@@ -100,16 +101,16 @@ export class OrdersComponent {
     this.store.select(selectOrderData).subscribe((data) => {
       this.orderes = data;
       this.allorderes = cloneDeep(data);
-      this.orderes = this.service.changePage(this.allorderes)
+      this.orderes = this.service.changePage(this.allorderes);
     });
   }
 
   changePage() {
-    this.orderes = this.service.changePage(this.allorderes)
+    this.orderes = this.service.changePage(this.allorderes);
   }
 
   onSort(column: any) {
-    this.orderes = this.service.onSort(column, this.orderes)
+    this.orderes = this.service.onSort(column, this.orderes);
   }
 
   // Search Data
@@ -124,7 +125,7 @@ export class OrdersComponent {
       );
     });
     // this.orderes = this.searchResults.slice(0, 10);
-    this.orderes = this.service.changePage(this.searchResults)
+    this.orderes = this.service.changePage(this.searchResults);
     // if (this.searchResults.length == 0) {
     //   (document.querySelector('.noresult') as HTMLElement).style.display = 'block'
     // } else {
@@ -136,7 +137,7 @@ export class OrdersComponent {
     // this.orderes = this.allorderes.filter(country => country.status == status);
 
     if (changeEvent.nextId === 1) {
-      this.orderes = this.allorderes
+      this.orderes = this.allorderes;
     }
     if (changeEvent.nextId === 2) {
       this.orderes = this.allorderes.filter((order: any) => order.status == 'Delivered');
@@ -155,30 +156,29 @@ export class OrdersComponent {
   /**
    * Open modal
    * @param content modal content
-  */
+   */
   openModal(content: any) {
     this.submitted = false;
     this.modalService.open(content, { size: 'md', centered: true });
   }
 
   /**
-  * Form data get
-  */
+   * Form data get
+   */
   get form() {
     return this.ordersForm.controls;
   }
 
   /**
-  * Save user
-  */
+   * Save user
+   */
   saveUser() {
     if (this.ordersForm.valid) {
       if (this.ordersForm.get('orderId')?.value) {
         const updatedData = this.ordersForm.value;
         this.store.dispatch(updateOrder({ updatedData }));
         this.modalService.dismissAll();
-      }
-      else {
+      } else {
         const orderId = (this.allorderes.length + 1).toString();
         this.ordersForm.controls['orderId'].setValue(orderId);
         const newData = this.ordersForm.value;
@@ -201,7 +201,7 @@ export class OrdersComponent {
       }
     }
     this.ordersForm.reset();
-    this.submitted = true
+    this.submitted = true;
   }
 
   /**
@@ -214,7 +214,7 @@ export class OrdersComponent {
     var modelTitle = document.querySelector('.modal-title') as HTMLAreaElement;
     modelTitle.innerHTML = 'Edit Order';
     var updateBtn = document.getElementById('add-btn') as HTMLAreaElement;
-    updateBtn.innerHTML = "Update";
+    updateBtn.innerHTML = 'Update';
     this.econtent = this.allorderes[id];
     this.ordersForm.controls['customer'].setValue(this.econtent.customer);
     this.ordersForm.controls['product'].setValue(this.econtent.product);
@@ -223,12 +223,11 @@ export class OrdersComponent {
     this.ordersForm.controls['payment'].setValue(this.econtent.payment);
     this.ordersForm.controls['status'].setValue(this.econtent.status);
     this.ordersForm.controls['orderId'].setValue(this.econtent.orderId);
-
   }
 
   /**
-  * Delete Model Open
-  */
+   * Delete Model Open
+   */
   deleteId: any;
   confirm(content: any, id: any) {
     this.deleteId = id;
@@ -242,17 +241,17 @@ export class OrdersComponent {
     } else {
       this.store.dispatch(deleteOrder({ id: this.checkedValGet.toString() }));
     }
-    this.deleteId = ''
-    this.masterSelected = false
+    this.deleteId = '';
+    this.masterSelected = false;
   }
 
   /**
-  * Multiple Delete
-  */
+   * Multiple Delete
+   */
   checkedValGet: any[] = [];
   deleteMultiple(content: any) {
     var checkboxes: any = document.getElementsByName('checkAll');
-    var result
+    var result;
     var checkedVal: any[] = [];
     for (var i = 0; i < checkboxes.length; i++) {
       if (checkboxes[i].checked) {
@@ -262,41 +261,43 @@ export class OrdersComponent {
     }
     if (checkedVal.length > 0) {
       this.modalService.open(content, { centered: true });
-    }
-    else {
-      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb', });
+    } else {
+      Swal.fire({ text: 'Please select at least one checkbox', confirmButtonColor: '#299cdb' });
     }
     this.checkedValGet = checkedVal;
   }
 
   // The master checkbox will check/ uncheck all items
   checkUncheckAll(ev: any) {
-    this.orderes.forEach((x: { state: any; }) => x.state = ev.target.checked)
+    this.orderes.forEach((x: { state: any }) => (x.state = ev.target.checked));
     var checkedVal: any[] = [];
-    var result
+    var result;
     for (var i = 0; i < this.orderes.length; i++) {
       if (this.orderes[i].state == true) {
         result = this.orderes[i];
         checkedVal.push(result);
       }
     }
-    this.checkedValGet = checkedVal
-    checkedVal.length > 0 ? (document.getElementById("remove-actions") as HTMLElement).style.display = "block" : (document.getElementById("remove-actions") as HTMLElement).style.display = "none";
+    this.checkedValGet = checkedVal;
+    checkedVal.length > 0
+      ? ((document.getElementById('remove-actions') as HTMLElement).style.display = 'block')
+      : ((document.getElementById('remove-actions') as HTMLElement).style.display = 'none');
   }
-
 
   // Select Checkbox value Get
   onCheckboxChange(e: any) {
     var checkedVal: any[] = [];
-    var result
+    var result;
     for (var i = 0; i < this.orderes.length; i++) {
       if (this.orderes[i].state == true) {
         result = this.orderes[i];
         checkedVal.push(result);
       }
     }
-    this.checkedValGet = checkedVal
-    checkedVal.length > 0 ? (document.getElementById("remove-actions") as HTMLElement).style.display = "block" : (document.getElementById("remove-actions") as HTMLElement).style.display = "none";
+    this.checkedValGet = checkedVal;
+    checkedVal.length > 0
+      ? ((document.getElementById('remove-actions') as HTMLElement).style.display = 'block')
+      : ((document.getElementById('remove-actions') as HTMLElement).style.display = 'none');
   }
 
   // Csv File Export
@@ -310,21 +311,30 @@ export class OrdersComponent {
       title: 'Order Data',
       useBom: true,
       noDownload: false,
-      headers: ["id", "order Id", "customer", "product", "orderDate", "amount", "payment", "status"]
+      headers: [
+        'id',
+        'order Id',
+        'customer',
+        'product',
+        'orderDate',
+        'amount',
+        'payment',
+        'status',
+      ],
     };
-    new ngxCsv(this.orderes, "orders", orders);
+    new ngxCsv(this.orderes, 'orders', orders);
   }
   /**
-  * Sort table data
-  * @param param0 sort the column
-  *
-  */
+   * Sort table data
+   * @param param0 sort the column
+   *
+   */
 
   PaymentFiletr() {
     if (this.payment != '') {
       this.orderes = this.allorderes.filter((order: any) => order.payment == this.payment);
     } else {
-      this.orderes = this.service.changePage(this.allorderes)
+      this.orderes = this.service.changePage(this.allorderes);
     }
   }
 
@@ -332,8 +342,7 @@ export class OrdersComponent {
     if (this.status != '') {
       this.orderes = this.allorderes.filter((order: any) => order.status == this.status);
     } else {
-      this.orderes = this.service.changePage(this.allorderes)
+      this.orderes = this.service.changePage(this.allorderes);
     }
   }
-
 }

@@ -4,10 +4,12 @@
   <div class="col-12">
     <form [formGroup]="form" (ngSubmit)="save()">
       <div class="card">
-        <div class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div
+          class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2"
+        >
           <div>
             <h5 class="card-title mb-1">{{ title() }}</h5>
-            <p class="text-muted mb-0">Informe os dados b·sicos e permissıes do usu·rio.</p>
+            <p class="text-muted mb-0">Informe os dados b√°sicos e permiss√µes do usu√°rio.</p>
           </div>
           <div class="status-toggle form-check form-switch mb-0">
             <input
@@ -20,7 +22,9 @@
               Status
               <span
                 class="status-toggle__badge"
-                [ngClass]="form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'"
+                [ngClass]="
+                  form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'
+                "
               >
                 {{ form.get('isActive')?.value ? 'Ativo' : 'Inativo' }}
               </span>
@@ -32,31 +36,45 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Nome <span class="text-danger">*</span></label>
-              <input formControlName="name" type="text" class="form-control" placeholder="Nome completo" />
+              <input
+                formControlName="name"
+                type="text"
+                class="form-control"
+                placeholder="Nome completo"
+              />
             </div>
             <div class="col-md-6">
               <label class="form-label">Email <span class="text-danger">*</span></label>
-              <input formControlName="email" type="email" class="form-control" placeholder="email@empresa.com" [readonly]="id()" />
+              <input
+                formControlName="email"
+                type="email"
+                class="form-control"
+                placeholder="email@empresa.com"
+                [readonly]="id()"
+              />
             </div>
           </div>
 
           <div class="card mt-4">
             <div class="card-header border-bottom-dashed">
-              <h6 class="mb-0">Permissıes</h6>
+              <h6 class="mb-0">Permiss√µes</h6>
             </div>
             <div class="card-body p-0">
               <div class="table-responsive">
                 <table class="table mb-0">
                   <thead class="thead-light">
                     <tr>
-                      <th>MÛdulo</th>
+                      <th>M√≥dulo</th>
                       <th>Acesso</th>
                       <th>Admin</th>
                       <th>Leitura</th>
                     </tr>
                   </thead>
                   <tbody formArrayName="permissions">
-                    <tr *ngFor="let pg of permissionGroups; let i = index; trackBy: trackByIdx" [formGroupName]="i">
+                    <tr
+                      *ngFor="let pg of permissionGroups; let i = index; trackBy: trackByIdx"
+                      [formGroupName]="i"
+                    >
                       <td>
                         <h6 class="fs-14 fw-normal text-gray-9 mb-0">{{ pg.module }}</h6>
                       </td>
@@ -94,8 +112,11 @@
                   </tbody>
                 </table>
               </div>
-              <div class="text-danger px-3 pb-3" *ngIf="form.get('permissions')?.touched && form.get('permissions')?.invalid">
-                Selecione ao menos uma permiss„o.
+              <div
+                class="text-danger px-3 pb-3"
+                *ngIf="form.get('permissions')?.touched && form.get('permissions')?.invalid"
+              >
+                Selecione ao menos uma permiss√£o.
               </div>
             </div>
           </div>

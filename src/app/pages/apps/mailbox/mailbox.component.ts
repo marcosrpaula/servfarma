@@ -5,24 +5,22 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 // Sweet Alert
-import Swal from 'sweetalert2';
 
 // Email Data Get
-import { Email } from './mailbox.model';
 import { emailData } from 'src/app/core/data';
+import { Email } from './mailbox.model';
 
 @Component({
-    selector: 'app-mailbox',
-    templateUrl: './mailbox.component.html',
-    styleUrls: ['./mailbox.component.scss'],
-    standalone: false
+  selector: 'app-mailbox',
+  templateUrl: './mailbox.component.html',
+  styleUrls: ['./mailbox.component.scss'],
+  standalone: false,
 })
 
 /**
  * Mailbox Component
  */
 export class MailboxComponent implements OnInit {
-
   public Editor = ClassicEditor;
   emailData!: Email[];
   emailIds: number[] = [];
@@ -34,7 +32,7 @@ export class MailboxComponent implements OnInit {
   public CcRecipientsCollapse = true;
   public BccRecipientsCollapse = true;
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal) {}
 
   ngOnInit(): void {
     /**
@@ -44,17 +42,17 @@ export class MailboxComponent implements OnInit {
 
     // Compose Model Hide/Show
     var isShowMenu = false;
-    document.querySelectorAll(".email-menu-btn").forEach(function (item) {
-      item.addEventListener("click", function (e) {
+    document.querySelectorAll('.email-menu-btn').forEach(function (item) {
+      item.addEventListener('click', function (e) {
         e.preventDefault();
         isShowMenu = true;
-        document.getElementById('menusidebar')?.classList.add("menubar-show");
+        document.getElementById('menusidebar')?.classList.add('menubar-show');
       });
     });
     document.querySelector('.email-wrapper')?.addEventListener('click', function () {
-      if (document.querySelector(".email-menu-sidebar")?.classList.contains('menubar-show')) {
+      if (document.querySelector('.email-menu-sidebar')?.classList.contains('menubar-show')) {
         if (!isShowMenu) {
-          document.querySelector(".email-menu-sidebar")?.classList.remove("menubar-show");
+          document.querySelector('.email-menu-sidebar')?.classList.remove('menubar-show');
         }
         isShowMenu = false;
       }
@@ -65,27 +63,27 @@ export class MailboxComponent implements OnInit {
    * Fetches the data
    */
   private fetchData() {
-    document.getElementById('emaildata')?.classList.add('d-none')
+    document.getElementById('emaildata')?.classList.add('d-none');
     setTimeout(() => {
-      document.getElementById('emaildata')?.classList.remove('d-none')
+      document.getElementById('emaildata')?.classList.remove('d-none');
       this.emailData = emailData;
       this.emailDatas = Object.assign([], this.emailData);
-      this.dataCount = this.emailDatas.length
-      document.getElementById('elmLoader')?.classList.add('d-none')
+      this.dataCount = this.emailDatas.length;
+      document.getElementById('elmLoader')?.classList.add('d-none');
     }, 1000);
   }
 
   /**
-  * Open modal
-  * @param content content
-  */
+   * Open modal
+   * @param content content
+   */
   open(content: any) {
     this.modalService.open(content, { size: 'lg', centered: true });
   }
 
   /**
-  * on settings button clicked from topbar
-  */
+   * on settings button clicked from topbar
+   */
   singleData: any = [];
   onSettingsButtonClicked(event: any, id: any) {
     this.singleData = this.emailData.filter((order: any) => {
@@ -93,13 +91,13 @@ export class MailboxComponent implements OnInit {
     });
     this.singleData.forEach((item: any) => {
       this.singleData = item;
-    })
+    });
     document.body.classList.add('email-detail-show');
   }
 
   /**
- * Hide the sidebar
- */
+   * Hide the sidebar
+   */
   public hide() {
     document.body.classList.remove('email-detail-show');
   }
@@ -111,14 +109,14 @@ export class MailboxComponent implements OnInit {
     this.modalService.open(content, { centered: true });
     var checkboxes: any = document.getElementsByName('checkAll');
     var checkedVal: any[] = [];
-    var result
+    var result;
     for (var i = 0; i < checkboxes.length; i++) {
       if (checkboxes[i].checked) {
         result = checkboxes[i].value;
         checkedVal.push(result);
       }
     }
-    this.emailIds = checkedVal
+    this.emailIds = checkedVal;
   }
 
   /***
@@ -129,11 +127,11 @@ export class MailboxComponent implements OnInit {
       document.getElementById('chk-' + item)?.remove();
       for (var i = 0; i < this.emailData.length; i++) {
         if (this.emailData[i].id == item) {
-          this.emailData[i].category = 'trash'
+          this.emailData[i].category = 'trash';
         }
       }
     });
-    (document.getElementById("email-topbar-actions") as HTMLElement).style.display = "none";
+    (document.getElementById('email-topbar-actions') as HTMLElement).style.display = 'none';
   }
 
   /***
@@ -142,15 +140,17 @@ export class MailboxComponent implements OnInit {
   selectMail(event: any, id: any) {
     var checkboxes: any = document.getElementsByName('checkAll');
     var checkedVal: any[] = [];
-    var result
+    var result;
     for (var i = 0; i < checkboxes.length; i++) {
       if (checkboxes[i].checked) {
         result = checkboxes[i].value;
         checkedVal.push(result);
       }
     }
-    this.emailIds = checkedVal
-    this.emailIds.length > 0 ? (document.getElementById("email-topbar-actions") as HTMLElement).style.display = "block" : (document.getElementById("email-topbar-actions") as HTMLElement).style.display = "none";
+    this.emailIds = checkedVal;
+    this.emailIds.length > 0
+      ? ((document.getElementById('email-topbar-actions') as HTMLElement).style.display = 'block')
+      : ((document.getElementById('email-topbar-actions') as HTMLElement).style.display = 'none');
   }
 
   /**
@@ -178,27 +178,26 @@ export class MailboxComponent implements OnInit {
   // Active Star
   activeStar(id: any, i: any) {
     if (this.emailData[i].category != 'starred') {
-      this.cat = this.emailData[i].category
-      this.emailData[i].category = 'starred'
+      this.cat = this.emailData[i].category;
+      this.emailData[i].category = 'starred';
     } else {
-      this.emailData[i].category = this.cat
+      this.emailData[i].category = this.cat;
     }
     document.querySelector('.star_' + id)?.classList.toggle('active');
   }
 
   /**
-   * Category Filtering  
+   * Category Filtering
    */
   categoryFilter(e: any, name: any) {
     var removeClass = document.querySelectorAll('.mail-list a');
     removeClass.forEach((element: any) => {
       element.classList.remove('active');
     });
-    e.target.closest('.mail-list a').classList.add('active')
+    e.target.closest('.mail-list a').classList.add('active');
     if (name == 'all') {
-      this.emailDatas = this.emailData
-    }
-    else {
+      this.emailDatas = this.emailData;
+    } else {
       this.emailDatas = this.emailData.filter((email: any) => {
         return email.category === name;
       });
@@ -206,45 +205,42 @@ export class MailboxComponent implements OnInit {
   }
 
   /**
-   * Label Filtering  
+   * Label Filtering
    */
   labelsFilter(e: any, name: any) {
     var removeClass = document.querySelectorAll('.mail-list a');
     removeClass.forEach((element: any) => {
       element.classList.remove('active');
     });
-    e.target.closest('.mail-list a').classList.add('active')
+    e.target.closest('.mail-list a').classList.add('active');
     this.emailDatas = this.emailData.filter((email: any) => {
       return email.label === name;
     });
   }
 
   /**
-   * Chat Filtering  
+   * Chat Filtering
    */
-  userName: any
+  userName: any;
   profile: any = 'user-dummy-img.jpg';
   chatFilter(e: any, name: any, image: any) {
-    (document.getElementById("emailchat-detailElem") as HTMLElement).style.display = "block";
+    (document.getElementById('emailchat-detailElem') as HTMLElement).style.display = 'block';
     this.userName = name;
     this.profile = image ? image : 'user-dummy-img.jpg';
   }
 
   // Close Chat
   closeChat() {
-    (document.getElementById("emailchat-detailElem") as HTMLElement).style.display = "none";
+    (document.getElementById('emailchat-detailElem') as HTMLElement).style.display = 'none';
   }
 
   // The master checkbox will check/ uncheck all items
   checkUncheckAll(ev: any) {
-    this.emailDatas.forEach((x: { state: any; }) => x.state = ev.target.checked)
+    this.emailDatas.forEach((x: { state: any }) => (x.state = ev.target.checked));
     if (ev.target.checked) {
-      (document.getElementById("email-topbar-actions") as HTMLElement).style.display = "block"
-    }
-    else {
-      (document.getElementById("email-topbar-actions") as HTMLElement).style.display = "none"
+      (document.getElementById('email-topbar-actions') as HTMLElement).style.display = 'block';
+    } else {
+      (document.getElementById('email-topbar-actions') as HTMLElement).style.display = 'none';
     }
   }
-
-
 }

@@ -1,19 +1,14 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ProjectsApiService } from '../services/projects.api.service';
-import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
+import { NotificationService } from '../../../../core/notifications/notification.service';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ProjectInput, ProjectViewModel } from '../../../../shared/models/projects';
-import { ProjectsStateService } from '../services/projects-state.service';
-import { NotificationService } from '../../../../core/notifications/notification.service';
 import { SharedModule } from '../../../../shared/shared.module';
+import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
+import { ProjectsStateService } from '../services/projects-state.service';
+import { ProjectsApiService } from '../services/projects.api.service';
 
 interface ServiceTypeOption {
   id: number;
@@ -91,7 +86,9 @@ export class ProjectUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const project = this.resolveProjectForReadOnly();
         if (!project) {
-          this.notifications.error('Nao foi possivel carregar os dados do projeto para visualizacao. Acesse novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados do projeto para visualizacao. Acesse novamente a partir da listagem.',
+          );
           this.router.navigate(['/projects']);
           return;
         }
@@ -152,9 +149,7 @@ export class ProjectUpsertComponent implements OnInit {
             sampleStock: stockValue.sampleStock || '',
             blockedStock: stockValue.blockedStock || '',
             blockSimilarLot: !!stockValue.blockSimilarLot,
-            blockBeforeExpirationInMonths: Number(
-              stockValue.blockBeforeExpirationInMonths || 0
-            ),
+            blockBeforeExpirationInMonths: Number(stockValue.blockBeforeExpirationInMonths || 0),
           }
         : null,
     };
@@ -251,11 +246,15 @@ export class ProjectUpsertComponent implements OnInit {
       };
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const historyCandidate = (history.state as Record<string, unknown>)['project'] as ProjectViewModel | undefined;
+      const historyCandidate = (history.state as Record<string, unknown>)['project'] as
+        | ProjectViewModel
+        | undefined;
       if (historyCandidate) {
         return {
           ...historyCandidate,
-          laboratory: historyCandidate.laboratory ? { ...historyCandidate.laboratory } : historyCandidate.laboratory,
+          laboratory: historyCandidate.laboratory
+            ? { ...historyCandidate.laboratory }
+            : historyCandidate.laboratory,
           stock: historyCandidate.stock ? { ...historyCandidate.stock } : historyCandidate.stock,
           allowedServiceTypes: historyCandidate.allowedServiceTypes?.map((s) => ({ ...s })) ?? [],
         };

@@ -1,22 +1,17 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { CourierCompaniesApiService } from '../services/courier-companies.api.service';
-import { CourierCompaniesStateService } from '../services/courier-companies-state.service';
-import { NotificationService } from '../../../../core/notifications/notification.service';
-import { SharedModule } from '../../../../shared/shared.module';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
+import { NotificationService } from '../../../../core/notifications/notification.service';
+import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import {
-  CitySimpleViewModel,
-  StateSimpleViewModel,
-} from '../../../../shared/models/addresses';
-import { CourierCompanyInput, CourierCompanyViewModel } from '../../../../shared/models/courier-companies';
+  CourierCompanyInput,
+  CourierCompanyViewModel,
+} from '../../../../shared/models/courier-companies';
+import { SharedModule } from '../../../../shared/shared.module';
+import { CourierCompaniesStateService } from '../services/courier-companies-state.service';
+import { CourierCompaniesApiService } from '../services/courier-companies.api.service';
 
 @Component({
   selector: 'app-courier-company-upsert',
@@ -86,7 +81,9 @@ export class CourierCompanyUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const company = this.resolveCompanyForReadOnly();
         if (!company) {
-          this.notifications.error('Nao foi possivel carregar os dados da transportadora para visualizacao. Abra novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados da transportadora para visualizacao. Abra novamente a partir da listagem.',
+          );
           this.router.navigate(['/courier-companies']);
           return;
         }
@@ -201,7 +198,6 @@ export class CourierCompanyUpsertComponent implements OnInit {
     this.router.navigate(['/courier-companies']);
   }
 
-
   private applyCompany(company: CourierCompanyViewModel): void {
     this.form.patchValue({
       name: company?.name ?? '',
@@ -227,7 +223,7 @@ export class CourierCompanyUpsertComponent implements OnInit {
           referencePoint: address.referencePoint ?? '',
           neighborhood: address.neighborhood ?? '',
         },
-        { emitEvent: false }
+        { emitEvent: false },
       );
       this.applyPendingAddressSelection();
     } else {
@@ -242,7 +238,7 @@ export class CourierCompanyUpsertComponent implements OnInit {
           referencePoint: '',
           neighborhood: '',
         },
-        { emitEvent: false }
+        { emitEvent: false },
       );
       this.form.get('address.stateId')?.setValue('', { emitEvent: false });
       this.form.get('address.cityId')?.setValue('', { emitEvent: false });
@@ -260,12 +256,16 @@ export class CourierCompanyUpsertComponent implements OnInit {
 
   private getCompanyFromNavigationState(): CourierCompanyViewModel | undefined {
     const navigation = this.router.getCurrentNavigation();
-    const fromNavigation = navigation?.extras?.state?.['courierCompany'] as CourierCompanyViewModel | undefined;
+    const fromNavigation = navigation?.extras?.state?.['courierCompany'] as
+      | CourierCompanyViewModel
+      | undefined;
     if (fromNavigation) {
       return { ...fromNavigation };
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const candidate = (history.state as Record<string, unknown>)['courierCompany'] as CourierCompanyViewModel | undefined;
+      const candidate = (history.state as Record<string, unknown>)['courierCompany'] as
+        | CourierCompanyViewModel
+        | undefined;
       if (candidate) {
         return { ...candidate };
       }
@@ -314,10 +314,3 @@ export class CourierCompanyUpsertComponent implements OnInit {
       });
   }
 }
-
-
-
-
-
-
-

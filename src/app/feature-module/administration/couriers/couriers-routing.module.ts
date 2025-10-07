@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PermissionGuard } from '../../../core/access-control/permission.guard';
-import { CouriersComponent } from './couriers/couriers.component';
 import { CourierUpsertComponent } from './courier-upsert/courier-upsert.component';
+import { CouriersComponent } from './couriers/couriers.component';
 
 const routes: Routes = [
   {

@@ -1,11 +1,11 @@
-﻿import { Component } from '@angular/core';
-import { MainMenu, Menu } from '../../../shared/models/models';
-import { DataService } from '../../../shared/data/data.service';
-import { CommonService } from '../../../shared/common/common.service';
+import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { SideBarService } from '../../../shared/side-bar/side-bar.service';
-import { routes } from '../../../shared/routes/routes';
 import { KeycloakAuthService } from '../../../auth/keycloak/keycloak.service';
+import { CommonService } from '../../../shared/common/common.service';
+import { DataService } from '../../../shared/data/data.service';
+import { MainMenu, Menu } from '../../../shared/models/models';
+import { routes } from '../../../shared/routes/routes';
+import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 
 @Component({
   selector: 'app-default-header',
@@ -55,11 +55,7 @@ export class DefaultHeaderComponent {
         const splitVal = event.url.split('/');
         this.base = splitVal[1];
         this.page = splitVal[2];
-        if (
-          this.base === 'components' ||
-          this.page === 'tasks' ||
-          this.page === 'email'
-        ) {
+        if (this.base === 'components' || this.page === 'tasks' || this.page === 'email') {
           this.baricon = false;
           localStorage.setItem('baricon', 'false');
         } else {
@@ -78,9 +74,7 @@ export class DefaultHeaderComponent {
       this.side_bar_data = res;
     });
 
-    this.detachAuthListener = this.auth.onAuthStateChanged(() =>
-      this.updateUserProfile(),
-    );
+    this.detachAuthListener = this.auth.onAuthStateChanged(() => this.updateUserProfile());
     this.updateUserProfile();
   }
 
@@ -181,9 +175,7 @@ export class DefaultHeaderComponent {
 
   private updateUserProfile(): void {
     const payload = this.auth.getTokenPayload();
-    const rawName = payload
-      ? (payload['name'] ?? payload['preferred_username'])
-      : undefined;
+    const rawName = payload ? (payload['name'] ?? payload['preferred_username']) : undefined;
     const rawEmail = payload ? payload['email'] : undefined;
     this.userName = (rawName ?? '').toString().trim();
     this.userEmail = (rawEmail ?? '').toString().trim();

@@ -1,4 +1,4 @@
-  export interface pageSelection {
+export interface pageSelection {
   skip: number;
   limit: number;
 }
@@ -231,14 +231,14 @@ export interface SideBarMenu {
   showSubRoute: boolean;
   icon: string;
   base?: string;
-  base2?:string;
-  base3?:string;
-  base4?:string;
-  base5?:string;
-  base7?:string;
-  base8?:string;
-  base9?:string;
-  base10?:string;
+  base2?: string;
+  base3?: string;
+  base4?: string;
+  base5?: string;
+  base7?: string;
+  base8?: string;
+  base9?: string;
+  base10?: string;
   last1?: string;
   last?: string;
   page?: string;
@@ -268,7 +268,7 @@ export interface SubMenu {
   base6?: string;
   base7?: string;
   base8?: string;
-  dot?:boolean;
+  dot?: boolean;
   currentActive?: boolean;
   hasSubRoute?: boolean;
   showSubRoute?: boolean;
@@ -298,8 +298,8 @@ export interface SideBar {
   tittle: string;
   icon?: string;
   showAsTab: boolean;
-  base?:string;
-  base2?:string;
+  base?: string;
+  base2?: string;
   separateRoute: boolean;
   materialicons?: string;
   menu: SideBarMenu[];
@@ -860,45 +860,44 @@ export interface RoleInfo {
   Status: string;
 }
 export interface budgetRevenue {
-  sNo?: number
-  isSelected: boolean
-  RevenueName: string
-  CategoryName: string
-  SubCategoryName: string
-  Amount: string
-  ExpenseDate: string
+  sNo?: number;
+  isSelected: boolean;
+  RevenueName: string;
+  CategoryName: string;
+  SubCategoryName: string;
+  Amount: string;
+  ExpenseDate: string;
 }
 
 export interface budgetExpense {
-  sNo?: number
-  isSelected: boolean
-  ExpenseName: string
-  CategoryName: string
-  SubCategoryName: string
-  Amount: string
-  ExpenseDate: string
+  sNo?: number;
+  isSelected: boolean;
+  ExpenseName: string;
+  CategoryName: string;
+  SubCategoryName: string;
+  Amount: string;
+  ExpenseDate: string;
 }
 
 export interface budget {
-  sNo?: number
-  isSelected: boolean
-  BudgetTitle: string
-  BudgetType: string
-  StartDate: string
-  EndDate: string
-  TotalRevenue: string
-  TotalExpense: string
-  TaxAmount: string
-  BudgetAmount: string
+  sNo?: number;
+  isSelected: boolean;
+  BudgetTitle: string;
+  BudgetType: string;
+  StartDate: string;
+  EndDate: string;
+  TotalRevenue: string;
+  TotalExpense: string;
+  TaxAmount: string;
+  BudgetAmount: string;
 }
 
 export interface categories {
-  sNo?: number
-  isSelected: boolean
-  CategoryName: string
-  SubCategoryName: string
+  sNo?: number;
+  isSelected: boolean;
+  CategoryName: string;
+  SubCategoryName: string;
 }
-
 
 export interface payrollAddition {
   sNo?: number;
@@ -918,7 +917,7 @@ export interface payrollOvertime {
 export interface payrollDeduction {
   sNo?: number;
   isSelected: boolean;
-  Name: string
+  Name: string;
   Category: string;
   Amount: string;
 }
@@ -926,7 +925,7 @@ export interface payrollDeduction {
 export interface employeeSalary {
   sNo?: number;
   isSelected: boolean;
-  Image:string;
+  Image: string;
   EmpID: string;
   Name: string;
   Department: string;
@@ -936,12 +935,12 @@ export interface employeeSalary {
   JoiningDate: string;
   Salary: string;
   PaySlip: string;
-};
+}
 
 export interface assetList {
   sNo?: number;
   isSelected: boolean;
-  Image:string;
+  Image: string;
   AssetName: string;
   AssetUser: string;
   PurchaseDate: string;
@@ -950,7 +949,7 @@ export interface assetList {
   Status: string;
 }
 
-export interface assetCategories{
+export interface assetCategories {
   sNo?: number;
   isSelected: boolean;
   CategoryName: string;
@@ -1033,7 +1032,6 @@ export interface leaveReport {
   Status: string;
 }
 
-
 export interface invoiceReport {
   sNo?: number;
   isSelected: boolean;
@@ -1047,8 +1045,6 @@ export interface invoiceReport {
   Amount: string;
   Status: string;
 }
-
-
 
 export interface expenseReport {
   sNo?: number;
@@ -1072,7 +1068,6 @@ export interface employeeReport {
   JoiningDate: string;
   Status: string;
 }
-
 
 export interface dailyReport {
   sNo?: number;
@@ -1098,7 +1093,7 @@ export interface attendanceReport {
   Break: string;
   Late: string;
   Overtime: string;
-  Progress:number;
+  Progress: number;
   ProductionHours: string;
 }
 export interface ApiData {
@@ -1111,7 +1106,6 @@ export interface ApiData {
   status: string;
   createdDate: string;
 }
-
 
 export interface page {
   sNo?: number;
@@ -1170,7 +1164,6 @@ export interface faq {
   Answers: string;
   Categories: string;
 }
-
 
 export interface states {
   sNo?: number;

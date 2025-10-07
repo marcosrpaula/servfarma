@@ -1,11 +1,10 @@
-import { Component, QueryList, ViewChildren, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormArray, Validators, UntypedFormControl } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MatTable } from '@angular/material/table';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Component, ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { MatTable } from '@angular/material/table';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 // Todo Services
-import { restApiService } from "../../../core/services/rest-api.service";
 
 // Sweet Alert
 import Swal from 'sweetalert2';
@@ -13,27 +12,26 @@ import Swal from 'sweetalert2';
 // Drag and drop
 import { DndDropEvent } from 'ngx-drag-drop';
 
-import { Todo, Assigned, project } from './todo.model';
-import { RootReducerState } from 'src/app/store';
 import { Store } from '@ngrx/store';
+import { cloneDeep } from 'lodash';
+import { todoAssigned, todoProject } from 'src/app/core/data';
+import { PaginationService } from 'src/app/core/services/pagination.service';
+import { RootReducerState } from 'src/app/store';
 import { addTodo, fetchTodoListData, updateTodo } from 'src/app/store/Todo/todo_action';
 import { selectTodoData, selectTodoLoading } from 'src/app/store/Todo/todo_selector';
-import { cloneDeep } from 'lodash';
-import { PaginationService } from 'src/app/core/services/pagination.service';
-import { todoAssigned, todoProject } from 'src/app/core/data';
+import { Assigned, project, Todo } from './todo.model';
 
 @Component({
-    selector: 'app-todo',
-    templateUrl: './todo.component.html',
-    styleUrls: ['./todo.component.scss'],
-    standalone: false
+  selector: 'app-todo',
+  templateUrl: './todo.component.html',
+  styleUrls: ['./todo.component.scss'],
+  standalone: false,
 })
 
 /**
  * Todo Component
  */
 export class TodoComponent {
-
   public velzonAdmin = false;
   public projectCollapsed = true;
   public skoteCollapsed = true;
@@ -54,14 +52,16 @@ export class TodoComponent {
   projectForm!: UntypedFormGroup;
   subItem: any = [];
 
-
   @ViewChild('dataTable')
   table!: MatTable<Todo>;
   displayedColumns: string[] = ['task', 'subItem', 'dueDate', 'status', 'priority', 'action'];
 
-  constructor(private modalService: NgbModal, private formBuilder: UntypedFormBuilder, private service: PaginationService,
-    private store: Store<{ data: RootReducerState }>) {
-  }
+  constructor(
+    private modalService: NgbModal,
+    private formBuilder: UntypedFormBuilder,
+    private service: PaginationService,
+    private store: Store<{ data: RootReducerState }>,
+  ) {}
   ngOnInit(): void {
     /**
      * Form Validation
@@ -91,33 +91,31 @@ export class TodoComponent {
       this.dataSource = cloneDeep(data);
     });
 
-
     /**
      * Recent Validation
-    */
+     */
     this.projectForm = this.formBuilder.group({
       ids: [''],
-      title: ['', [Validators.required]]
+      title: ['', [Validators.required]],
     });
 
     // Compose Model Hide/Show
     var isShowMenu = false;
-    document.querySelectorAll(".file-menu-btn").forEach(function (item) {
-      item.addEventListener("click", function (e) {
+    document.querySelectorAll('.file-menu-btn').forEach(function (item) {
+      item.addEventListener('click', function (e) {
         e.preventDefault();
         isShowMenu = true;
-        document.getElementById('menusidebar')?.classList.add("menubar-show");
+        document.getElementById('menusidebar')?.classList.add('menubar-show');
       });
     });
     document.querySelector('.chat-wrapper')?.addEventListener('click', function () {
-      if (document.querySelector(".file-manager-sidebar")?.classList.contains('menubar-show')) {
+      if (document.querySelector('.file-manager-sidebar')?.classList.contains('menubar-show')) {
         if (!isShowMenu) {
-          document.querySelector(".file-manager-sidebar")?.classList.remove("menubar-show");
+          document.querySelector('.file-manager-sidebar')?.classList.remove('menubar-show');
         }
         isShowMenu = false;
       }
     });
-
   }
 
   /**
@@ -150,8 +148,8 @@ export class TodoComponent {
   }
 
   /**
-  * Delete Model Open
-  */
+   * Delete Model Open
+   */
   deleteId: any;
   confirm(content: any, id: any) {
     this.deleteId = id;
@@ -167,7 +165,7 @@ export class TodoComponent {
   /**
    * Open modal
    * @param content modal content
-  */
+   */
   openModal(content: any) {
     this.submitted = false;
     this.todoForm.reset();
@@ -182,8 +180,8 @@ export class TodoComponent {
   }
 
   /**
-  * Save Todo data
-  */
+   * Save Todo data
+   */
   saveTodo() {
     if (this.todoForm.valid) {
       if (this.todoForm.get('_id')?.value) {
@@ -198,7 +196,7 @@ export class TodoComponent {
           status: this.todoForm.value.status,
           priority: this.todoForm.value.priority,
           due_date: this.todoForm.value.due_date,
-        }
+        };
         let timerInterval: any;
         Swal.fire({
           title: 'Todo inserted successfully!',
@@ -215,17 +213,16 @@ export class TodoComponent {
 
         // this.leadsForm.controls['_id'].setValue(contactId);
         this.store.dispatch(addTodo({ newData }));
-
       }
     }
     this.subItem = [];
     this.modalService.dismissAll();
     this.todoForm.reset();
-    this.submitted = true
+    this.submitted = true;
   }
 
   selectAssignee(id: any) {
-    this.subItem.push(this.AssignedData[id])
+    this.subItem.push(this.AssignedData[id]);
   }
 
   /**
@@ -243,34 +240,33 @@ export class TodoComponent {
     this.todoForm.controls['status'].setValue(this.econtent.status);
     this.todoForm.controls['priority'].setValue(this.econtent.priority);
     this.todoForm.controls['_id'].setValue(this.econtent._id);
-    this.subItem = this.econtent.assigned_to
+    this.subItem = this.econtent.assigned_to;
   }
 
   // Location Filter
   taskFilter() {
-    var status = (document.getElementById("choices-select-status") as HTMLInputElement).value;
+    var status = (document.getElementById('choices-select-status') as HTMLInputElement).value;
     if (status) {
       this.todoDatas = this.dataSource.filter((data: any) => {
         return data.status === status;
       });
-    }
-    else {
-      this.todoDatas = this.dataSource
+    } else {
+      this.todoDatas = this.dataSource;
     }
   }
 
   // Sort filter
   sortField: any;
-  sortBy: any
+  sortBy: any;
   SortFilter() {
-    this.sortField = (document.getElementById("choices-select-sortlist") as HTMLInputElement).value;
+    this.sortField = (document.getElementById('choices-select-sortlist') as HTMLInputElement).value;
     if (this.sortField[0] == 'A') {
       this.sortBy = 'desc';
-      this.sortField = this.sortField.replace(/A/g, '')
+      this.sortField = this.sortField.replace(/A/g, '');
     }
     if (this.sortField[0] == 'D') {
       this.sortBy = 'asc';
-      this.sortField = this.sortField.replace(/D/g, '')
+      this.sortField = this.sortField.replace(/D/g, '');
     }
   }
 
@@ -279,10 +275,11 @@ export class TodoComponent {
     var checkboxes: any = e.target.closest('tr').querySelector('#todo' + id);
     var status: any = e.target.closest('tr').querySelector('.status');
     if (checkboxes.checked) {
-      status.innerHTML = '<span class="badge text-uppercase bg-success-subtle text-success">Completed</span>'
-    }
-    else {
-      status.innerHTML = '<span class="badge text-uppercase bg-secondary-subtle text-secondary">Inprogress</span>'
+      status.innerHTML =
+        '<span class="badge text-uppercase bg-success-subtle text-success">Completed</span>';
+    } else {
+      status.innerHTML =
+        '<span class="badge text-uppercase bg-secondary-subtle text-secondary">Inprogress</span>';
     }
   }
 
@@ -304,31 +301,30 @@ export class TodoComponent {
   }
 
   /**
-  * Save user
-  */
+   * Save user
+   */
   saveRecent() {
     if (this.projectForm.valid) {
-      const id = "4";
+      const id = '4';
       const title = this.projectForm.get('title')?.value;
-      const coll = "newCollapsed";
+      const coll = 'newCollapsed';
       const subItem = [
         {
           version: 'v1.0.0',
-          color: 'danger'
-        }
+          color: 'danger',
+        },
       ];
       this.projectList.push({
         id,
         title,
         coll,
-        subItem
+        subItem,
       });
       this.modalService.dismissAll();
     }
     setTimeout(() => {
       this.projectForm.reset();
     }, 2000);
-    this.submitted = true
+    this.submitted = true;
   }
-
 }

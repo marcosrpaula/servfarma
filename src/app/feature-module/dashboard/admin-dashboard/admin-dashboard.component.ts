@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  HostListener,
-  RendererFactory2,
-} from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Chart, registerables } from 'chart.js';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -17,14 +12,11 @@ import {
   ApexXAxis,
   ChartComponent,
 } from 'ng-apexcharts';
-import { BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
-import { Chart, registerables } from 'chart.js';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { FormControl, FormGroup } from '@angular/forms';
+import { BsDatepickerConfig, BsDatepickerDirective } from 'ngx-bootstrap/datepicker';
 import { Editor, Toolbar, Validators } from 'ngx-editor';
+import { CommonService } from '../../../shared/common/common.service';
 import { breadCrumbItems } from '../../../shared/models/models';
 import { routes } from '../../../shared/routes/routes';
-import { CommonService } from '../../../shared/common/common.service';
 import { SettingService } from '../../../shared/settings/settings.service';
 export interface ChartOptions {
   series: ApexAxisChartSeries;
@@ -38,10 +30,10 @@ export interface ChartOptions {
 
 Chart.register(...registerables);
 @Component({
-    selector: 'app-admin-dashboard',
-    templateUrl: './admin-dashboard.component.html',
-    styleUrl: './admin-dashboard.component.scss',
-    standalone: false
+  selector: 'app-admin-dashboard',
+  templateUrl: './admin-dashboard.component.html',
+  styleUrl: './admin-dashboard.component.scss',
+  standalone: false,
 })
 export class AdminDashboardComponent implements OnInit, OnDestroy {
   routes = routes;
@@ -85,16 +77,16 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       // Move to the previous step
       this.selectedFieldSet[0]--;
     }
-
   }
-  constructor(private common: CommonService,private layout:SettingService) {
+  constructor(
+    private common: CommonService,
+    private layout: SettingService,
+  ) {
     this.selectedYear = new Date(new Date().getFullYear(), 0, 1);
     this.bsConfig = {
       minMode: 'year',
       dateInputFormat: 'YYYY', // Display only the year in the input
     };
-
-
   }
 
   // Open the dropdown
@@ -112,10 +104,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.closeDropdown(); // Close dropdown after time selection
   }
   ngOnInit(): void {
-    this.breadCrumbItems = [
-      { label: 'Dashboards' },
-      { label: 'Admin Dashboard', active: true },
-    ];
+    this.breadCrumbItems = [{ label: 'Dashboards' }, { label: 'Admin Dashboard', active: true }];
     this.editor = new Editor();
     this.EmpDepartment = {
       chart: {
@@ -160,14 +149,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         },
       ],
       xaxis: {
-        categories: [
-          'UI/UX',
-          'Development',
-          'Management',
-          'HR',
-          'Testing',
-          'Marketing',
-        ],
+        categories: ['UI/UX', 'Development', 'Management', 'HR', 'Testing', 'Marketing'],
         labels: {
           style: {
             colors: '#111827',

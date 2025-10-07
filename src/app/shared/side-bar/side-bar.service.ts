@@ -8,11 +8,11 @@ import { SideBar, SideBarMenu } from '../models/models';
 })
 export class SideBarService {
   public toggleSideBar: BehaviorSubject<string> = new BehaviorSubject<string>(
-    localStorage.getItem('isMiniSidebar') || 'false'
+    localStorage.getItem('isMiniSidebar') || 'false',
   );
 
   public toggleMobileSideBar: BehaviorSubject<string> = new BehaviorSubject<string>(
-    localStorage.getItem('isMobileSidebar') || 'false'
+    localStorage.getItem('isMobileSidebar') || 'false',
   );
 
   public expandSideBar: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

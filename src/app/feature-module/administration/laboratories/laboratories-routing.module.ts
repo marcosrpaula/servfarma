@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { PermissionGuard } from '../../../core/access-control/permission.guard';
 import { LaboratoriesComponent } from './laboratories/laboratories.component';
 import { LaboratoryUpsertComponent } from './laboratory-upsert/laboratory-upsert.component';
-import { PermissionGuard } from '../../../core/access-control/permission.guard';
 
 const routes: Routes = [
   {

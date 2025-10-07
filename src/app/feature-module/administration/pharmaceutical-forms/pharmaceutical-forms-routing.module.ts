@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PharmaceuticalFormsComponent } from './pharmaceutical-forms/pharmaceutical-forms.component';
-import { PharmaceuticalFormUpsertComponent } from './pharmaceutical-form-upsert/pharmaceutical-form-upsert.component';
 import { PermissionGuard } from '../../../core/access-control/permission.guard';
+import { PharmaceuticalFormUpsertComponent } from './pharmaceutical-form-upsert/pharmaceutical-form-upsert.component';
+import { PharmaceuticalFormsComponent } from './pharmaceutical-forms/pharmaceutical-forms.component';
 
 const routes: Routes = [
   {

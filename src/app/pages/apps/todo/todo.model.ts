@@ -7,7 +7,6 @@ export interface Todo {
   priority?: any;
 }
 
-
 export interface Assigned {
   id: any;
   profile: any;

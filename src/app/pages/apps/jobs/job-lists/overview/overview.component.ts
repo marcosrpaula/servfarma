@@ -4,29 +4,27 @@ import { joboverview } from 'src/app/core/data/jobList';
 // Data Get
 
 @Component({
-    selector: 'app-overview',
-    templateUrl: './overview.component.html',
-    styleUrls: ['./overview.component.scss'],
-    standalone: false
+  selector: 'app-overview',
+  templateUrl: './overview.component.html',
+  styleUrls: ['./overview.component.scss'],
+  standalone: false,
 })
 export class OverviewComponent implements OnInit {
-
   relatedjobs: any;
   bookmark: boolean = true;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     // Fetch Data
-    this.relatedjobs = joboverview
+    this.relatedjobs = joboverview;
   }
 
   bookmarklist() {
     if (this.bookmark == true) {
-      this.bookmark = false
+      this.bookmark = false;
     } else {
-      this.bookmark = true
+      this.bookmark = true;
     }
   }
-
 }

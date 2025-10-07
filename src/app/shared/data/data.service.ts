@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { routes } from '../routes/routes';
+import { AccessControlService } from '../../core/access-control/access-control.service';
+import { PermissionRequirement } from '../../core/access-control/access-control.types';
 import {
   MainMenu,
   Menu,
@@ -10,8 +11,7 @@ import {
   SubMenu2,
   SubMenuTwo,
 } from '../models/models';
-import { AccessControlService } from '../../core/access-control/access-control.service';
-import { PermissionRequirement } from '../../core/access-control/access-control.types';
+import { routes } from '../routes/routes';
 
 type Permission = PermissionRequirement | PermissionRequirement[];
 
@@ -238,7 +238,7 @@ export class DataService {
           requiredPermission: { module: 'supplies', level: 'read' },
         },
       ],
-    }
+    },
   ];
 
   private readonly adminHorizontalTemplate: PermissionAwareHorizontalSection[] = [
@@ -408,7 +408,7 @@ export class DataService {
           requiredPermission: { module: 'units', level: 'read' },
         },
       ],
-    }
+    },
   ];
 
   public sideBar: SideBar[] = [];
@@ -485,7 +485,7 @@ export class DataService {
     return {
       ...rest,
       hasSubRoute: hasVisibleChildren,
-      showSubRoute: hasVisibleChildren ? rest.showSubRoute ?? false : false,
+      showSubRoute: hasVisibleChildren ? (rest.showSubRoute ?? false) : false,
       subMenus,
     };
   }
@@ -541,13 +541,18 @@ export class DataService {
       return null;
     }
 
-    const { requiredPermission: _ignored, subMenus: _unusedSubMenus, subMenusTwo: _unusedSubMenusTwo, ...rest } = menu;
+    const {
+      requiredPermission: _ignored,
+      subMenus: _unusedSubMenus,
+      subMenusTwo: _unusedSubMenusTwo,
+      ...rest
+    } = menu;
 
     return {
       ...rest,
       hasSubRoute: menu.hasSubRoute && hasVisibleChildren,
       hasSubRouteTwo: menu.hasSubRouteTwo && subMenusTwo.length > 0,
-      showSubRoute: hasVisibleChildren ? rest.showSubRoute ?? false : false,
+      showSubRoute: hasVisibleChildren ? (rest.showSubRoute ?? false) : false,
       subMenus: subMenus.length ? subMenus : undefined,
       subMenusTwo: subMenusTwo.length ? subMenusTwo : undefined,
     };
@@ -562,7 +567,9 @@ export class DataService {
     return { ...rest };
   }
 
-  private prepareHorizontalSubMenuTwo(subMenu: PermissionAwareHorizontalSubMenuTwo): SubMenuTwo | null {
+  private prepareHorizontalSubMenuTwo(
+    subMenu: PermissionAwareHorizontalSubMenuTwo,
+  ): SubMenuTwo | null {
     if (subMenu.requiredPermission && !this.access.canAny(subMenu.requiredPermission)) {
       return null;
     }
@@ -592,9 +599,3 @@ export class DataService {
     }));
   }
 }
-
-
-
-
-
-

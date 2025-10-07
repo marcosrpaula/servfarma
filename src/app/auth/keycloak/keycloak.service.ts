@@ -1,9 +1,5 @@
-import Keycloak, {
-  KeycloakConfig,
-  KeycloakInitOptions,
-  KeycloakTokenParsed,
-} from 'keycloak-js';
 import { Injectable } from '@angular/core';
+import Keycloak, { KeycloakConfig, KeycloakInitOptions, KeycloakTokenParsed } from 'keycloak-js';
 import { environment } from '../../config/environment';
 
 export type AuthStateCallback = () => void;
@@ -25,8 +21,7 @@ export class KeycloakAuthService {
       onLoad: 'login-required',
       checkLoginIframe: false,
       pkceMethod: 'S256',
-      silentCheckSsoRedirectUri:
-        window.location.origin + '/assets/silent-check-sso.html',
+      silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
     };
 
     try {
@@ -81,8 +76,7 @@ export class KeycloakAuthService {
     const kc: any = this.keycloak;
     if (!kc) return [];
     const realmRoles: string[] = kc?.realmAccess?.roles ?? [];
-    const clientRoles: string[] =
-      kc?.resourceAccess?.[environment.keycloak.clientId]?.roles ?? [];
+    const clientRoles: string[] = kc?.resourceAccess?.[environment.keycloak.clientId]?.roles ?? [];
     return Array.from(new Set([...(realmRoles ?? []), ...(clientRoles ?? [])]));
   }
 

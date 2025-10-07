@@ -1,18 +1,28 @@
-import { Directive, Input, EventEmitter, Inject, Output, ElementRef, HostListener } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import {
+  Directive,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Inject,
+  Input,
+  Output,
+} from '@angular/core';
 
 @Directive({
-    selector: '[appScrollspy]',
-    standalone: false
+  selector: '[appScrollspy]',
+  standalone: false,
 })
 export class ScrollspyDirective {
-
-  @Input() public spiedTags : string[] = [];;
+  @Input() public spiedTags: string[] = [];
   @Output() public sectionChange = new EventEmitter<string>();
   private currentSection: string | undefined;
 
   // tslint:disable-next-line: variable-name
-  constructor(private _el: ElementRef, @Inject(DOCUMENT) private document: Document,) { }
+  constructor(
+    private _el: ElementRef,
+    @Inject(DOCUMENT) private document: Document,
+  ) {}
 
   @HostListener('scroll', ['$event'])
   /**
@@ -26,8 +36,8 @@ export class ScrollspyDirective {
 
     for (let i = 0; i < children.length; i++) {
       const element = children[i];
-      if (this.spiedTags.some(spiedTag => spiedTag === element.tagName)) {
-        if ((element.offsetTop - parentOffset) <= scrollTop) {
+      if (this.spiedTags.some((spiedTag) => spiedTag === element.tagName)) {
+        if (element.offsetTop - parentOffset <= scrollTop) {
           currentSection = element.id;
         }
       }

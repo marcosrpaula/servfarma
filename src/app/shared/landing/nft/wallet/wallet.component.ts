@@ -1,36 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 
-import {walletModel} from './wallet.model';
 import { walletData } from './data';
+import { walletModel } from './wallet.model';
 
 @Component({
-    selector: 'app-wallet',
-    templateUrl: './wallet.component.html',
-    styleUrls: ['./wallet.component.scss'],
-    standalone: false
+  selector: 'app-wallet',
+  templateUrl: './wallet.component.html',
+  styleUrls: ['./wallet.component.scss'],
+  standalone: false,
 })
 
 /**
  * Wallet Component
  */
 export class WalletComponent implements OnInit {
-
   walletData!: walletModel[];
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     /**
      * fetches data
      */
-     this._fetchData();
+    this._fetchData();
   }
 
   /**
-  * User grid data fetches
-  */
-   private _fetchData() {
+   * User grid data fetches
+   */
+  private _fetchData() {
     this.walletData = walletData;
   }
-
 }

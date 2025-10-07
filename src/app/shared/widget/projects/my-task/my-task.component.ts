@@ -1,31 +1,30 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-my-task',
-    templateUrl: './my-task.component.html',
-    styleUrls: ['./my-task.component.scss'],
-    standalone: false
+  selector: 'app-my-task',
+  templateUrl: './my-task.component.html',
+  styleUrls: ['./my-task.component.scss'],
+  standalone: false,
 })
 
 /**
  * MyTask Component
  */
 export class MyTaskComponent implements OnInit {
-
   // Upcoming Activities
-  @Input() MyTask: Array<{
-    name?: string;
-    dedline?: string;
-    status?: string;
-    assignee: {
-      name?: string;
-      profile?: string;
-    };
-  }> | undefined;
+  @Input() MyTask:
+    | Array<{
+        name?: string;
+        dedline?: string;
+        status?: string;
+        assignee: {
+          name?: string;
+          profile?: string;
+        };
+      }>
+    | undefined;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

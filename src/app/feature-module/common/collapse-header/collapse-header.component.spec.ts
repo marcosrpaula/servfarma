@@ -8,10 +8,9 @@ describe('CollapseHeaderComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CollapseHeaderComponent]
-    })
-    .compileComponents();
-    
+      declarations: [CollapseHeaderComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(CollapseHeaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

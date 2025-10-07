@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PermissionGuard } from '../../../core/access-control/permission.guard';
-import { ReturnUnitsComponent } from './return-units/return-units.component';
 import { ReturnUnitUpsertComponent } from './return-unit-upsert/return-unit-upsert.component';
+import { ReturnUnitsComponent } from './return-units/return-units.component';
 
 const routes: Routes = [
   {

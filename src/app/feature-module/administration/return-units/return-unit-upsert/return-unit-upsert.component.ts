@@ -1,24 +1,16 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { ReturnUnitsApiService } from '../services/return-units.api.service';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
-import {
-  CitySimpleViewModel,
-  StateSimpleViewModel,
-} from '../../../../shared/models/addresses';
-import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
+import { NotificationService } from '../../../../core/notifications/notification.service';
+import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ReturnUnitInput, ReturnUnitViewModel } from '../../../../shared/models/return-units';
-import { ReturnUnitsStateService } from '../services/return-units-state.service';
-import { NotificationService } from '../../../../core/notifications/notification.service';
 import { SharedModule } from '../../../../shared/shared.module';
+import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
+import { ReturnUnitsStateService } from '../services/return-units-state.service';
+import { ReturnUnitsApiService } from '../services/return-units.api.service';
 
 @Component({
   selector: 'app-return-unit-upsert',
@@ -92,7 +84,9 @@ export class ReturnUnitUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const unit = this.resolveUnitForReadOnly();
         if (!unit) {
-          this.notifications.error('Nao foi possivel carregar os dados da unidade de devolucao para visualizacao. Acesse novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados da unidade de devolucao para visualizacao. Acesse novamente a partir da listagem.',
+          );
           this.router.navigate(['/return-units']);
           return;
         }
@@ -226,9 +220,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
       .subscribe((res) => {
         this.states = res.items || [];
         if (this.pendingStateAbbreviation) {
-          const state = this.states.find(
-            (s) => s.abbreviation === this.pendingStateAbbreviation
-          );
+          const state = this.states.find((s) => s.abbreviation === this.pendingStateAbbreviation);
           if (state) {
             this.form.get('address.stateId')?.setValue(state.id, { emitEvent: false });
             this.loadCities(state, true);
@@ -246,9 +238,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
         if (preserveSelection && this.pendingCityId) {
           const exists = this.cities.some((c) => c.id === this.pendingCityId);
           if (exists) {
-            this.form
-              .get('address.cityId')
-              ?.setValue(this.pendingCityId, { emitEvent: false });
+            this.form.get('address.cityId')?.setValue(this.pendingCityId, { emitEvent: false });
           }
           this.pendingCityId = null;
         } else {
@@ -281,7 +271,9 @@ export class ReturnUnitUpsertComponent implements OnInit {
       return this.cloneUnit(candidate);
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const historyCandidate = (history.state as Record<string, unknown>)['returnUnit'] as ReturnUnitViewModel | undefined;
+      const historyCandidate = (history.state as Record<string, unknown>)['returnUnit'] as
+        | ReturnUnitViewModel
+        | undefined;
       if (historyCandidate) {
         return this.cloneUnit(historyCandidate);
       }
@@ -299,7 +291,9 @@ export class ReturnUnitUpsertComponent implements OnInit {
             city: unit.address.city
               ? {
                   ...unit.address.city,
-                  state: unit.address.city.state ? { ...unit.address.city.state } : unit.address.city.state,
+                  state: unit.address.city.state
+                    ? { ...unit.address.city.state }
+                    : unit.address.city.state,
                 }
               : unit.address.city,
           }

@@ -1,4 +1,4 @@
-<app-breadcrumbs title="Usuarios" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
+<app-breadcrumbs title="Usuários" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-12">
@@ -6,7 +6,7 @@
       <div class="card-header border-bottom-dashed">
         <div class="row g-4 align-items-center">
           <div class="col-sm">
-            <h5 class="card-title mb-0">Lista de Usuarios</h5>
+            <h5 class="card-title mb-0">Lista de Usuários</h5>
           </div>
           <div class="col-sm-auto">
             <div class="d-flex flex-wrap align-items-center gap-2">
@@ -25,12 +25,15 @@
       </div>
 
       <div class="card-body border-bottom border-bottom-dashed">
-        <div class="row g-3 align-items-end">
+        <form
+          class="row g-3 align-items-end"
+          [formGroup]="filtersForm"
+          (ngSubmit)="aplicarFiltros()"
+        >
           <div class="col-xxl-3 col-lg-3 col-md-6 col-sm-6">
             <div class="search-box w-100">
               <input
-                [(ngModel)]="filtroNome"
-                (keyup.enter)="aplicarFiltros()"
+                formControlName="name"
                 type="text"
                 class="form-control"
                 placeholder="Buscar por nome"
@@ -41,8 +44,7 @@
           <div class="col-xxl-3 col-lg-3 col-md-6 col-sm-6">
             <div class="search-box w-100">
               <input
-                [(ngModel)]="filtroEmail"
-                (keyup.enter)="aplicarFiltros()"
+                formControlName="email"
                 type="text"
                 class="form-control"
                 placeholder="Buscar por e-mail"
@@ -52,8 +54,8 @@
           </div>
           <div class="col-xxl-3 col-lg-3 col-md-6 col-sm-6">
             <div class="w-100">
-              <select class="form-select" [(ngModel)]="filtroAtivo">
-                <option value="" selected>Todos</option>
+              <select class="form-select" formControlName="isActive">
+                <option value="">Status</option>
                 <option value="true">Ativo</option>
                 <option value="false">Inativo</option>
               </select>
@@ -61,17 +63,21 @@
           </div>
           <div class="col-xxl-3 col-lg-3 col-md-6 col-sm-12">
             <div class="d-flex flex-wrap align-items-center gap-2 justify-content-md-end w-100">
-              <button type="button" class="btn btn-primary d-inline-flex align-items-center" (click)="aplicarFiltros()">
+              <button type="submit" class="btn btn-primary d-inline-flex align-items-center">
                 <i class="ri-search-line me-1"></i>
                 <span>Aplicar</span>
               </button>
-              <button type="button" class="btn btn-soft-secondary d-inline-flex align-items-center" (click)="limparFiltros()">
+              <button
+                type="button"
+                class="btn btn-soft-secondary d-inline-flex align-items-center"
+                (click)="limparFiltros()"
+              >
                 <i class="ri-refresh-line me-1"></i>
                 <span>Limpar</span>
               </button>
             </div>
           </div>
-        </div>
+        </form>
       </div>
 
       <div class="card-body">
@@ -101,59 +107,75 @@
             <thead class="table-light text-muted">
               <tr>
                 <th
+                  class="sort"
                   (click)="toggleSort('Name')"
                   (keydown.enter)="toggleSort('Name')"
                   role="button"
                   tabindex="0"
-                  class="sort"
                 >
                   Nome
                   <span class="sort-icon">
-                    <i *ngIf="orderLabel === 'Name'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i>
+                    <i
+                      *ngIf="orderLabel === 'Name'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
                   </span>
                 </th>
                 <th
+                  class="sort"
                   (click)="toggleSort('Email')"
                   (keydown.enter)="toggleSort('Email')"
                   role="button"
                   tabindex="0"
-                  class="sort"
                 >
                   E-mail
                   <span class="sort-icon">
-                    <i *ngIf="orderLabel === 'Email'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i>
+                    <i
+                      *ngIf="orderLabel === 'Email'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
                   </span>
                 </th>
                 <th
+                  class="sort"
                   (click)="toggleSort('CreatedDate')"
                   (keydown.enter)="toggleSort('CreatedDate')"
                   role="button"
                   tabindex="0"
-                  class="sort"
                 >
                   Criado em
                   <span class="sort-icon">
-                    <i *ngIf="orderLabel === 'CreatedDate'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i>
+                    <i
+                      *ngIf="orderLabel === 'CreatedDate'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
                   </span>
                 </th>
-                <th>Funcoes</th>
+                <th>Funções</th>
                 <th
+                  class="sort"
                   (click)="toggleSort('Status')"
                   (keydown.enter)="toggleSort('Status')"
                   role="button"
                   tabindex="0"
-                  class="sort"
                 >
                   Status
                   <span class="sort-icon">
-                    <i *ngIf="orderLabel === 'Status'" class="ti" [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"></i>
+                    <i
+                      *ngIf="orderLabel === 'Status'"
+                      class="ti"
+                      [ngClass]="ascending ? 'ti-arrow-up' : 'ti-arrow-down'"
+                    ></i>
                   </span>
                 </th>
-                <th class="text-end">Acoes</th>
+                <th class="text-end">Ações</th>
               </tr>
             </thead>
             <tbody>
-              @for (row of tableData; track row) {
+              @for (row of tableData(); track row.id) {
                 <tr>
                   <td>
                     <div class="d-flex align-items-center gap-2">
@@ -164,7 +186,7 @@
                   <td>{{ row.createdAt | date: 'short' }}</td>
                   <td>
                     <span class="badge badge-md p-2 fs-10">
-                      {{ (row.roles || []).length ? (row.roles || []).join(', ') : 'Sem roles' }}
+                      {{ row.roles?.length ? row.roles?.join(', ') : 'Sem roles' }}
                     </span>
                   </td>
                   <td>
@@ -172,7 +194,8 @@
                       class="badge d-inline-flex align-items-center badge-xs"
                       [ngClass]="row.isActive ? 'badge-success' : 'badge-danger'"
                     >
-                      <i class="ti ti-point-filled me-1"></i>{{ row.isActive ? 'Ativo' : 'Inativo' }}
+                      <i class="ti ti-point-filled me-1"></i
+                      >{{ row.isActive ? 'Ativo' : 'Inativo' }}
                     </span>
                   </td>
                   <td>
@@ -190,7 +213,7 @@
                   </td>
                 </tr>
               }
-              @if (carregando) {
+              @if (carregando()) {
                 <tr>
                   <td colspan="6" class="py-5 text-center">
                     <div class="spinner-border" role="status">
@@ -199,7 +222,7 @@
                   </td>
                 </tr>
               }
-              @if (!carregando && tableData.length === 0) {
+              @if (semResultados()) {
                 <tr>
                   <td colspan="6" class="py-5 text-center">
                     <h5 class="text-muted mb-0">Nenhum registro encontrado</h5>

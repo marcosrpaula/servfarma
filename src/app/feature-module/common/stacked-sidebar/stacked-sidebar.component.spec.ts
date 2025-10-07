@@ -8,9 +8,8 @@ describe('StackedSidebarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [StackedSidebarComponent]
-    })
-    .compileComponents();
+      declarations: [StackedSidebarComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(StackedSidebarComponent);
     component = fixture.componentInstance;

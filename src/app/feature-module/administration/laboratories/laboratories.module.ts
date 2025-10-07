@@ -1,7 +1,7 @@
-﻿import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ServfarmaSharedModule } from '../../../shared/servfarma-shared.module';
+import { NgModule } from '@angular/core';
 import { CustomPaginationModule } from '../../../shared/custom-pagination/custom-pagination.module';
+import { ServfarmaSharedModule } from '../../../shared/servfarma-shared.module';
 import { LaboratoriesRoutingModule } from './laboratories-routing.module';
 import { LaboratoriesComponent } from './laboratories/laboratories.component';
 

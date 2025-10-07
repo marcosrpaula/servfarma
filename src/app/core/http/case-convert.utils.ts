@@ -1,7 +1,6 @@
 /** Simple helpers to convert between camelCase <-> snake_case recursively */
 
-const toCamel = (s: string) =>
-  s.replace(/[_-](\w)/g, (_, c) => (c ? c.toUpperCase() : ''));
+const toCamel = (s: string) => s.replace(/[_-](\w)/g, (_, c) => (c ? c.toUpperCase() : ''));
 
 export const toSnakeCase = (s: string) =>
   s
@@ -11,7 +10,12 @@ export const toSnakeCase = (s: string) =>
 
 export function keysToCamelCase<T = any>(input: any): T {
   if (Array.isArray(input)) return input.map(keysToCamelCase) as any;
-  if (input !== null && typeof input === 'object' && !(input instanceof Date) && !(input instanceof File)) {
+  if (
+    input !== null &&
+    typeof input === 'object' &&
+    !(input instanceof Date) &&
+    !(input instanceof File)
+  ) {
     const result: any = {};
     Object.keys(input).forEach((k) => {
       const v = (input as any)[k];
@@ -24,7 +28,12 @@ export function keysToCamelCase<T = any>(input: any): T {
 
 export function keysToSnakeCase<T = any>(input: any): T {
   if (Array.isArray(input)) return input.map(keysToSnakeCase) as any;
-  if (input !== null && typeof input === 'object' && !(input instanceof Date) && !(input instanceof File)) {
+  if (
+    input !== null &&
+    typeof input === 'object' &&
+    !(input instanceof Date) &&
+    !(input instanceof File)
+  ) {
     const result: any = {};
     Object.keys(input).forEach((k) => {
       const v = (input as any)[k];

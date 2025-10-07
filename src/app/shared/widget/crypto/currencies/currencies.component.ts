@@ -1,32 +1,30 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-currencies',
-    templateUrl: './currencies.component.html',
-    styleUrls: ['./currencies.component.scss'],
-    standalone: false
+  selector: 'app-currencies',
+  templateUrl: './currencies.component.html',
+  styleUrls: ['./currencies.component.scss'],
+  standalone: false,
 })
 
 /**
  * Currencies Component
  */
 export class CurrenciesComponent implements OnInit {
+  // Currencies data
+  @Input() Currencies:
+    | Array<{
+        image?: string;
+        coinName?: string;
+        price?: string;
+        change?: string;
+        profit?: string;
+        balance?: string;
+        coin?: string;
+      }>
+    | undefined;
 
-   // Currencies data
-   @Input() Currencies: Array<{
-    image?: string;
-    coinName?: string;
-    price?: string;
-    change?: string;
-    profit?: string;
-    balance?: string;
-    coin?: string;
+  constructor() {}
 
-  }> | undefined;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

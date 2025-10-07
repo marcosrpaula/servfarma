@@ -1,24 +1,21 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbCarouselModule } from '@ng-bootstrap/ng-bootstrap';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 // Component
-import { SuccessMsgRoutingModule } from "./success-msg-routing.module";
-import { CoverComponent } from './cover/cover.component';
 import { BasicComponent } from './basic/basic.component';
+import { CoverComponent } from './cover/cover.component';
+import { SuccessMsgRoutingModule } from './success-msg-routing.module';
 
 @NgModule({
-  declarations: [
-    CoverComponent,
-    BasicComponent
-  ],
+  declarations: [CoverComponent, BasicComponent],
   imports: [
     CommonModule,
     NgbCarouselModule,
     ReactiveFormsModule,
     FormsModule,
-    SuccessMsgRoutingModule
-  ]
+    SuccessMsgRoutingModule,
+  ],
 })
-export class SuccessMsgModule { }
+export class SuccessMsgModule {}

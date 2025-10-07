@@ -8,9 +8,8 @@ describe('LockScreenComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [LockScreenComponent]
-    })
-    .compileComponents();
+      declarations: [LockScreenComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(LockScreenComponent);
     component = fixture.componentInstance;

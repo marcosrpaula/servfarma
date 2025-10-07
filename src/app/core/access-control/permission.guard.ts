@@ -17,24 +17,22 @@ import { AccessControlService } from './access-control.service';
 import { PermissionInput } from './access-control.types';
 
 @Injectable({ providedIn: 'root' })
-export class PermissionGuard
-  implements CanActivate, CanActivateChild, CanMatch
-{
+export class PermissionGuard implements CanActivate, CanActivateChild, CanMatch {
   constructor(
     private readonly access: AccessControlService,
-    private readonly router: Router
+    private readonly router: Router,
   ) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> {
     return this.evaluate(route.data, route.data?.['permission']);
   }
 
   canActivateChild(
     childRoute: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
+    state: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> {
     return this.evaluate(childRoute.data, childRoute.data?.['permission']);
   }
@@ -45,15 +43,14 @@ export class PermissionGuard
 
   private evaluate(
     data: Data | undefined,
-    permission: PermissionInput | undefined
+    permission: PermissionInput | undefined,
   ): Observable<boolean | UrlTree> {
     if (!permission) return of(true);
     const mode = (data?.['permissionMode'] as 'any' | 'all') === 'any' ? 'any' : 'all';
-    const resolver = mode === 'any'
-      ? this.access.resolveOnce(permission)
-      : this.access.resolveAllOnce(permission);
+    const resolver =
+      mode === 'any' ? this.access.resolveOnce(permission) : this.access.resolveAllOnce(permission);
     return resolver.pipe(
-      map((allowed) => (allowed ? true : this.router.parseUrl(this.access.getFallbackRoute())))
+      map((allowed) => (allowed ? true : this.router.parseUrl(this.access.getFallbackRoute()))),
     );
   }
 }

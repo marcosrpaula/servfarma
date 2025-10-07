@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import {
   HttpEvent,
   HttpHandler,
@@ -7,6 +6,7 @@ import {
   HttpRequest,
   HttpResponse,
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { keysToCamelCase, keysToSnakeCase, toSnakeCase } from './case-convert.utils';
 
@@ -67,7 +67,7 @@ export class SnakeCaseInterceptor implements HttpInterceptor {
           return event.clone({ body: camel });
         }
         return event;
-      })
+      }),
     );
   }
 }

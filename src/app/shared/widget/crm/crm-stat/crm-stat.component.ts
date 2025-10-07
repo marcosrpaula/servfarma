@@ -1,17 +1,16 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-crm-stat',
-    templateUrl: './crm-stat.component.html',
-    styleUrls: ['./crm-stat.component.scss'],
-    standalone: false
+  selector: 'app-crm-stat',
+  templateUrl: './crm-stat.component.html',
+  styleUrls: ['./crm-stat.component.scss'],
+  standalone: false,
 })
 
 /**
  * Crm Stat Component
  */
 export class CrmStatComponent implements OnInit {
-
   @Input() title: string | undefined;
   @Input() value: any | undefined;
   @Input() icon: string | undefined;
@@ -19,10 +18,9 @@ export class CrmStatComponent implements OnInit {
   @Input() sign: string | undefined;
   @Input() percentage: string | undefined;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   num: number = 0;
   option = {
@@ -31,5 +29,4 @@ export class CrmStatComponent implements OnInit {
     duration: 2,
     decimalPlaces: 2,
   };
-
 }

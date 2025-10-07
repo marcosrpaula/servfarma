@@ -1,24 +1,24 @@
-﻿import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { SideBar, SideBarMenu } from '../../../shared/models/models';
-import { DataService } from '../../../shared/data/data.service';
-import { SideBarService } from '../../../shared/side-bar/side-bar.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
 import { CommonService } from '../../../shared/common/common.service';
+import { DataService } from '../../../shared/data/data.service';
+import { SideBar, SideBarMenu } from '../../../shared/models/models';
 import { routes } from '../../../shared/routes/routes';
+import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 
 @Component({
-    selector: 'app-default-sidebar',
-    templateUrl: './default-sidebar.component.html',
-    styleUrl: './default-sidebar.component.scss',
-    standalone: false
+  selector: 'app-default-sidebar',
+  templateUrl: './default-sidebar.component.html',
+  styleUrl: './default-sidebar.component.scss',
+  standalone: false,
 })
-export class DefaultSidebarComponent implements OnDestroy , OnInit{
+export class DefaultSidebarComponent implements OnDestroy, OnInit {
   public routes = routes;
   base = 'dashboard';
   page = '';
   last = '';
-  page1='';
-  isOpen=false;
+  page1 = '';
+  isOpen = false;
   openMenuItem: any = null;
   openSubmenuOneItem: any = null;
   side_bar_data: SideBar[] = [];
@@ -26,10 +26,8 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
     public router: Router,
     private data: DataService,
     private sideBar: SideBarService,
-    private common: CommonService
+    private common: CommonService,
   ) {
-
-
     // get sidebar data as observable because data is controlled for design to expand submenus
     this.data.getSideBarData.subscribe((res: SideBar[]) => {
       this.side_bar_data = res;
@@ -46,9 +44,7 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
     this.common.page.subscribe((res: string) => {
       this.page1 = res;
     });
-
   }
-
 
   public miniSideBarMouseHover(position: string): void {
     if (position === 'over') {
@@ -58,14 +54,13 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
     }
   }
   public expandSubMenus(menu: SideBarMenu): void {
-    this.isOpen= false
+    this.isOpen = false;
     sessionStorage.setItem('menuValue', menu.menuValue);
     this.side_bar_data.map((mainMenus: SideBar) => {
       mainMenus.menu.map((resMenu: SideBarMenu) => {
         // collapse other submenus which are open
         if (resMenu.menuValue === menu.menuValue) {
           menu.showSubRoute = !menu.showSubRoute;
-
         } else {
           resMenu.showSubRoute = false;
         }
@@ -74,28 +69,26 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
   }
   public expandSubMenusActive(): void {
     const activeMenu = sessionStorage.getItem('menuValue');
-    if(activeMenu === null) {
+    if (activeMenu === null) {
       this.side_bar_data.map((mainMenus: SideBar) => {
         mainMenus.menu.map((resMenu: SideBarMenu) => {
           // collapse other submenus which are open
           if (resMenu.menuValue === 'Dashboard') {
             resMenu.showSubRoute = true;
-
           } else {
             resMenu.showSubRoute = false;
           }
         });
       });
-      this.isOpen = true
-    }else {
-      this.isOpen= false
+      this.isOpen = true;
+    } else {
+      this.isOpen = false;
     }
     this.side_bar_data.map((mainMenus: SideBar) => {
       mainMenus.menu.map((resMenu: SideBarMenu) => {
         // collapse other submenus which are open
         if (resMenu.menuValue === activeMenu) {
           resMenu.showSubRoute = true;
-
         } else {
           resMenu.showSubRoute = false;
         }
@@ -111,7 +104,6 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
         this.page = splitVal[2];
         this.last = splitVal[3];
         this.page1 = splitVal[4];
-
       }
     });
   }
@@ -148,5 +140,3 @@ export class DefaultSidebarComponent implements OnDestroy , OnInit{
     }
   }
 }
-
-

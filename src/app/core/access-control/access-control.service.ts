@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, distinctUntilChanged, filter, take } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, take } from 'rxjs/operators';
 import { KeycloakAuthService } from '../../auth/keycloak/keycloak.service';
 import { environment } from '../../config/environment';
+import { ACCESS_CONTROL_CONFIG } from './access-control.config';
 import {
   AccessControlConfig,
   AccessLevel,
@@ -11,7 +12,6 @@ import {
   PermissionMap,
   PermissionRequirement,
 } from './access-control.types';
-import { ACCESS_CONTROL_CONFIG } from './access-control.config';
 
 interface PermissionState {
   ready: boolean;
@@ -23,8 +23,8 @@ const DEFAULT_MUTATION_METHODS = ['POST', 'PUT', 'PATCH', 'DELETE'];
 @Injectable({ providedIn: 'root' })
 export class AccessControlService {
   private readonly config: AccessControlConfig = ACCESS_CONTROL_CONFIG;
-  private readonly mutationMethods = (this.config.mutationMethods ?? DEFAULT_MUTATION_METHODS).map((m) =>
-    (m || '').toUpperCase()
+  private readonly mutationMethods = (this.config.mutationMethods ?? DEFAULT_MUTATION_METHODS).map(
+    (m) => (m || '').toUpperCase(),
   );
   private readonly moduleMap = this.buildModuleMap(this.config.moduleMap);
   private readonly apiPrefix = this.normalizePrefix(this.config.apiPrefix ?? '/api/v1');
@@ -35,12 +35,12 @@ export class AccessControlService {
 
   readonly permissions$: Observable<PermissionMap> = this.state$.pipe(
     map((state) => state.map),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   );
 
   readonly ready$: Observable<boolean> = this.state$.pipe(
     map((state) => state.ready),
-    distinctUntilChanged()
+    distinctUntilChanged(),
   );
 
   constructor(private keycloak: KeycloakAuthService) {
@@ -76,7 +76,7 @@ export class AccessControlService {
     const list = this.normalizeRequirements(requirements);
     return this.state$.pipe(
       map((state) => (state.ready ? (list.length ? this.canAny(list) : true) : false)),
-      distinctUntilChanged()
+      distinctUntilChanged(),
     );
   }
 
@@ -84,7 +84,7 @@ export class AccessControlService {
     return this.state$.pipe(
       filter((state) => state.ready),
       take(1),
-      map(() => this.canAny(requirements))
+      map(() => this.canAny(requirements)),
     );
   }
 
@@ -92,14 +92,11 @@ export class AccessControlService {
     return this.state$.pipe(
       filter((state) => state.ready),
       take(1),
-      map(() => this.canAll(requirements))
+      map(() => this.canAll(requirements)),
     );
   }
 
-  resolveHttpRequirement(
-    method: string,
-    url: string
-  ): PermissionRequirement | null {
+  resolveHttpRequirement(method: string, url: string): PermissionRequirement | null {
     const normalizedMethod = (method || '').toUpperCase();
     if (!this.mutationMethods.includes(normalizedMethod)) {
       return null;
@@ -155,17 +152,7 @@ export class AccessControlService {
     const normalized = (action || '').trim().toLowerCase();
     if (!normalized) return null;
     if (['read', 'view'].includes(normalized)) return 'read';
-    if (
-      [
-        'write',
-        'admin',
-        'manage',
-        'update',
-        'create',
-        'delete',
-        'edit',
-      ].includes(normalized)
-    ) {
+    if (['write', 'admin', 'manage', 'update', 'create', 'delete', 'edit'].includes(normalized)) {
       return 'write';
     }
     return null;
@@ -177,9 +164,7 @@ export class AccessControlService {
     return this.moduleMap[key] ?? key;
   }
 
-  private normalizeRequirements(
-    requirements?: PermissionInput
-  ): PermissionRequirement[] {
+  private normalizeRequirements(requirements?: PermissionInput): PermissionRequirement[] {
     if (!requirements) return [];
     if (Array.isArray(requirements)) {
       if (!requirements.length) return [];
@@ -202,9 +187,7 @@ export class AccessControlService {
     return sanitized ? [sanitized] : [];
   }
 
-  private sanitizeRequirement(
-    requirement?: PermissionRequirement
-  ): PermissionRequirement | null {
+  private sanitizeRequirement(requirement?: PermissionRequirement): PermissionRequirement | null {
     if (!requirement) return null;
     const module = this.normalizeModule(requirement.module);
     const level = requirement.level === 'write' ? 'write' : 'read';
@@ -218,8 +201,7 @@ export class AccessControlService {
     if (!module) return null;
     const normalizedModule = this.normalizeModule(module);
     const normalizedLevel = (level || 'read').trim().toLowerCase();
-    const permissionLevel =
-      normalizedLevel === 'write' ? 'write' : ('read' as AccessLevel);
+    const permissionLevel = normalizedLevel === 'write' ? 'write' : ('read' as AccessLevel);
     return { module: normalizedModule, level: permissionLevel };
   }
 

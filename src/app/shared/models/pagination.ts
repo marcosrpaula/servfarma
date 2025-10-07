@@ -30,4 +30,3 @@ export function mapRawPaged<T>(raw: RawPagedResult<T> | any): PagedResult<T> {
   const items = raw.items ?? [];
   return { items, totalCount, currentPage, pageSize, totalPages, hasNextPage, hasPreviousPage };
 }
-

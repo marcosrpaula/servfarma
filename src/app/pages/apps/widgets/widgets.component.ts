@@ -1,22 +1,45 @@
 import { Component, OnInit } from '@angular/core';
 import { circle, latLng, tileLayer } from 'leaflet';
 
-import { TitleBox1Model, TitleBox2Model, TitleBox3Model, TitleBox4Model, otherWidgetsModel, widgetsActivitiesModel, widgetsTasksModel, TitleBox5Model, HotproductModel, BankModel, CandidateModel } from './widgets.model';
-import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormArray, AbstractControl } from '@angular/forms';
-import { bank, candidate, hotproducts, otherWidgets, tileBoxs1, tileBoxs2, tileBoxs3, tileBoxs4, tileBoxs5, widgetsActivities, widgetsTasks } from 'src/app/core/data';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  bank,
+  candidate,
+  hotproducts,
+  otherWidgets,
+  tileBoxs1,
+  tileBoxs2,
+  tileBoxs3,
+  tileBoxs4,
+  tileBoxs5,
+  widgetsActivities,
+  widgetsTasks,
+} from 'src/app/core/data';
+import {
+  BankModel,
+  CandidateModel,
+  HotproductModel,
+  TitleBox1Model,
+  TitleBox2Model,
+  TitleBox3Model,
+  TitleBox4Model,
+  TitleBox5Model,
+  otherWidgetsModel,
+  widgetsActivitiesModel,
+  widgetsTasksModel,
+} from './widgets.model';
 
 @Component({
-    selector: 'app-widgets',
-    templateUrl: './widgets.component.html',
-    styleUrls: ['./widgets.component.scss'],
-    standalone: false
+  selector: 'app-widgets',
+  templateUrl: './widgets.component.html',
+  styleUrls: ['./widgets.component.scss'],
+  standalone: false,
 })
 
 /**
  * Widgets Component
  */
 export class WidgetsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
   tileBoxs1!: TitleBox1Model[];
@@ -46,25 +69,26 @@ export class WidgetsComponent implements OnInit {
   customcardData!: UntypedFormGroup;
   submitted = false;
 
-  constructor(public formBuilder: UntypedFormBuilder) { }
+  constructor(public formBuilder: UntypedFormBuilder) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-    this.breadCrumbItems = [
-      { label: 'Velzon' },
-      { label: 'Widgets', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Velzon' }, { label: 'Widgets', active: true }];
 
     // Chat Data Get Function
     this._fetchData();
 
     // Chart Color Data Get Function
-    this._basicBarChart('["--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-danger", "--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-info"]');
+    this._basicBarChart(
+      '["--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-danger", "--vz-info", "--vz-info", "--vz-info", "--vz-info", "--vz-info"]',
+    );
     this._basicColumnChart('["--vz-success", "--vz-light"]');
     this._simpleDonutChart('["--vz-primary", "--vz-info", "--vz-warning", "--vz-success"]');
-    this._basicHeatmapChart('["--vz-info", "--vz-success", "--vz-primary", "--vz-warning", "--vz-danger"]');
+    this._basicHeatmapChart(
+      '["--vz-info", "--vz-success", "--vz-primary", "--vz-warning", "--vz-danger"]',
+    );
     this._applicationChart('["--vz-success" , "--vz-transparent"]');
     this._interviewChart('["--vz-danger" , "--vz-transparent"]');
     this._hiredChart('["--vz-success", "--vz-transparent"]');
@@ -75,7 +99,7 @@ export class WidgetsComponent implements OnInit {
       cardholder: ['', [Validators.required]],
       month: ['', [Validators.required]],
       year: ['', [Validators.required]],
-      cvc: ['', [Validators.required]]
+      cvc: ['', [Validators.required]],
     });
 
     /**
@@ -85,48 +109,47 @@ export class WidgetsComponent implements OnInit {
       ids: [''],
       amount: ['', [Validators.required]],
     });
-
   }
 
   /**
-  * Returns form
-  */
+   * Returns form
+   */
   get form() {
     return this.customcardData.controls;
   }
 
   setcardnumber(e: any) {
     var key = e.keyCode || e.charCode;
-    var is_digit = key >= 48 && key <= 57 || key >= 96 && key <= 105;
+    var is_digit = (key >= 48 && key <= 57) || (key >= 96 && key <= 105);
     var is_delete = key == 8 || key == 46;
     if (is_digit || is_delete) {
       var text = e.target.value;
-      (document.getElementById("card-num-elem") as HTMLElement).innerText = text
+      (document.getElementById('card-num-elem') as HTMLElement).innerText = text;
     }
   }
 
   setname(ev: any) {
-    (document.getElementById("card-holder-elem") as HTMLElement).innerHTML = ev.target.value
+    (document.getElementById('card-holder-elem') as HTMLElement).innerHTML = ev.target.value;
   }
 
   setMonth(ev: any) {
     if (!ev.target.value) {
-      (document.getElementById("expiry-month-elem") as HTMLElement).innerText = "00";
+      (document.getElementById('expiry-month-elem') as HTMLElement).innerText = '00';
     } else {
-      (document.getElementById("expiry-month-elem") as HTMLElement).innerText = ev.target.value;
+      (document.getElementById('expiry-month-elem') as HTMLElement).innerText = ev.target.value;
     }
   }
 
   setYear(ev: any) {
     if (!ev.target.value) {
-      (document.getElementById("expiry-year-elem") as HTMLElement).innerText = "00";
+      (document.getElementById('expiry-year-elem') as HTMLElement).innerText = '00';
     } else {
-      (document.getElementById("expiry-year-elem") as HTMLElement).innerText = ev.target.value;
+      (document.getElementById('expiry-year-elem') as HTMLElement).innerText = ev.target.value;
     }
   }
 
   setCVC(ev: any) {
-    (document.getElementById("cvc-elem") as HTMLElement).innerHTML = ev.target.value
+    (document.getElementById('cvc-elem') as HTMLElement).innerHTML = ev.target.value;
   }
 
   custompay() {
@@ -139,19 +162,18 @@ export class WidgetsComponent implements OnInit {
   private getChartColorsArray(colors: any) {
     colors = JSON.parse(colors);
     return colors.map(function (value: any) {
-      var newValue = value.replace(" ", "");
-      if (newValue.indexOf(",") === -1) {
+      var newValue = value.replace(' ', '');
+      if (newValue.indexOf(',') === -1) {
         var color = getComputedStyle(document.documentElement).getPropertyValue(newValue);
         if (color) {
-          color = color.replace(" ", "");
+          color = color.replace(' ', '');
           return color;
-        }
-        else return newValue;;
+        } else return newValue;
       } else {
         var val = value.split(',');
         if (val.length == 2) {
           var rgbaColor = getComputedStyle(document.documentElement).getPropertyValue(val[0]);
-          rgbaColor = "rgba(" + rgbaColor + "," + val[1] + ")";
+          rgbaColor = 'rgba(' + rgbaColor + ',' + val[1] + ')';
           return rgbaColor;
         } else {
           return newValue;
@@ -161,19 +183,18 @@ export class WidgetsComponent implements OnInit {
   }
 
   /**
- * Series Data
- */
-  private generateData(count: number, yrange: { max: number; min: number; }) {
+   * Series Data
+   */
+  private generateData(count: number, yrange: { max: number; min: number }) {
     var i = 0;
     var series = [];
     while (i < count) {
-      var x = "w" + (i + 1).toString();
-      var y =
-        Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
+      var x = 'w' + (i + 1).toString();
+      var y = Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
 
       series.push({
         x: x,
-        y: y
+        y: y,
       });
       i++;
     }
@@ -181,21 +202,23 @@ export class WidgetsComponent implements OnInit {
   }
 
   /**
- * Basic Bar Chart
- */
+   * Basic Bar Chart
+   */
   private _basicBarChart(colors: any) {
     colors = this.getChartColorsArray(colors);
     this.basicBarChart = {
-      series: [{
-        data: [1010, 1640, 490, 1255, 1050, 689, 800, 420, 1085, 589],
-        name: 'Sessions',
-      }],
+      series: [
+        {
+          data: [1010, 1640, 490, 1255, 1050, 689, 800, 420, 1085, 589],
+          name: 'Sessions',
+        },
+      ],
       chart: {
         type: 'bar',
         height: 436,
         toolbar: {
           show: false,
-        }
+        },
       },
       plotOptions: {
         bar: {
@@ -205,7 +228,7 @@ export class WidgetsComponent implements OnInit {
           dataLabels: {
             position: 'top',
           },
-        }
+        },
       },
       dataLabels: {
         enabled: true,
@@ -213,8 +236,8 @@ export class WidgetsComponent implements OnInit {
         style: {
           fontSize: '12px',
           fontWeight: 400,
-          colors: ['#adb5bd']
-        }
+          colors: ['#adb5bd'],
+        },
       },
       colors: colors,
       legend: {
@@ -224,24 +247,37 @@ export class WidgetsComponent implements OnInit {
         show: false,
       },
       xaxis: {
-        categories: ['India', 'United States', 'China', 'Indonesia', 'Russia', 'Bangladesh', 'Canada', 'Brazil', 'Vietnam', 'UK'],
+        categories: [
+          'India',
+          'United States',
+          'China',
+          'Indonesia',
+          'Russia',
+          'Bangladesh',
+          'Canada',
+          'Brazil',
+          'Vietnam',
+          'UK',
+        ],
       },
     };
   }
 
   /**
-  * Application Chart
-  */
+   * Application Chart
+   */
   private _applicationChart(colors: any) {
     colors = this.getChartColorsArray(colors);
     this.ApplicationChart = {
-      series: [{
-        name: "Results",
-        data: [0, 68, 35, 90, 99],
-      },],
+      series: [
+        {
+          name: 'Results',
+          data: [0, 68, 35, 90, 99],
+        },
+      ],
       chart: {
         width: 140,
-        type: "area",
+        type: 'area',
         sparkline: {
           enabled: true,
         },
@@ -253,11 +289,11 @@ export class WidgetsComponent implements OnInit {
         enabled: false,
       },
       stroke: {
-        curve: "smooth",
+        curve: 'smooth',
         width: 1.5,
       },
       fill: {
-        type: "gradient",
+        type: 'gradient',
         gradient: {
           shadeIntensity: 1,
           inverseColors: false,
@@ -266,23 +302,25 @@ export class WidgetsComponent implements OnInit {
           stops: [50, 100, 100, 100],
         },
       },
-      colors: colors
+      colors: colors,
     };
   }
 
   /**
- * Interviewed Chart
- */
+   * Interviewed Chart
+   */
   private _interviewChart(colors: any) {
     colors = this.getChartColorsArray(colors);
     this.InterviewedChart = {
-      series: [{
-        name: "Results",
-        data: [0, 98, 85, 90, 67],
-      },],
+      series: [
+        {
+          name: 'Results',
+          data: [0, 98, 85, 90, 67],
+        },
+      ],
       chart: {
         width: 140,
-        type: "area",
+        type: 'area',
         sparkline: {
           enabled: true,
         },
@@ -294,11 +332,11 @@ export class WidgetsComponent implements OnInit {
         enabled: false,
       },
       stroke: {
-        curve: "smooth",
+        curve: 'smooth',
         width: 1.5,
       },
       fill: {
-        type: "gradient",
+        type: 'gradient',
         gradient: {
           shadeIntensity: 1,
           inverseColors: false,
@@ -307,23 +345,25 @@ export class WidgetsComponent implements OnInit {
           stops: [50, 100, 100, 100],
         },
       },
-      colors: colors
+      colors: colors,
     };
   }
 
   /**
-  * Hired Chart
-  */
+   * Hired Chart
+   */
   private _hiredChart(colors: any) {
     colors = this.getChartColorsArray(colors);
     this.HiredChart = {
-      series: [{
-        name: "Results",
-        data: [0, 65, 103, 75, 120],
-      },],
+      series: [
+        {
+          name: 'Results',
+          data: [0, 65, 103, 75, 120],
+        },
+      ],
       chart: {
         width: 140,
-        type: "area",
+        type: 'area',
         sparkline: {
           enabled: true,
         },
@@ -335,11 +375,11 @@ export class WidgetsComponent implements OnInit {
         enabled: false,
       },
       stroke: {
-        curve: "smooth",
+        curve: 'smooth',
         width: 1.5,
       },
       fill: {
-        type: "gradient",
+        type: 'gradient',
         gradient: {
           shadeIntensity: 1,
           inverseColors: false,
@@ -348,30 +388,33 @@ export class WidgetsComponent implements OnInit {
           stops: [50, 100, 100, 100],
         },
       },
-      colors: colors
+      colors: colors,
     };
   }
 
   /**
- * Basic Column Charts
- */
+   * Basic Column Charts
+   */
   private _basicColumnChart(colors: any) {
     colors = this.getChartColorsArray(colors);
     this.basicColumnChart = {
-      series: [{
-        name: 'Last Year',
-        data: [25.3, 12.5, 20.2, 18.5, 40.4, 25.4, 15.8, 22.3, 19.2, 25.3, 12.5, 20.2]
-      }, {
-        name: 'Current Year',
-        data: [36.2, 22.4, 38.2, 30.5, 26.4, 30.4, 20.2, 29.6, 10.9, 36.2, 22.4, 38.2]
-      }],
+      series: [
+        {
+          name: 'Last Year',
+          data: [25.3, 12.5, 20.2, 18.5, 40.4, 25.4, 15.8, 22.3, 19.2, 25.3, 12.5, 20.2],
+        },
+        {
+          name: 'Current Year',
+          data: [36.2, 22.4, 38.2, 30.5, 26.4, 30.4, 20.2, 29.6, 10.9, 36.2, 22.4, 38.2],
+        },
+      ],
       chart: {
         type: 'bar',
         height: 306,
         stacked: true,
         toolbar: {
           show: false,
-        }
+        },
       },
       plotOptions: {
         bar: {
@@ -400,51 +443,63 @@ export class WidgetsComponent implements OnInit {
       stroke: {
         show: true,
         width: 2,
-        colors: ['transparent']
+        colors: ['transparent'],
       },
       grid: {
         show: false,
       },
       colors: colors,
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        categories: [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ],
         axisTicks: {
           show: false,
         },
         axisBorder: {
           show: true,
           offsetX: 0,
-          offsetY: 0
+          offsetY: 0,
         },
       },
       yaxis: {
-        show: false
+        show: false,
       },
       fill: {
-        opacity: 1
-      }
+        opacity: 1,
+      },
     };
   }
 
   /**
- * Simple Donut Chart
- */
+   * Simple Donut Chart
+   */
   private _simpleDonutChart(colors: any) {
     colors = this.getChartColorsArray(colors);
     this.simpleDonutChart = {
       series: [19405, 40552, 15824, 30635],
-      labels: ["Bitcoin", "Ethereum", "Litecoin", "Dash"],
+      labels: ['Bitcoin', 'Ethereum', 'Litecoin', 'Dash'],
       chart: {
-        type: "donut",
+        type: 'donut',
         height: 210,
       },
       plotOptions: {
         pie: {
-
           offsetX: 0,
           offsetY: 0,
           donut: {
-            size: "70%",
+            size: '70%',
             labels: {
               show: true,
               name: {
@@ -459,8 +514,8 @@ export class WidgetsComponent implements OnInit {
                 fontWeight: 500,
                 offsetY: 5,
                 formatter: function (val: any) {
-                  return "$" + val
-                }
+                  return '$' + val;
+                },
               },
               total: {
                 show: true,
@@ -468,8 +523,8 @@ export class WidgetsComponent implements OnInit {
                 label: 'Total value',
                 color: '#9599ad',
                 fontWeight: 500,
-              }
-            }
+              },
+            },
           },
         },
       },
@@ -482,94 +537,95 @@ export class WidgetsComponent implements OnInit {
       yaxis: {
         labels: {
           formatter: function (value: any) {
-            return "$" + value;
-          }
-        }
+            return '$' + value;
+          },
+        },
       },
       stroke: {
-        lineCap: "round",
-        width: 2
+        lineCap: 'round',
+        width: 2,
       },
-      colors: colors
+      colors: colors,
     };
   }
 
   /**
- * Basic Heatmap Chart
- */
+   * Basic Heatmap Chart
+   */
   private _basicHeatmapChart(colors: any) {
     colors = this.getChartColorsArray(colors);
     this.basicHeatmapChart = {
-      series: [{
-        name: 'Jan',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      },
-      {
-        name: 'Feb',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      },
-      {
-        name: 'Mar',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      },
-      {
-        name: 'Apr',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      },
-      {
-        name: 'May',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      },
-      {
-        name: 'Jun',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      },
-      {
-        name: 'Jul',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      },
-      {
-        name: 'Aug',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      },
-      {
-        name: 'Sep',
-        data: this.generateData(20, {
-          min: -30,
-          max: 55
-        })
-      }
+      series: [
+        {
+          name: 'Jan',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
+        {
+          name: 'Feb',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
+        {
+          name: 'Mar',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
+        {
+          name: 'Apr',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
+        {
+          name: 'May',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
+        {
+          name: 'Jun',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
+        {
+          name: 'Jul',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
+        {
+          name: 'Aug',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
+        {
+          name: 'Sep',
+          data: this.generateData(20, {
+            min: -30,
+            max: 55,
+          }),
+        },
       ],
       chart: {
         height: 310,
         type: 'heatmap',
         toolbar: {
-          show: false
-        }
+          show: false,
+        },
       },
       legend: {
         show: false,
@@ -580,45 +636,46 @@ export class WidgetsComponent implements OnInit {
           radius: 0,
           useFillColorAsStroke: true,
           colorScale: {
-            ranges: [{
-              from: -30,
-              to: 5,
-              name: 'Youtube',
-              color: colors[0]
-            },
-            {
-              from: 6,
-              to: 20,
-              name: 'Meta',
-              color: colors[1]
-            },
-            {
-              from: 21,
-              to: 45,
-              name: 'Google',
-              color: colors[2]
-            },
-            {
-              from: 46,
-              to: 55,
-              name: 'Medium',
-              color: colors[3]
-            },
-            {
-              from: 36,
-              to: 40,
-              name: 'Other',
-              color: colors[4]
-            }
-            ]
-          }
-        }
+            ranges: [
+              {
+                from: -30,
+                to: 5,
+                name: 'Youtube',
+                color: colors[0],
+              },
+              {
+                from: 6,
+                to: 20,
+                name: 'Meta',
+                color: colors[1],
+              },
+              {
+                from: 21,
+                to: 45,
+                name: 'Google',
+                color: colors[2],
+              },
+              {
+                from: 46,
+                to: 55,
+                name: 'Medium',
+                color: colors[3],
+              },
+              {
+                from: 36,
+                to: 40,
+                name: 'Other',
+                color: colors[4],
+              },
+            ],
+          },
+        },
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
-        width: 1
+        width: 1,
       },
       title: {
         style: {
@@ -649,49 +706,93 @@ export class WidgetsComponent implements OnInit {
    */
   options = {
     layers: [
-      tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        id: "mapbox/light-v9",
+      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        id: 'mapbox/light-v9',
         tileSize: 512,
         zoomOffset: 0,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      })
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      }),
     ],
     zoom: 1.1,
-    center: latLng(28, 1.5)
+    center: latLng(28, 1.5),
   };
   layers = [
-    circle([41.9, 12.45], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
-    circle([12.05, -61.75], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
-    circle([1.3, 103.8], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
+    circle([41.9, 12.45], {
+      color: '#435fe3',
+      opacity: 0.5,
+      weight: 10,
+      fillColor: '#435fe3',
+      fillOpacity: 1,
+      radius: 400000,
+    }),
+    circle([12.05, -61.75], {
+      color: '#435fe3',
+      opacity: 0.5,
+      weight: 10,
+      fillColor: '#435fe3',
+      fillOpacity: 1,
+      radius: 400000,
+    }),
+    circle([1.3, 103.8], {
+      color: '#435fe3',
+      opacity: 0.5,
+      weight: 10,
+      fillColor: '#435fe3',
+      fillOpacity: 1,
+      radius: 400000,
+    }),
   ];
 
   options1 = {
     layers: [
-      tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        id: "mapbox/light-v9",
+      tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        id: 'mapbox/light-v9',
         tileSize: 512,
         zoomOffset: 0,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      })
+        attribution:
+          'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      }),
     ],
     zoom: 1.1,
-    center: latLng(28, 1.5)
+    center: latLng(28, 1.5),
   };
   layers1 = [
-    circle([41.9, 12.45], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
-    circle([12.05, -61.75], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
-    circle([1.3, 103.8], { color: "#435fe3", opacity: 0.5, weight: 10, fillColor: "#435fe3", fillOpacity: 1, radius: 400000, }),
+    circle([41.9, 12.45], {
+      color: '#435fe3',
+      opacity: 0.5,
+      weight: 10,
+      fillColor: '#435fe3',
+      fillOpacity: 1,
+      radius: 400000,
+    }),
+    circle([12.05, -61.75], {
+      color: '#435fe3',
+      opacity: 0.5,
+      weight: 10,
+      fillColor: '#435fe3',
+      fillOpacity: 1,
+      radius: 400000,
+    }),
+    circle([1.3, 103.8], {
+      color: '#435fe3',
+      opacity: 0.5,
+      weight: 10,
+      fillColor: '#435fe3',
+      fillOpacity: 1,
+      radius: 400000,
+    }),
   ];
 
   /**
-     * Swiper Responsive setting
-     */
+   * Swiper Responsive setting
+   */
   public Responsive = {
     infinite: true,
     slidesToShow: 1.2,
     autoplay: true,
-    arrows: true
-  }
+    arrows: true,
+  };
 
   num: number = 0;
   option = {
@@ -702,25 +803,25 @@ export class WidgetsComponent implements OnInit {
   };
   // open Candidate Detail
   opendetail(id: any) {
-    this.candidatedetail = this.candidates[id]
+    this.candidatedetail = this.candidates[id];
   }
 
   // select bank
   confirmcard() {
     if (this.cardForm.valid) {
-      document.getElementById('notification-warn')?.classList.add('d-none')
+      document.getElementById('notification-warn')?.classList.add('d-none');
       const amount = this.cardForm.get('amount')?.value;
-      (document.getElementById("notification-overlay") as HTMLElement).style.visibility = "visible";
-      (document.getElementById("notification-overlay") as HTMLElement).style.opacity = "1";
-      (document.querySelector("#notification-overlay .success-pay") as HTMLElement).innerHTML = amount + ' Payment Successfully'
+      (document.getElementById('notification-overlay') as HTMLElement).style.visibility = 'visible';
+      (document.getElementById('notification-overlay') as HTMLElement).style.opacity = '1';
+      (document.querySelector('#notification-overlay .success-pay') as HTMLElement).innerHTML =
+        amount + ' Payment Successfully';
     } else {
-      document.getElementById('notification-warn')?.classList.remove('d-none')
+      document.getElementById('notification-warn')?.classList.remove('d-none');
     }
   }
 
   backtohome() {
-    (document.getElementById("notification-overlay") as HTMLElement).style.visibility = "hidden";
-    (document.getElementById("notification-overlay") as HTMLElement).style.opacity = "0";
+    (document.getElementById('notification-overlay') as HTMLElement).style.visibility = 'hidden';
+    (document.getElementById('notification-overlay') as HTMLElement).style.opacity = '0';
   }
-
 }

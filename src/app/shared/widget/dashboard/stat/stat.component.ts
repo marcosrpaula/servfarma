@@ -1,13 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-stat',
-    templateUrl: './stat.component.html',
-    styleUrls: ['./stat.component.scss'],
-    standalone: false
+  selector: 'app-stat',
+  templateUrl: './stat.component.html',
+  styleUrls: ['./stat.component.scss'],
+  standalone: false,
 })
 export class StatComponent implements OnInit {
-
   @Input() title: string | undefined;
   @Input() value: any | undefined;
   @Input() icon: string | undefined;
@@ -15,10 +14,9 @@ export class StatComponent implements OnInit {
   @Input() profit: string | undefined;
   @Input() link: string | undefined;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   num: number = 0;
   option = {
@@ -27,5 +25,4 @@ export class StatComponent implements OnInit {
     duration: 2,
     decimalPlaces: 2,
   };
-
 }

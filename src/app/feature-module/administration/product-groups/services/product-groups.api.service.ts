@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import {
   ListProductGroupsParams,
   ProductGroupViewModel,
 } from '../../../../shared/models/product-groups';
-import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import { buildHttpParams } from '../../../../shared/utils/http-params';
 
 export interface CreateProductGroupDto {

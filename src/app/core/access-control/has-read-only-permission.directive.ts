@@ -1,10 +1,4 @@
-﻿import {
-  Directive,
-  Input,
-  OnDestroy,
-  TemplateRef,
-  ViewContainerRef,
-} from '@angular/core';
+import { Directive, Input, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
 import { Subscription, combineLatest } from 'rxjs';
 import { AccessControlService } from './access-control.service';
 import { PermissionRequirement } from './access-control.types';
@@ -18,7 +12,7 @@ export class HasReadOnlyPermissionDirective implements OnDestroy {
   constructor(
     private readonly templateRef: TemplateRef<unknown>,
     private readonly viewContainer: ViewContainerRef,
-    private readonly access: AccessControlService
+    private readonly access: AccessControlService,
   ) {}
 
   @Input()
@@ -31,9 +25,7 @@ export class HasReadOnlyPermissionDirective implements OnDestroy {
     this.subscription?.unsubscribe();
   }
 
-  private extractModule(
-    value: string | PermissionRequirement | undefined
-  ): string | undefined {
+  private extractModule(value: string | PermissionRequirement | undefined): string | undefined {
     if (!value) return undefined;
     if (typeof value === 'string') {
       const normalized = value.trim();

@@ -2,32 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { candidates } from './data';
 
 @Component({
-    selector: 'app-candidates',
-    templateUrl: './candidates.component.html',
-    styleUrls: ['./candidates.component.scss'],
-    standalone: false
+  selector: 'app-candidates',
+  templateUrl: './candidates.component.html',
+  styleUrls: ['./candidates.component.scss'],
+  standalone: false,
 })
 export class CandidatesComponent implements OnInit {
-
   candidates: any;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
-
     // Fetch Data
-    this.candidates = candidates
+    this.candidates = candidates;
   }
 
   /**
-  * Swiper Responsive setting
-  */
+   * Swiper Responsive setting
+   */
   public Responsive = {
     infinite: true,
     slidesToShow: 4,
     autoplay: true,
     dots: false,
-    arrows: false
+    arrows: false,
   };
-
 }

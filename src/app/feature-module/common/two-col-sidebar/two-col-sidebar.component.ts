@@ -1,22 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { routes } from '../../../shared/routes/routes';
-import { SideBar, SideBarMenu } from '../../../shared/models/models';
 import { NavigationEnd, Router } from '@angular/router';
-import { DataService } from '../../../shared/data/data.service';
-import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 import { CommonService } from '../../../shared/common/common.service';
+import { DataService } from '../../../shared/data/data.service';
+import { SideBar, SideBarMenu } from '../../../shared/models/models';
+import { routes } from '../../../shared/routes/routes';
+import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 
 @Component({
-    selector: 'app-two-col-sidebar',
-    templateUrl: './two-col-sidebar.component.html',
-    styleUrl: './two-col-sidebar.component.scss',
-    standalone: false
+  selector: 'app-two-col-sidebar',
+  templateUrl: './two-col-sidebar.component.html',
+  styleUrl: './two-col-sidebar.component.scss',
+  standalone: false,
 })
-export class TwoColSidebarComponent implements OnDestroy , OnInit{
+export class TwoColSidebarComponent implements OnDestroy, OnInit {
   public routes = routes;
   showSubMenusTab = false;
   openMenuItem: any = null;
-  activeMenu:any =  'Layouts';
+  activeMenu: any = 'Layouts';
   openSubmenuOneItem: any = null;
   base = 'dashboard';
   page = '';
@@ -27,11 +27,11 @@ export class TwoColSidebarComponent implements OnDestroy , OnInit{
     public router: Router,
     private data: DataService,
     private sideBar: SideBarService,
-    private common: CommonService
+    private common: CommonService,
   ) {
     this.common.base.subscribe((res: string) => {
       this.base = res;
-      if(this.base === 'layout-two-column') this.activeMenu = 'Layouts' ;
+      if (this.base === 'layout-two-column') this.activeMenu = 'Layouts';
       this.side_bar_data.map((mainMenus: SideBarMenu) => {
         if (this.activeMenu === mainMenus.menuValue) {
           mainMenus.showMyTab = true;
@@ -95,15 +95,14 @@ export class TwoColSidebarComponent implements OnDestroy , OnInit{
     });
   }
   ngOnInit(): void {
-    this.activeMenu = sessionStorage.getItem('menuValue2')
-       this.side_bar_data.map((mainMenus: SideBarMenu) => {
-            if (this.activeMenu === mainMenus.menuValue) {
-              mainMenus.showMyTab = true;
-            } else {
-              mainMenus.showMyTab = false;
-            }
-          });
-
+    this.activeMenu = sessionStorage.getItem('menuValue2');
+    this.side_bar_data.map((mainMenus: SideBarMenu) => {
+      if (this.activeMenu === mainMenus.menuValue) {
+        mainMenus.showMyTab = true;
+      } else {
+        mainMenus.showMyTab = false;
+      }
+    });
   }
   ngOnDestroy(): void {
     this.data.resetData2();

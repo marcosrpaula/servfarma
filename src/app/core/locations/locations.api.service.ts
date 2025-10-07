@@ -1,19 +1,15 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable, of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
-import { environment } from "../../config/environment";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../config/environment';
 import {
   CitySimpleViewModel,
   PostalAddressViewModel,
   StateSimpleViewModel,
-} from "../../shared/models/addresses";
-import {
-  PagedResult,
-  RawPagedResult,
-  mapRawPaged,
-} from "../../shared/models/pagination";
-import { buildHttpParams } from "../../shared/utils/http-params";
+} from '../../shared/models/addresses';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../shared/models/pagination';
+import { buildHttpParams } from '../../shared/utils/http-params';
 
 export interface ListStatesParams {
   page?: number;
@@ -29,7 +25,7 @@ export interface ListCitiesParams {
   ascending?: boolean;
 }
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class LocationsApiService {
   private readonly baseUrl = `${environment.apiBaseUrl}/api/v1/locations`;
 
@@ -52,7 +48,7 @@ export class LocationsApiService {
 
   listCities(
     stateUf: string,
-    params: ListCitiesParams = {}
+    params: ListCitiesParams = {},
   ): Observable<PagedResult<CitySimpleViewModel>> {
     const httpParams = buildHttpParams({
       page: params.page ?? 1,
@@ -62,10 +58,9 @@ export class LocationsApiService {
     });
 
     return this.http
-      .get<RawPagedResult<CitySimpleViewModel>>(
-        `${this.baseUrl}/states/${stateUf}/cities`,
-        { params: httpParams }
-      )
+      .get<
+        RawPagedResult<CitySimpleViewModel>
+      >(`${this.baseUrl}/states/${stateUf}/cities`, { params: httpParams })
       .pipe(map((res) => mapRawPaged<CitySimpleViewModel>(res)));
   }
 

@@ -1,4 +1,4 @@
-﻿<!-- Header -->
+<!-- Header -->
 <div class="header">
   <div class="main-header">
     <div class="header-left">
@@ -70,20 +70,13 @@
                           <span class="menu-arrow"></span>
                         </a>
                         <ul
-                          [ngClass]="
-                            menu.showSubRoute === true
-                              ? 'show-sub-menu'
-                              : 'hide-sub-menu'
-                          "
+                          [ngClass]="menu.showSubRoute === true ? 'show-sub-menu' : 'hide-sub-menu'"
                         >
                           @for (subMenus of menu.subMenus; track subMenus) {
                             <li>
                               <a
                                 [routerLink]="subMenus.route"
-                                [class.active]="
-                                  page === subMenus.base ||
-                                  base === subMenus.base
-                                "
+                                [class.active]="page === subMenus.base || base === subMenus.base"
                               >
                                 {{ subMenus.menuValue }}</a
                               >
@@ -115,19 +108,12 @@
                           <span>{{ menu.menuValue }}</span>
                           <span class="menu-arrow"></span>
                         </a>
-                        <ul
-                          [ngClass]="
-                            menu.showSubRoute === true ? 'd-block' : 'd-none'
-                          "
-                        >
+                        <ul [ngClass]="menu.showSubRoute === true ? 'd-block' : 'd-none'">
                           @for (subMenus of menu.subMenus; track subMenus) {
                             @if (subMenus.customSubmenuTwo === false) {
                               <li>
                                 <a
-                                  [class.active]="
-                                    base === subMenus.base ||
-                                    page === subMenus.base
-                                  "
+                                  [class.active]="base === subMenus.base || page === subMenus.base"
                                   [routerLink]="subMenus.route"
                                   >{{ subMenus.menuValue }}</a
                                 >
@@ -144,26 +130,15 @@
                                   }"
                                 >
                                   {{ subMenus.menuValue }}
-                                  <span
-                                    class="menu-arrow inside-submenu"
-                                  ></span>
+                                  <span class="menu-arrow inside-submenu"></span>
                                 </a>
                                 <ul
-                                  [ngClass]="
-                                    openSubmenuOneItem === subMenus
-                                      ? 'd-block'
-                                      : 'd-none'
-                                  "
+                                  [ngClass]="openSubmenuOneItem === subMenus ? 'd-block' : 'd-none'"
                                 >
-                                  @for (
-                                    subMenuTwo of subMenus.subMenusTwo;
-                                    track subMenuTwo
-                                  ) {
+                                  @for (subMenuTwo of subMenus.subMenusTwo; track subMenuTwo) {
                                     <li>
                                       <a
-                                        [class.active]="
-                                          page === subMenuTwo.base
-                                        "
+                                        [class.active]="page === subMenuTwo.base"
                                         [routerLink]="subMenuTwo.route"
                                         >{{ subMenuTwo.menuValue }}</a
                                       >
@@ -219,17 +194,13 @@
               <i class="ti ti-bell"></i>
               <span class="notification-status-dot"></span>
             </a>
-            <div
-              class="dropdown-menu dropdown-menu-end notification-dropdown p-4"
-            >
+            <div class="dropdown-menu dropdown-menu-end notification-dropdown p-4">
               <div
                 class="d-flex align-items-center justify-content-between border-bottom p-0 pb-3 mb-3"
               >
                 <h4 class="notification-title">Notifications (2)</h4>
                 <div class="d-flex align-items-center">
-                  <a
-                    href="javascript:void(0);"
-                    class="text-primary fs-15 me-3 lh-1"
+                  <a href="javascript:void(0);" class="text-primary fs-15 me-3 lh-1"
                     >Mark all as read</a
                   >
                   <div class="dropdown">
@@ -242,26 +213,17 @@
                     </a>
                     <ul class="dropdown-menu mt-2 p-3">
                       <li>
-                        <a
-                          href="javascript:void(0);"
-                          class="dropdown-item rounded-1"
-                        >
+                        <a href="javascript:void(0);" class="dropdown-item rounded-1">
                           This Week
                         </a>
                       </li>
                       <li>
-                        <a
-                          href="javascript:void(0);"
-                          class="dropdown-item rounded-1"
-                        >
+                        <a href="javascript:void(0);" class="dropdown-item rounded-1">
                           Last Week
                         </a>
                       </li>
                       <li>
-                        <a
-                          href="javascript:void(0);"
-                          class="dropdown-item rounded-1"
-                        >
+                        <a href="javascript:void(0);" class="dropdown-item rounded-1">
                           Last Week
                         </a>
                       </li>
@@ -288,10 +250,7 @@
                     <a [routerLink]="routes.activities" class="pb-0">
                       <div class="d-flex">
                         <span class="avatar avatar-lg me-2 flex-shrink-0">
-                          <img
-                            src="assets/img/profiles/avatar-23.jpg"
-                            alt="Profile"
-                          />
+                          <img src="assets/img/profiles/avatar-23.jpg" alt="Profile" />
                         </span>
                         <div class="flex-grow-1">
                           <p class="mb-1">
@@ -299,9 +258,7 @@
                             added appointment on 02:00 PM
                           </p>
                           <span>10 mins ago</span>
-                          <div
-                            class="d-flex justify-content-start align-items-center mt-1"
-                          >
+                          <div class="d-flex justify-content-start align-items-center mt-1">
                             <span class="btn btn-light btn-sm me-2">Deny</span>
                             <span class="btn btn-primary btn-sm">Approve</span>
                           </div>
@@ -313,10 +270,7 @@
                     <a [routerLink]="routes.activities">
                       <div class="d-flex">
                         <span class="avatar avatar-lg me-2 flex-shrink-0">
-                          <img
-                            src="assets/img/profiles/avatar-25.jpg"
-                            alt="Profile"
-                          />
+                          <img src="assets/img/profiles/avatar-25.jpg" alt="Profile" />
                         </span>
                         <div class="flex-grow-1">
                           <p class="mb-1">
@@ -334,10 +288,7 @@
                     <a [routerLink]="routes.activities">
                       <div class="d-flex">
                         <span class="avatar avatar-lg me-2 flex-shrink-0">
-                          <img
-                            src="assets/img/profiles/avatar-01.jpg"
-                            alt="Profile"
-                          />
+                          <img src="assets/img/profiles/avatar-01.jpg" alt="Profile" />
                         </span>
                         <div class="flex-grow-1">
                           <p class="mb-1">
@@ -352,14 +303,8 @@
                 </div>
               </div>
               <div class="d-flex p-0">
-                <a href="javascript:void(0);" class="btn btn-light w-100 me-2"
-                  >Cancel</a
-                >
-                <a
-                  [routerLink]="routes.activities"
-                  class="btn btn-primary w-100"
-                  >View All</a
-                >
+                <a href="javascript:void(0);" class="btn btn-light w-100 me-2">Cancel</a>
+                <a [routerLink]="routes.activities" class="btn btn-primary w-100">View All</a>
               </div>
             </div>
           </div>
@@ -382,9 +327,9 @@
                 <div class="card-header">
                   <div class="d-flex align-items-center">
                     <div>
-                      <h5 class="mb-0">{{ userName || "Usuário" }}</h5>
+                      <h5 class="mb-0">{{ userName || 'Usuário' }}</h5>
                       <p class="fs-12 fw-medium mb-0">
-                        {{ userEmail || "Sem e-mail" }}
+                        {{ userEmail || 'Sem e-mail' }}
                       </p>
                     </div>
                   </div>
@@ -414,12 +359,7 @@
         ><i class="fa fa-ellipsis-v"></i
       ></a>
       <div class="dropdown-menu dropdown-menu-end">
-        <a
-          class="dropdown-item"
-          href="javascript:void(0);"
-          (click)="logout($event)"
-          >Logout</a
-        >
+        <a class="dropdown-item" href="javascript:void(0);" (click)="logout($event)">Logout</a>
       </div>
     </div>
     <!-- /Mobile Menu -->

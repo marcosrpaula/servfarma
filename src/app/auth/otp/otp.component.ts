@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
-import { routes } from '../../shared/routes/routes';
 import { Router } from '@angular/router';
+import { routes } from '../../shared/routes/routes';
 
 @Component({
-    selector: 'app-otp',
-    templateUrl: './otp.component.html',
-    styleUrl: './otp.component.scss',
-    standalone: false
+  selector: 'app-otp',
+  templateUrl: './otp.component.html',
+  styleUrl: './otp.component.scss',
+  standalone: false,
 })
 export class OtpComponent {
   public oneTimePassword = {
-    data1: "",
-    data2: "",
-    data3: "",
-    data4: ""
+    data1: '',
+    data2: '',
+    data3: '',
+    data4: '',
   };
   public ValueChanged(data: string, box: string): void {
     if (box == 'digit-1' && data.length > 0) {
@@ -23,7 +23,7 @@ export class OtpComponent {
     } else if (box == 'digit-3' && data.length > 0) {
       document.getElementById('digit-4')?.focus();
     } else {
-      return
+      return;
     }
   }
   public tiggerBackspace(data: string, box: string) {
@@ -43,8 +43,8 @@ export class OtpComponent {
   }
 
   public routes = routes;
-  constructor(private router: Router){}
-  navigation(){
-    this.router.navigate([routes.resetPassword])
+  constructor(private router: Router) {}
+  navigation() {
+    this.router.navigate([routes.resetPassword]);
   }
 }

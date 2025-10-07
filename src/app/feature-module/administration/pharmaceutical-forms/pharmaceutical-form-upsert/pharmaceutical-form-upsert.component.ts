@@ -1,24 +1,19 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import {
-  PharmaceuticalFormsApiService,
-  CreatePharmaceuticalFormDto,
-  UpdatePharmaceuticalFormDto,
-} from '../services/pharmaceutical-forms.api.service';
-import { PharmaceuticalFormsStateService } from '../services/pharmaceutical-forms-state.service';
+import { NotificationService } from '../../../../core/notifications/notification.service';
 import {
   PharmaceuticalFormDetailsViewModel,
   PharmaceuticalFormViewModel,
 } from '../../../../shared/models/pharmaceutical-forms';
-import { NotificationService } from '../../../../core/notifications/notification.service';
 import { SharedModule } from '../../../../shared/shared.module';
+import { PharmaceuticalFormsStateService } from '../services/pharmaceutical-forms-state.service';
+import {
+  CreatePharmaceuticalFormDto,
+  PharmaceuticalFormsApiService,
+  UpdatePharmaceuticalFormDto,
+} from '../services/pharmaceutical-forms.api.service';
 
 @Component({
   selector: 'app-pharmaceutical-form-upsert',
@@ -63,7 +58,9 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const form = this.resolveFormForReadOnly();
         if (!form) {
-          this.notifications.error('Nao foi possivel carregar os dados da forma farmaceutica para visualizacao. Acesse novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados da forma farmaceutica para visualizacao. Acesse novamente a partir da listagem.',
+          );
           this.router.navigate(['/pharmaceutical-forms']);
           return;
         }
@@ -152,12 +149,16 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
 
   private getFormFromNavigationState(): PharmaceuticalFormViewModel | undefined {
     const nav = this.router.getCurrentNavigation();
-    const candidate = nav?.extras?.state?.['pharmaceuticalForm'] as PharmaceuticalFormViewModel | undefined;
+    const candidate = nav?.extras?.state?.['pharmaceuticalForm'] as
+      | PharmaceuticalFormViewModel
+      | undefined;
     if (candidate) {
       return { ...candidate };
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const historyCandidate = (history.state as Record<string, unknown>)['pharmaceuticalForm'] as PharmaceuticalFormViewModel | undefined;
+      const historyCandidate = (history.state as Record<string, unknown>)['pharmaceuticalForm'] as
+        | PharmaceuticalFormViewModel
+        | undefined;
       if (historyCandidate) {
         return { ...historyCandidate };
       }

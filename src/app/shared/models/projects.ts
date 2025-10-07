@@ -1,5 +1,5 @@
-import { LaboratorySimpleViewModel } from "./laboratories";
-import { ListRequestParams } from "./api/base-view.model";
+import { ListRequestParams } from './api/base-view.model';
+import { LaboratorySimpleViewModel } from './laboratories';
 
 export interface ServiceTypeViewModel {
   id: number;
@@ -51,7 +51,7 @@ export interface StockConfigurationInput {
   blockBeforeExpirationInMonths: number;
 }
 
-export type ProjectSortableField = "createdAt" | "name" | "isActive";
+export type ProjectSortableField = 'createdAt' | 'name' | 'isActive';
 
 export interface ProjectListFilters {
   laboratoryId?: string;
@@ -59,5 +59,4 @@ export interface ProjectListFilters {
   isActive?: boolean;
 }
 
-export type ListProjectsParams =
-  ListRequestParams<ProjectSortableField> & ProjectListFilters;
+export type ListProjectsParams = ListRequestParams<ProjectSortableField> & ProjectListFilters;

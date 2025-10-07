@@ -6,16 +6,18 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class PaginationService {
-  tablePageSize: BehaviorSubject<tablePageSize> =
-    new BehaviorSubject<tablePageSize>({ skip: 0, limit: 10, pageSize: 10 });
+  tablePageSize: BehaviorSubject<tablePageSize> = new BehaviorSubject<tablePageSize>({
+    skip: 0,
+    limit: 10,
+    pageSize: 10,
+  });
 
-  calculatePageSize: BehaviorSubject<pageSizeCal> =
-    new BehaviorSubject<pageSizeCal>({
-      totalData: 0,
-      pageSize: 10,
-      tableData: [],
-      serialNumberArray: [],
-    });
+  calculatePageSize: BehaviorSubject<pageSizeCal> = new BehaviorSubject<pageSizeCal>({
+    totalData: 0,
+    pageSize: 10,
+    tableData: [],
+    serialNumberArray: [],
+  });
   changePagesize: BehaviorSubject<pageSize> = new BehaviorSubject<pageSize>({
     pageSize: 10,
   });

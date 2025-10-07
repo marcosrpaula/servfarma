@@ -1,23 +1,31 @@
 <div class="page-wrapper">
   <div class="content">
-
     <!-- Breadcrumb -->
     <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
-      <app-breadcrumbs title="Deals Dashboard" [breadcrumbItems]="breadCrumbItems"></app-breadcrumbs>
-      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap ">
+      <app-breadcrumbs
+        title="Deals Dashboard"
+        [breadcrumbItems]="breadCrumbItems"
+      ></app-breadcrumbs>
+      <div class="d-flex my-xl-auto right-content align-items-center flex-wrap">
         <div class="me-2 mb-2">
           <div class="dropdown">
-            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white d-inline-flex align-items-center" data-bs-toggle="dropdown">
+            <a
+              href="javascript:void(0);"
+              class="dropdown-toggle btn btn-white d-inline-flex align-items-center"
+              data-bs-toggle="dropdown"
+            >
               <i class="ti ti-file-export me-1"></i>Export
             </a>
-            <ul class="dropdown-menu  dropdown-menu-end p-3">
+            <ul class="dropdown-menu dropdown-menu-end p-3">
               <li>
-                <a href="javascript:void(0);" class="dropdown-item rounded-1"><i
-                    class="ti ti-file-type-pdf me-1"></i>Export as PDF</a>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-pdf me-1"></i>Export as PDF</a
+                >
               </li>
               <li>
-                <a href="javascript:void(0);" class="dropdown-item rounded-1"><i
-                    class="ti ti-file-type-xls me-1"></i>Export as Excel </a>
+                <a href="javascript:void(0);" class="dropdown-item rounded-1"
+                  ><i class="ti ti-file-type-xls me-1"></i>Export as Excel
+                </a>
               </li>
             </ul>
           </div>
@@ -26,7 +34,15 @@
           <span class="input-icon-addon">
             <i class="ti ti-calendar text-gray-9"></i>
           </span>
-          <input type="text" class="form-control date-range bookingrange" container=".ngx-dates" bsDaterangepicker [(ngModel)]="bsRangeValue"  [bsConfig]="{ adaptivePosition: true }" placeholder="dd/mm/yyyy - dd/mm/yyyy">
+          <input
+            type="text"
+            class="form-control date-range bookingrange"
+            container=".ngx-dates"
+            bsDaterangepicker
+            [(ngModel)]="bsRangeValue"
+            [bsConfig]="{ adaptivePosition: true }"
+            placeholder="dd/mm/yyyy - dd/mm/yyyy"
+          />
         </div>
         <app-collapse-header></app-collapse-header>
       </div>
@@ -37,7 +53,9 @@
       <div class="col-xl-6 d-flex">
         <div class="row flex-fill">
           <div class="col-sm-6">
-            <div class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative">
+            <div
+              class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative"
+            >
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                   <div>
@@ -45,16 +63,25 @@
                     <h5>$45,221,45</h5>
                   </div>
                   <div class="avatar avatar-md br-10 icon-rotate bg-primary">
-                    <span class="d-flex align-items-center"><i class="ti ti-delta text-white fs-16"></i></span>
+                    <span class="d-flex align-items-center"
+                      ><i class="ti ti-delta text-white fs-16"></i
+                    ></span>
                   </div>
                 </div>
                 <div class="progress progress-xs mb-2">
                   <div class="progress-bar bg-primary" role="progressbar" style="width: 40%"></div>
                 </div>
-                <p class="fw-medium fs-13"><span class="text-danger fs-12"><i class="ti ti-arrow-wave-right-up me-1"></i>-4.01% </span> from last week</p>
+                <p class="fw-medium fs-13">
+                  <span class="text-danger fs-12"
+                    ><i class="ti ti-arrow-wave-right-up me-1"></i>-4.01%
+                  </span>
+                  from last week
+                </p>
               </div>
             </div>
-            <div class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative">
+            <div
+              class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative"
+            >
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                   <div>
@@ -62,35 +89,57 @@
                     <h5>$12,545,68</h5>
                   </div>
                   <div class="avatar avatar-md br-10 icon-rotate bg-secondary">
-                    <span class="d-flex align-items-center"><i class="ti ti-currency text-white fs-16"></i></span>
+                    <span class="d-flex align-items-center"
+                      ><i class="ti ti-currency text-white fs-16"></i
+                    ></span>
                   </div>
                 </div>
                 <div class="progress progress-xs mb-2">
-                  <div class="progress-bar bg-secondary" role="progressbar" style="width: 40%"></div>
+                  <div
+                    class="progress-bar bg-secondary"
+                    role="progressbar"
+                    style="width: 40%"
+                  ></div>
                 </div>
-                <p class="fw-medium fs-13"><span class="text-success fs-12"><i class="ti ti-arrow-wave-right-up me-1"></i>+20.01% </span> from last week</p>
+                <p class="fw-medium fs-13">
+                  <span class="text-success fs-12"
+                    ><i class="ti ti-arrow-wave-right-up me-1"></i>+20.01%
+                  </span>
+                  from last week
+                </p>
               </div>
             </div>
-            <div class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative">
+            <div
+              class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative"
+            >
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                   <div>
-                    <p class="fw-medium mb-1">Revenue this month </p>
+                    <p class="fw-medium mb-1">Revenue this month</p>
                     <h5>$46,548,48</h5>
                   </div>
                   <div class="avatar avatar-md br-10 icon-rotate bg-pink">
-                    <span class="d-flex align-items-center"><i class="ti ti-stairs-up text-white fs-16"></i></span>
+                    <span class="d-flex align-items-center"
+                      ><i class="ti ti-stairs-up text-white fs-16"></i
+                    ></span>
                   </div>
                 </div>
                 <div class="progress progress-xs mb-2">
                   <div class="progress-bar bg-pink" role="progressbar" style="width: 40%"></div>
                 </div>
-                <p class="fw-medium fs-13"><span class="text-success fs-12"><i class="ti ti-arrow-wave-right-up me-1"></i>+55% </span> from last week</p>
+                <p class="fw-medium fs-13">
+                  <span class="text-success fs-12"
+                    ><i class="ti ti-arrow-wave-right-up me-1"></i>+55%
+                  </span>
+                  from last week
+                </p>
               </div>
             </div>
           </div>
           <div class="col-sm-6">
-            <div class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative">
+            <div
+              class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative"
+            >
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                   <div>
@@ -98,16 +147,25 @@
                     <h5>9895</h5>
                   </div>
                   <div class="avatar avatar-md br-10 icon-rotate bg-purple">
-                    <span class="d-flex align-items-center"><i class="ti ti-users-group text-white fs-16"></i></span>
+                    <span class="d-flex align-items-center"
+                      ><i class="ti ti-users-group text-white fs-16"></i
+                    ></span>
                   </div>
                 </div>
                 <div class="progress progress-xs mb-2">
                   <div class="progress-bar bg-purple" role="progressbar" style="width: 40%"></div>
                 </div>
-                <p class="fw-medium fs-13"><span class="text-success fs-12"><i class="ti ti-arrow-wave-right-up me-1"></i>+55% </span> from last week</p>
+                <p class="fw-medium fs-13">
+                  <span class="text-success fs-12"
+                    ><i class="ti ti-arrow-wave-right-up me-1"></i>+55%
+                  </span>
+                  from last week
+                </p>
               </div>
             </div>
-            <div class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative">
+            <div
+              class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative"
+            >
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                   <div>
@@ -115,30 +173,46 @@
                     <h5>51.96%</h5>
                   </div>
                   <div class="avatar avatar-md br-10 icon-rotate bg-info">
-                    <span class="d-flex align-items-center"><i class="ti ti-swipe text-white fs-16"></i></span>
+                    <span class="d-flex align-items-center"
+                      ><i class="ti ti-swipe text-white fs-16"></i
+                    ></span>
                   </div>
                 </div>
                 <div class="progress progress-xs mb-2">
                   <div class="progress-bar bg-info" role="progressbar" style="width: 40%"></div>
                 </div>
-                <p class="fw-medium fs-13"><span class="text-danger fs-12"><i class="ti ti-arrow-wave-right-up me-1"></i>-6.01% </span> from last week</p>
+                <p class="fw-medium fs-13">
+                  <span class="text-danger fs-12"
+                    ><i class="ti ti-arrow-wave-right-up me-1"></i>-6.01%
+                  </span>
+                  from last week
+                </p>
               </div>
             </div>
-            <div class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative">
+            <div
+              class="card bg-linear-gradiant border-white border-2 overlay-bg-3 position-relative"
+            >
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                   <div>
-                    <p class="fw-medium mb-1">Active Customers </p>
+                    <p class="fw-medium mb-1">Active Customers</p>
                     <h5>8987</h5>
                   </div>
                   <div class="avatar avatar-md br-10 icon-rotate bg-warning">
-                    <span class="d-flex align-items-center"><i class="ti ti-star text-white fs-16"></i></span>
+                    <span class="d-flex align-items-center"
+                      ><i class="ti ti-star text-white fs-16"></i
+                    ></span>
                   </div>
                 </div>
                 <div class="progress progress-xs mb-2">
                   <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"></div>
                 </div>
-                <p class="fw-medium fs-13"><span class="text-danger fs-12"><i class="ti ti-arrow-wave-right-up me-1"></i>-3.22% </span> from last week</p>
+                <p class="fw-medium fs-13">
+                  <span class="text-danger fs-12"
+                    ><i class="ti ti-arrow-wave-right-up me-1"></i>-3.22%
+                  </span>
+                  from last week
+                </p>
               </div>
             </div>
           </div>
@@ -150,10 +224,14 @@
             <div class="d-flex align-items-center justify-content-between">
               <h5>Pipeline Stages</h5>
               <div class="dropdown">
-                <a href="javascript:void(0);" class="btn btn-white border btn-sm d-inline-flex align-items-center" data-bs-toggle="dropdown">
+                <a
+                  href="javascript:void(0);"
+                  class="btn btn-white border btn-sm d-inline-flex align-items-center"
+                  data-bs-toggle="dropdown"
+                >
                   <i class="ti ti-calendar me-1"></i>This Week
                 </a>
-                <ul class="dropdown-menu  dropdown-menu-end p-3">
+                <ul class="dropdown-menu dropdown-menu-end p-3">
                   <li>
                     <a href="javascript:void(0);" class="dropdown-item rounded-1">This Month</a>
                   </li>
@@ -169,18 +247,18 @@
           </div>
           <div class="card-body">
             <apx-chart
-                [series]="pipeline_chart.series"
-                [chart]="pipeline_chart.chart"
-                [colors]="pipeline_chart.colors"
-                [responsive]="pipeline_chart.responsive"
-                [plotOptions]="pipeline_chart.plotOptions"
-                [xaxis]="pipeline_chart.xaxis"
-                [yaxis]="pipeline_chart.yaxis"
-                [legend]="pipeline_chart.legend"
-                [grid]="pipeline_chart.grid"
-                [title]="pipeline_chart.title"
-                [dataLabels]="pipeline_chart.dataLabels"
-              ></apx-chart>
+              [series]="pipeline_chart.series"
+              [chart]="pipeline_chart.chart"
+              [colors]="pipeline_chart.colors"
+              [responsive]="pipeline_chart.responsive"
+              [plotOptions]="pipeline_chart.plotOptions"
+              [xaxis]="pipeline_chart.xaxis"
+              [yaxis]="pipeline_chart.yaxis"
+              [legend]="pipeline_chart.legend"
+              [grid]="pipeline_chart.grid"
+              [title]="pipeline_chart.title"
+              [dataLabels]="pipeline_chart.dataLabels"
+            ></apx-chart>
             <div>
               <h6 class="mb-3">Leads Values By Stages</h6>
               <div class="row g-2 justify-content-center">
@@ -227,10 +305,14 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2">
               <h5>Deals by Stage</h5>
               <div class="dropdown">
-                <a href="javascript:void(0);" class="btn btn-white border btn-sm d-inline-flex align-items-center" data-bs-toggle="dropdown">
+                <a
+                  href="javascript:void(0);"
+                  class="btn btn-white border btn-sm d-inline-flex align-items-center"
+                  data-bs-toggle="dropdown"
+                >
                   <i class="ti ti-calendar me-1"></i>This Week
                 </a>
-                <ul class="dropdown-menu  dropdown-menu-end p-3">
+                <ul class="dropdown-menu dropdown-menu-end p-3">
                   <li>
                     <a href="javascript:void(0);" class="dropdown-item rounded-1">This Month</a>
                   </li>
@@ -248,7 +330,9 @@
             <div>
               <div class="d-flex align-items-center">
                 <h3 class="me-2">98%</h3>
-                <span class="badge badge-outline-success bg-success-transparent rounded-pill me-1">12%</span>
+                <span class="badge badge-outline-success bg-success-transparent rounded-pill me-1"
+                  >12%</span
+                >
                 <span>vs last years</span>
               </div>
               <apx-chart
@@ -275,10 +359,14 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2">
               <h5>Deals By Companies</h5>
               <div class="dropdown">
-                <a href="javascript:void(0);" class="btn btn-white border btn-sm d-inline-flex align-items-center" data-bs-toggle="dropdown">
+                <a
+                  href="javascript:void(0);"
+                  class="btn btn-white border btn-sm d-inline-flex align-items-center"
+                  data-bs-toggle="dropdown"
+                >
                   <i class="ti ti-calendar me-1"></i>This Week
                 </a>
-                <ul class="dropdown-menu  dropdown-menu-end p-3">
+                <ul class="dropdown-menu dropdown-menu-end p-3">
                   <li>
                     <a href="javascript:void(0);" class="dropdown-item rounded-1">This Month</a>
                   </li>
@@ -297,8 +385,15 @@
               <div class="border border-dashed bg-transparent-light rounded p-2 mb-2">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex align-items-center">
-                    <a href="javascript:void(0);" class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2">
-                      <img src="assets/img/company/company-24.svg" class="w-auto h-auto" alt="Img">
+                    <a
+                      href="javascript:void(0);"
+                      class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2"
+                    >
+                      <img
+                        src="assets/img/company/company-24.svg"
+                        class="w-auto h-auto"
+                        alt="Img"
+                      />
                     </a>
                     <div>
                       <h6 class="fw-medium mb-1">Pitch</h6>
@@ -313,8 +408,15 @@
               <div class="border border-dashed bg-transparent-light rounded p-2 mb-2">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex align-items-center">
-                    <a href="javascript:void(0);" class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2">
-                      <img src="assets/img/company/company-25.svg" class="w-auto h-auto" alt="Img">
+                    <a
+                      href="javascript:void(0);"
+                      class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2"
+                    >
+                      <img
+                        src="assets/img/company/company-25.svg"
+                        class="w-auto h-auto"
+                        alt="Img"
+                      />
                     </a>
                     <div>
                       <h6 class="fw-medium mb-1">Initech</h6>
@@ -329,8 +431,15 @@
               <div class="border border-dashed bg-transparent-light rounded p-2 mb-2">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex align-items-center">
-                    <a href="javascript:void(0);" class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2">
-                      <img src="assets/img/company/company-26.svg" class="w-auto h-auto" alt="Img">
+                    <a
+                      href="javascript:void(0);"
+                      class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2"
+                    >
+                      <img
+                        src="assets/img/company/company-26.svg"
+                        class="w-auto h-auto"
+                        alt="Img"
+                      />
                     </a>
                     <div>
                       <h6 class="fw-medium mb-1">Umbrella Corp</h6>
@@ -345,8 +454,15 @@
               <div class="border border-dashed bg-transparent-light rounded p-2 mb-2">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex align-items-center">
-                    <a href="javascript:void(0);" class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2">
-                      <img src="assets/img/company/company-27.svg" class="w-auto h-auto" alt="Img">
+                    <a
+                      href="javascript:void(0);"
+                      class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2"
+                    >
+                      <img
+                        src="assets/img/company/company-27.svg"
+                        class="w-auto h-auto"
+                        alt="Img"
+                      />
                     </a>
                     <div>
                       <h6 class="fw-medium mb-1">Capital Partners</h6>
@@ -361,8 +477,15 @@
               <div class="border border-dashed bg-transparent-light rounded p-2">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex align-items-center">
-                    <a href="javascript:void(0);" class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2">
-                      <img src="assets/img/company/company-28.svg" class="w-auto h-auto" alt="Img">
+                    <a
+                      href="javascript:void(0);"
+                      class="avatar avatar-md rounded-circle bg-gray-100 flex-shrink-0 me-2"
+                    >
+                      <img
+                        src="assets/img/company/company-28.svg"
+                        class="w-auto h-auto"
+                        alt="Img"
+                      />
                     </a>
                     <div>
                       <h6 class="fw-medium mb-1">Massive Dynamic</h6>
@@ -384,10 +507,14 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2">
               <h5>Top Deals</h5>
               <div class="dropdown">
-                <a href="javascript:void(0);" class="btn btn-white border btn-sm d-inline-flex align-items-center" data-bs-toggle="dropdown">
+                <a
+                  href="javascript:void(0);"
+                  class="btn btn-white border btn-sm d-inline-flex align-items-center"
+                  data-bs-toggle="dropdown"
+                >
                   <i class="ti ti-calendar me-1"></i>This Week
                 </a>
-                <ul class="dropdown-menu  dropdown-menu-end p-3">
+                <ul class="dropdown-menu dropdown-menu-end p-3">
                   <li>
                     <a href="javascript:void(0);" class="dropdown-item rounded-1">This Month</a>
                   </li>
@@ -408,7 +535,9 @@
             <div>
               <h6 class="mb-3">Status</h6>
               <div class="d-flex align-items-center justify-content-between mb-2">
-                <p class="f-13 mb-0"><i class="ti ti-circle-filled text-primary me-1"></i>Marketing</p>
+                <p class="f-13 mb-0">
+                  <i class="ti ti-circle-filled text-primary me-1"></i>Marketing
+                </p>
                 <p class="f-13 fw-medium text-gray-9">$5,69,877</p>
               </div>
               <div class="d-flex align-items-center justify-content-between mb-2">
@@ -442,8 +571,15 @@
                   <tr>
                     <td class="px-0">
                       <div class="d-flex align-items-center mb-2">
-                        <a [routerLink]="routes.countries" class="avatar rounded-circle border border-2">
-                          <img src="assets/img/payment-gateway/country-01.svg" class="img-fluid rounded-circle" alt="img">
+                        <a
+                          [routerLink]="routes.countries"
+                          class="avatar rounded-circle border border-2"
+                        >
+                          <img
+                            src="assets/img/payment-gateway/country-01.svg"
+                            class="img-fluid rounded-circle"
+                            alt="img"
+                          />
                         </a>
                         <div class="ms-2">
                           <h6 class="fw-medium mb-1"><a [routerLink]="routes.countries">USA</a></h6>
@@ -452,16 +588,16 @@
                       </div>
                     </td>
                     <td>
-                      <div class="text-center mb-2 ">
+                      <div class="text-center mb-2">
                         <apx-chart
-                            [series]="Areachart.series"
-                            [chart]="Areachart.chart"
-                            [colors]="Areachart.colors"
-                            [fill]="Areachart.fill"
-                            [stroke]="Areachart.stroke"
-                            [tooltip]="Areachart.tooltip"
-                            [dataLabels]="Areachart.dataLabels"
-                          ></apx-chart>
+                          [series]="Areachart.series"
+                          [chart]="Areachart.chart"
+                          [colors]="Areachart.colors"
+                          [fill]="Areachart.fill"
+                          [stroke]="Areachart.stroke"
+                          [tooltip]="Areachart.tooltip"
+                          [dataLabels]="Areachart.dataLabels"
+                        ></apx-chart>
                       </div>
                     </td>
                     <td class="px-0 text-end">
@@ -474,8 +610,15 @@
                   <tr>
                     <td class="px-0">
                       <div class="d-flex align-items-center mb-2">
-                        <a [routerLink]="routes.countries" class="avatar rounded-circle border border-2">
-                          <img src="assets/img/payment-gateway/country-02.svg" class="img-fluid rounded-circle" alt="img">
+                        <a
+                          [routerLink]="routes.countries"
+                          class="avatar rounded-circle border border-2"
+                        >
+                          <img
+                            src="assets/img/payment-gateway/country-02.svg"
+                            class="img-fluid rounded-circle"
+                            alt="img"
+                          />
                         </a>
                         <div class="ms-2">
                           <h6 class="fw-medium mb-1"><a [routerLink]="routes.countries">UAE</a></h6>
@@ -486,14 +629,14 @@
                     <td>
                       <div class="text-center mb-2">
                         <apx-chart
-                        [series]="Areachart.series"
-                        [chart]="Areachart.chart"
-                        [colors]="Areachart.colors"
-                        [fill]="Areachart.fill"
-                        [stroke]="Areachart.stroke"
-                        [tooltip]="Areachart.tooltip"
-                        [dataLabels]="Areachart.dataLabels"
-                      ></apx-chart>
+                          [series]="Areachart.series"
+                          [chart]="Areachart.chart"
+                          [colors]="Areachart.colors"
+                          [fill]="Areachart.fill"
+                          [stroke]="Areachart.stroke"
+                          [tooltip]="Areachart.tooltip"
+                          [dataLabels]="Areachart.dataLabels"
+                        ></apx-chart>
                       </div>
                     </td>
                     <td class="px-0 text-end">
@@ -506,11 +649,20 @@
                   <tr>
                     <td class="px-0">
                       <div class="d-flex align-items-center mb-2">
-                        <a [routerLink]="routes.countries" class="avatar rounded-circle border border-2">
-                          <img src="assets/img/payment-gateway/country-03.svg" class="img-fluid rounded-circle" alt="img">
+                        <a
+                          [routerLink]="routes.countries"
+                          class="avatar rounded-circle border border-2"
+                        >
+                          <img
+                            src="assets/img/payment-gateway/country-03.svg"
+                            class="img-fluid rounded-circle"
+                            alt="img"
+                          />
                         </a>
                         <div class="ms-2">
-                          <h6 class="fw-medium mb-1"><a [routerLink]="routes.countries">Singapore</a></h6>
+                          <h6 class="fw-medium mb-1">
+                            <a [routerLink]="routes.countries">Singapore</a>
+                          </h6>
                           <span class="fs-13 d-inline-flex align-items-center">Deals : 236</span>
                         </div>
                       </div>
@@ -518,14 +670,14 @@
                     <td>
                       <div class="text-center mb-2">
                         <apx-chart
-                            [series]="Areachart2.series"
-                            [chart]="Areachart2.chart"
-                            [colors]="Areachart2.colors"
-                            [fill]="Areachart2.fill"
-                            [stroke]="Areachart2.stroke"
-                            [tooltip]="Areachart2.tooltip"
-                            [dataLabels]="Areachart2.dataLabels"
-                          ></apx-chart>
+                          [series]="Areachart2.series"
+                          [chart]="Areachart2.chart"
+                          [colors]="Areachart2.colors"
+                          [fill]="Areachart2.fill"
+                          [stroke]="Areachart2.stroke"
+                          [tooltip]="Areachart2.tooltip"
+                          [dataLabels]="Areachart2.dataLabels"
+                        ></apx-chart>
                       </div>
                     </td>
                     <td class="px-0 text-end">
@@ -538,11 +690,20 @@
                   <tr>
                     <td class="px-0">
                       <div class="d-flex align-items-center mb-2">
-                        <a [routerLink]="routes.countries" class="avatar rounded-circle border border-2">
-                          <img src="assets/img/payment-gateway/country-04.svg" class="img-fluid rounded-circle" alt="img">
+                        <a
+                          [routerLink]="routes.countries"
+                          class="avatar rounded-circle border border-2"
+                        >
+                          <img
+                            src="assets/img/payment-gateway/country-04.svg"
+                            class="img-fluid rounded-circle"
+                            alt="img"
+                          />
                         </a>
                         <div class="ms-2">
-                          <h6 class="fw-medium mb-1"><a [routerLink]="routes.countries">France</a></h6>
+                          <h6 class="fw-medium mb-1">
+                            <a [routerLink]="routes.countries">France</a>
+                          </h6>
                           <span class="fs-13 d-inline-flex align-items-center">Deals : 589</span>
                         </div>
                       </div>
@@ -550,14 +711,14 @@
                     <td>
                       <div class="text-center mb-2">
                         <apx-chart
-                            [series]="Areachart.series"
-                            [chart]="Areachart.chart"
-                            [colors]="Areachart.colors"
-                            [fill]="Areachart.fill"
-                            [stroke]="Areachart.stroke"
-                            [tooltip]="Areachart.tooltip"
-                            [dataLabels]="Areachart.dataLabels"
-                          ></apx-chart>
+                          [series]="Areachart.series"
+                          [chart]="Areachart.chart"
+                          [colors]="Areachart.colors"
+                          [fill]="Areachart.fill"
+                          [stroke]="Areachart.stroke"
+                          [tooltip]="Areachart.tooltip"
+                          [dataLabels]="Areachart.dataLabels"
+                        ></apx-chart>
                       </div>
                     </td>
                     <td class="px-0 text-end">
@@ -570,11 +731,20 @@
                   <tr>
                     <td class="px-0">
                       <div class="d-flex align-items-center">
-                        <a [routerLink]="routes.countries" class="avatar rounded-circle border border-2">
-                          <img src="assets/img/payment-gateway/country-05.svg" class="img-fluid rounded-circle" alt="img">
+                        <a
+                          [routerLink]="routes.countries"
+                          class="avatar rounded-circle border border-2"
+                        >
+                          <img
+                            src="assets/img/payment-gateway/country-05.svg"
+                            class="img-fluid rounded-circle"
+                            alt="img"
+                          />
                         </a>
                         <div class="ms-2">
-                          <h6 class="fw-medium mb-1"><a [routerLink]="routes.countries">Norway</a></h6>
+                          <h6 class="fw-medium mb-1">
+                            <a [routerLink]="routes.countries">Norway</a>
+                          </h6>
                           <span class="fs-13 d-inline-flex align-items-center">Deals : 221</span>
                         </div>
                       </div>
@@ -582,14 +752,14 @@
                     <td>
                       <div class="text-center">
                         <apx-chart
-                            [series]="Areachart2.series"
-                            [chart]="Areachart2.chart"
-                            [colors]="Areachart2.colors"
-                            [fill]="Areachart2.fill"
-                            [stroke]="Areachart2.stroke"
-                            [tooltip]="Areachart2.tooltip"
-                            [dataLabels]="Areachart2.dataLabels"
-                          ></apx-chart>
+                          [series]="Areachart2.series"
+                          [chart]="Areachart2.chart"
+                          [colors]="Areachart2.colors"
+                          [fill]="Areachart2.fill"
+                          [stroke]="Areachart2.stroke"
+                          [tooltip]="Areachart2.tooltip"
+                          [dataLabels]="Areachart2.dataLabels"
+                        ></apx-chart>
                       </div>
                     </td>
                     <td class="px-0 text-end">
@@ -609,10 +779,14 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-2">
               <h5>Won Deals Stage</h5>
               <div class="dropdown">
-                <a href="javascript:void(0);" class="btn btn-white border-0 dropdown-toggle btn-sm d-inline-flex align-items-center" data-bs-toggle="dropdown">
+                <a
+                  href="javascript:void(0);"
+                  class="btn btn-white border-0 dropdown-toggle btn-sm d-inline-flex align-items-center"
+                  data-bs-toggle="dropdown"
+                >
                   Sales Pipeline
                 </a>
-                <ul class="dropdown-menu  dropdown-menu-end p-3">
+                <ul class="dropdown-menu dropdown-menu-end p-3">
                   <li>
                     <a href="javascript:void(0);" class="dropdown-item rounded-1">This Month</a>
                   </li>
@@ -631,24 +805,34 @@
               <p class="mb-1 fw-medium">Stages Won This Year</p>
               <div class="d-flex align-items-center justify-content-center">
                 <h3 class="me-2">$45,899,79</h3>
-                <span class="badge badge-soft-danger border-danger border rounded-pill me-1">$45,899,79</span>
+                <span class="badge badge-soft-danger border-danger border rounded-pill me-1"
+                  >$45,899,79</span
+                >
               </div>
             </div>
             <div class="stage-chart-main">
               <div class="deal-stage-chart">
-                <div class="text-center d-flex align-items-center justify-content-center flex-column bg-secondary rounded-circle chart-stage-1">
+                <div
+                  class="text-center d-flex align-items-center justify-content-center flex-column bg-secondary rounded-circle chart-stage-1"
+                >
                   <span class="d-block text-white mb-1">Conversion</span>
                   <h6 class="text-white">48%</h6>
                 </div>
-                <div class="text-center d-flex align-items-center justify-content-center flex-column bg-danger rounded-circle chart-stage-2">
+                <div
+                  class="text-center d-flex align-items-center justify-content-center flex-column bg-danger rounded-circle chart-stage-2"
+                >
                   <span class="d-block text-white mb-1">Calls</span>
                   <h6 class="text-white">24%</h6>
                 </div>
-                <div class="text-center d-flex align-items-center justify-content-center flex-column bg-warning rounded-circle chart-stage-3">
+                <div
+                  class="text-center d-flex align-items-center justify-content-center flex-column bg-warning rounded-circle chart-stage-3"
+                >
                   <span class="d-block text-white mb-1">Email</span>
                   <h6 class="text-white">39%</h6>
                 </div>
-                <div class="text-center d-flex align-items-center justify-content-center flex-column bg-success rounded-circle chart-stage-4">
+                <div
+                  class="text-center d-flex align-items-center justify-content-center flex-column bg-success rounded-circle chart-stage-4"
+                >
                   <span class="d-block text-white mb-1">Chats</span>
                   <h6 class="text-white">20%</h6>
                 </div>
@@ -671,70 +855,111 @@
             <div class="d-flex align-items-center justify-content-between mb-4">
               <div class="d-flex align-items-center">
                 <a href="javascript:void(0);" class="avatar flex-shrink-0">
-                  <img src="assets/img/users/user-27.jpg" class="rounded-circle border border-2" alt="img">
+                  <img
+                    src="assets/img/users/user-27.jpg"
+                    class="rounded-circle border border-2"
+                    alt="img"
+                  />
                 </a>
                 <div class="ms-2">
-                  <h6 class="fs-14 fw-medium text-truncate mb-1"><a href="javascript:void(0);">Alexander Jermai</a></h6>
+                  <h6 class="fs-14 fw-medium text-truncate mb-1">
+                    <a href="javascript:void(0);">Alexander Jermai</a>
+                  </h6>
                   <p class="fs-13">UI/UX Designer</p>
                 </div>
               </div>
               <div class="d-flex align-items-center">
-                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"><i class="ti ti-mail-bolt fs-16"></i></a>
+                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"
+                  ><i class="ti ti-mail-bolt fs-16"></i
+                ></a>
               </div>
             </div>
             <div class="d-flex align-items-center justify-content-between mb-4">
               <div class="d-flex align-items-center">
                 <a href="javascript:void(0);" class="avatar flex-shrink-0">
-                  <img src="assets/img/users/user-42.jpg" class="rounded-circle border border-2" alt="img">
+                  <img
+                    src="assets/img/users/user-42.jpg"
+                    class="rounded-circle border border-2"
+                    alt="img"
+                  />
                 </a>
                 <div class="ms-2">
-                  <h6 class="fs-14 fw-medium text-truncate mb-1"><a href="javascript:void(0);">Doglas Martini</a></h6>
+                  <h6 class="fs-14 fw-medium text-truncate mb-1">
+                    <a href="javascript:void(0);">Doglas Martini</a>
+                  </h6>
                   <p class="fs-13">Product Designer</p>
                 </div>
               </div>
-              <div class="d-flex align-items-center"><a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"><i class="ti ti-phone fs-16"></i></a>
+              <div class="d-flex align-items-center">
+                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"
+                  ><i class="ti ti-phone fs-16"></i
+                ></a>
               </div>
             </div>
             <div class="d-flex align-items-center justify-content-between mb-4">
               <div class="d-flex align-items-center">
                 <a href="javascript:void(0);" class="avatar flex-shrink-0">
-                  <img src="assets/img/users/user-43.jpg" class="rounded-circle border border-2" alt="img">
+                  <img
+                    src="assets/img/users/user-43.jpg"
+                    class="rounded-circle border border-2"
+                    alt="img"
+                  />
                 </a>
                 <div class="ms-2">
-                  <h6 class="fs-14 fw-medium text-truncate mb-1"><a href="javascript:void(0);">Daniel Esbella</a></h6>
+                  <h6 class="fs-14 fw-medium text-truncate mb-1">
+                    <a href="javascript:void(0);">Daniel Esbella</a>
+                  </h6>
                   <p class="fs-13">Project Manager</p>
                 </div>
               </div>
               <div class="d-flex align-items-center">
-                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"><i class="ti ti-mail-bolt fs-16"></i></a>
+                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"
+                  ><i class="ti ti-mail-bolt fs-16"></i
+                ></a>
               </div>
             </div>
             <div class="d-flex align-items-center justify-content-between mb-4">
               <div class="d-flex align-items-center">
                 <a href="javascript:void(0);" class="avatar flex-shrink-0">
-                  <img src="assets/img/users/user-11.jpg" class="rounded-circle border border-2" alt="img">
+                  <img
+                    src="assets/img/users/user-11.jpg"
+                    class="rounded-circle border border-2"
+                    alt="img"
+                  />
                 </a>
                 <div class="ms-2">
-                  <h6 class="fs-14 fw-medium text-truncate mb-1"><a href="javascript:void(0);">Daniel Esbella</a></h6>
+                  <h6 class="fs-14 fw-medium text-truncate mb-1">
+                    <a href="javascript:void(0);">Daniel Esbella</a>
+                  </h6>
                   <p class="fs-13">Team Lead</p>
                 </div>
               </div>
               <div class="d-flex align-items-center">
-                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"><i class="ti ti-brand-hipchat fs-16"></i></a>
+                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"
+                  ><i class="ti ti-brand-hipchat fs-16"></i
+                ></a>
               </div>
             </div>
             <div class="d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center">
                 <a href="javascript:void(0);" class="avatar flex-shrink-0">
-                  <img src="assets/img/users/user-44.jpg" class="rounded-circle border border-2" alt="img">
+                  <img
+                    src="assets/img/users/user-44.jpg"
+                    class="rounded-circle border border-2"
+                    alt="img"
+                  />
                 </a>
                 <div class="ms-2">
-                  <h6 class="fs-14 fw-medium text-truncate mb-1"><a href="javascript:void(0);">Stephan Peralt</a></h6>
+                  <h6 class="fs-14 fw-medium text-truncate mb-1">
+                    <a href="javascript:void(0);">Stephan Peralt</a>
+                  </h6>
                   <p class="fs-13">Team Lead</p>
                 </div>
               </div>
               <div class="d-flex align-items-center">
-                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"><i class="ti ti-brand-hipchat fs-16"></i></a>
+                <a href="javascript:void(0);" class="btn btn-light btn-icon btn-sm"
+                  ><i class="ti ti-brand-hipchat fs-16"></i
+                ></a>
               </div>
             </div>
           </div>
@@ -744,7 +969,9 @@
     <div class="row">
       <div class="col-xl-8 d-flex">
         <div class="card flex-fill">
-          <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-2">
+          <div
+            class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-2"
+          >
             <h5>Recent Deals</h5>
             <div class="d-flex align-items-center">
               <div>
@@ -766,15 +993,18 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Collins</a></h6></td>
-                    <td>Quality To Buy</td>
                     <td>
-                      $4,50,000
+                      <h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Collins</a></h6>
                     </td>
+                    <td>Quality To Buy</td>
+                    <td>$4,50,000</td>
                     <td>
                       <div class="d-flex align-items-center">
-                        <a href="javascript:void(0);" class="avatar avatar-rounded flex-shrink-0 me-2">
-                          <img src="assets/img/users/user-32.jpg" alt="Img">
+                        <a
+                          href="javascript:void(0);"
+                          class="avatar avatar-rounded flex-shrink-0 me-2"
+                        >
+                          <img src="assets/img/users/user-32.jpg" alt="Img" />
                         </a>
                         <h6 class="fw-medium"><a href="javascript:void(0);">Anthony Lewis</a></h6>
                       </div>
@@ -782,31 +1012,41 @@
                     <td>14 Jan 2024</td>
                   </tr>
                   <tr>
-                    <td><h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Konopelski</a></h6></td>
-                    <td>Proposal Made</td>
                     <td>
-                      $3,15,000
+                      <h6 class="fw-medium">
+                        <a [routerLink]="routes.dealsDetails">Konopelski</a>
+                      </h6>
                     </td>
+                    <td>Proposal Made</td>
+                    <td>$3,15,000</td>
                     <td>
                       <div class="d-flex align-items-center">
-                        <a href="javascript:void(0);" class="avatar avatar-rounded flex-shrink-0 me-2">
-                          <img src="assets/img/users/user-09.jpg" alt="Img">
+                        <a
+                          href="javascript:void(0);"
+                          class="avatar avatar-rounded flex-shrink-0 me-2"
+                        >
+                          <img src="assets/img/users/user-09.jpg" alt="Img" />
                         </a>
-                        <h6 class="fw-medium"><a href="javascript:void(0);">Brian Villalobos</a></h6>
+                        <h6 class="fw-medium">
+                          <a href="javascript:void(0);">Brian Villalobos</a>
+                        </h6>
                       </div>
                     </td>
                     <td>21 Jan 2024</td>
                   </tr>
                   <tr>
-                    <td><h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Adams</a></h6></td>
-                    <td>Contact Made</td>
                     <td>
-                      $8,40,000
+                      <h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Adams</a></h6>
                     </td>
+                    <td>Contact Made</td>
+                    <td>$8,40,000</td>
                     <td>
                       <div class="d-flex align-items-center">
-                        <a href="javascript:void(0);" class="avatar avatar-rounded flex-shrink-0 me-2">
-                          <img src="assets/img/users/user-01.jpg" alt="Img">
+                        <a
+                          href="javascript:void(0);"
+                          class="avatar avatar-rounded flex-shrink-0 me-2"
+                        >
+                          <img src="assets/img/users/user-01.jpg" alt="Img" />
                         </a>
                         <h6 class="fw-medium"><a href="javascript:void(0);">Harvey Smith</a></h6>
                       </div>
@@ -814,15 +1054,18 @@
                     <td>20 Feb 2024</td>
                   </tr>
                   <tr>
-                    <td><h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Schumm</a></h6></td>
-                    <td>Quality To Buy</td>
                     <td>
-                      $6,10,000
+                      <h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Schumm</a></h6>
                     </td>
+                    <td>Quality To Buy</td>
+                    <td>$6,10,000</td>
                     <td>
                       <div class="d-flex align-items-center">
-                        <a href="javascript:void(0);" class="avatar avatar-rounded flex-shrink-0 me-2">
-                          <img src="assets/img/users/user-33.jpg" alt="Img">
+                        <a
+                          href="javascript:void(0);"
+                          class="avatar avatar-rounded flex-shrink-0 me-2"
+                        >
+                          <img src="assets/img/users/user-33.jpg" alt="Img" />
                         </a>
                         <h6 class="fw-medium"><a href="javascript:void(0);">Stephan Peralt</a></h6>
                       </div>
@@ -830,15 +1073,18 @@
                     <td>15 Mar 2024</td>
                   </tr>
                   <tr>
-                    <td><h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Wisozk</a></h6></td>
-                    <td>Presentation</td>
                     <td>
-                      $4,70,000
+                      <h6 class="fw-medium"><a [routerLink]="routes.dealsDetails">Wisozk</a></h6>
                     </td>
+                    <td>Presentation</td>
+                    <td>$4,70,000</td>
                     <td>
                       <div class="d-flex align-items-center">
-                        <a href="javascript:void(0);" class="avatar avatar-rounded flex-shrink-0 me-2">
-                          <img src="assets/img/users/user-34.jpg" alt="Img">
+                        <a
+                          href="javascript:void(0);"
+                          class="avatar avatar-rounded flex-shrink-0 me-2"
+                        >
+                          <img src="assets/img/users/user-34.jpg" alt="Img" />
                         </a>
                         <h6 class="fw-medium"><a href="javascript:void(0);">Doglas Martini</a></h6>
                       </div>
@@ -867,7 +1113,11 @@
                 <i class="ti ti-phone-filled fs-16"></i>
               </div>
               <div class="flex-fill ps-3 pb-4 timeline-flow">
-                <p class="fw-medium text-gray-9 mb-1"><a [routerLink]="routes.activities">Drain responded to your appointment schedule question.</a></p>
+                <p class="fw-medium text-gray-9 mb-1">
+                  <a [routerLink]="routes.activities"
+                    >Drain responded to your appointment schedule question.</a
+                  >
+                </p>
                 <span>09:25 PM</span>
               </div>
             </div>
@@ -876,7 +1126,9 @@
                 <i class="ti ti-message-circle-2-filled fs-16"></i>
               </div>
               <div class="flex-fill ps-3 pb-4 timeline-flow">
-                <p class="fw-medium text-gray-9 mb-1"><a [routerLink]="routes.activities">You sent 1 Message to the James.</a></p>
+                <p class="fw-medium text-gray-9 mb-1">
+                  <a [routerLink]="routes.activities">You sent 1 Message to the James.</a>
+                </p>
                 <span>10:25 PM</span>
               </div>
             </div>
@@ -885,7 +1137,11 @@
                 <i class="ti ti-phone-filled fs-16"></i>
               </div>
               <div class="flex-fill ps-3 pb-4 timeline-flow">
-                <p class="fw-medium text-gray-9 mb-1"><a [routerLink]="routes.activities">Denwar responded to your appointment on 25 Jan 2025, 08:15 PM</a></p>
+                <p class="fw-medium text-gray-9 mb-1">
+                  <a [routerLink]="routes.activities"
+                    >Denwar responded to your appointment on 25 Jan 2025, 08:15 PM</a
+                  >
+                </p>
                 <span>09:25 PM</span>
               </div>
             </div>
@@ -894,7 +1150,16 @@
                 <i class="ti ti-user-circle fs-16"></i>
               </div>
               <div class="flex-fill ps-3 timeline-flow">
-                <p class="fw-medium text-gray-9 mb-1"><a [routerLink]="routes.activities" class="d-flex align-items-center">Meeting With <img src="assets/img/users/user-58.jpg" class="avatar avatar-sm rounded-circle mx-2" alt="Img">Abraham</a></p>
+                <p class="fw-medium text-gray-9 mb-1">
+                  <a [routerLink]="routes.activities" class="d-flex align-items-center"
+                    >Meeting With
+                    <img
+                      src="assets/img/users/user-58.jpg"
+                      class="avatar avatar-sm rounded-circle mx-2"
+                      alt="Img"
+                    />Abraham</a
+                  >
+                </p>
                 <span>09:25 PM</span>
               </div>
             </div>

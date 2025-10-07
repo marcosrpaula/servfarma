@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
-import { ListUnitsParams, UnitViewModel } from '../../../../shared/models/units';
 import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
+import { ListUnitsParams, UnitViewModel } from '../../../../shared/models/units';
 import { buildHttpParams } from '../../../../shared/utils/http-params';
 
 export interface CreateUnitDto {

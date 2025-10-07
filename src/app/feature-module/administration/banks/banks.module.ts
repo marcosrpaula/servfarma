@@ -1,7 +1,7 @@
-﻿import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ServfarmaSharedModule } from '../../../shared/servfarma-shared.module';
+import { NgModule } from '@angular/core';
 import { CustomPaginationModule } from '../../../shared/custom-pagination/custom-pagination.module';
+import { ServfarmaSharedModule } from '../../../shared/servfarma-shared.module';
 import { BanksRoutingModule } from './banks-routing.module';
 import { BanksComponent } from './banks/banks.component';
 
@@ -10,4 +10,3 @@ import { BanksComponent } from './banks/banks.component';
   imports: [CommonModule, ServfarmaSharedModule, CustomPaginationModule, BanksRoutingModule],
 })
 export class BanksModule {}
-

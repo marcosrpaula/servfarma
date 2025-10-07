@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PermissionGuard } from '../../../core/access-control/permission.guard';
-import { SuppliesComponent } from './supplies/supplies.component';
-import { SimpleSupplyUpsertComponent } from './simple-supply-upsert/simple-supply-upsert.component';
 import { DryPackageUpsertComponent } from './dry-package-upsert/dry-package-upsert.component';
 import { RefrigeratedPackageUpsertComponent } from './refrigerated-package-upsert/refrigerated-package-upsert.component';
+import { SimpleSupplyUpsertComponent } from './simple-supply-upsert/simple-supply-upsert.component';
+import { SuppliesComponent } from './supplies/supplies.component';
 
 const routes: Routes = [
   {

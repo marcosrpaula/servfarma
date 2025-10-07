@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { SettingService } from '../../../shared/settings/settings.service';
 import { routes } from '../../../shared/routes/routes';
+import { SettingService } from '../../../shared/settings/settings.service';
 
 @Component({
-    selector: 'app-theme-settings',
-    templateUrl: './theme-settings.component.html',
-    styleUrl: './theme-settings.component.scss',
-    standalone: false
+  selector: 'app-theme-settings',
+  templateUrl: './theme-settings.component.html',
+  styleUrl: './theme-settings.component.scss',
+  standalone: false,
 })
 export class ThemeSettingsComponent implements OnInit {
-  public routes=routes;
+  public routes = routes;
   layoutMode = '1';
   layoutWidth = '1';
   cardStyle = '1';
@@ -22,24 +22,22 @@ export class ThemeSettingsComponent implements OnInit {
   primaryColor1 = '1';
   topbarColor2 = '1';
   topbarColor3 = '1';
-  topbarColor4='1';
+  topbarColor4 = '1';
   topbarColor = 'white';
   topbarImage = '1';
   sidebarImage = '1';
   selectedColor = '84, 109, 254, 1';
   selectedColor1 = '84, 109, 254, 1'; // Default HEX color
-  horizontalColor= '84, 109, 254, 1';
-  dthemeColor= '84, 109, 254, 1';
+  horizontalColor = '84, 109, 254, 1';
+  dthemeColor = '84, 109, 254, 1';
   rgbaValues = '84, 109, 254, 1'; // Default RGBA values without "rgba()"
   rgbaValues1 = '84, 109, 254, 1';
   rgbaValues2 = '84, 109, 254, 1';
   rgbaValues3 = '84, 109, 254, 1';
 
   constructor(public settings: SettingService) {
-
     this.settings.layoutMode.subscribe((res: string) => {
       this.layoutMode = res;
-
     });
     this.settings.layoutWidth.subscribe((res: string) => {
       this.layoutWidth = res;
@@ -89,28 +87,26 @@ export class ThemeSettingsComponent implements OnInit {
     this.settings.changeSidebarColor('7');
     // Convert HEX to RGBA values string without "rgba()"
     this.rgbaValues = this.hexToRgbaValues(this.selectedColor, 1); // Assuming alpha is 1
-    this.settings.changeSidebarColor2(this.rgbaValues)
-
+    this.settings.changeSidebarColor2(this.rgbaValues);
   }
   setColor1(): void {
     this.settings.changeTopbarColor('7');
     // Convert HEX to RGBA values string without "rgba()"
     this.rgbaValues1 = this.hexToRgbaValues(this.selectedColor1, 1); // Assuming alpha is 1
-    this.settings.changeTopbarColor3(this.rgbaValues1)
-
+    this.settings.changeTopbarColor3(this.rgbaValues1);
   }
   sethorizontalColor(): void {
     this.settings.changeTopbarColor2('7');
     // Convert HEX to RGBA values string without "rgba()"
     this.rgbaValues2 = this.hexToRgbaValues(this.horizontalColor, 1); // Assuming alpha is 1
-    this.settings.changeTopbarHorizontalColor(this.rgbaValues2)
+    this.settings.changeTopbarHorizontalColor(this.rgbaValues2);
   }
 
   setprimaryColor(): void {
     this.settings.changePrimaryColor('8');
     // Convert HEX to RGBA values string without "rgba()"
-    this.rgbaValues3 = this.hexToRgbaValues(this.dthemeColor,1); // Assuming alpha is 1
-    this.settings.changePrimaryColor1(this.rgbaValues3)
+    this.rgbaValues3 = this.hexToRgbaValues(this.dthemeColor, 1); // Assuming alpha is 1
+    this.settings.changePrimaryColor1(this.rgbaValues3);
   }
 
   // Function to convert HEX to RGBA values string without "rgba()"
@@ -137,7 +133,7 @@ export class ThemeSettingsComponent implements OnInit {
     const sidebarImage = localStorage.getItem('sidebarImage') || '';
     const topbarImage = localStorage.getItem('topbarImage') || '1';
     const dynamicColorSidebar = localStorage.getItem('sidebarColor2') || '1';
-    this.rgbaValues = dynamicColorSidebar
+    this.rgbaValues = dynamicColorSidebar;
     this.settings.changeLayoutMode(layout);
     this.settings.changeLayoutWidth(layoutWidth);
     this.settings.changeCardStyle(cardStyle);
@@ -151,7 +147,7 @@ export class ThemeSettingsComponent implements OnInit {
     this.settings.changeSidebarImage(sidebarImage);
     this.settings.changeTopbarImage(topbarImage);
     this.settings.changeSidebarColor2(dynamicColorSidebar);
-}
+  }
 
   public changeLayoutMode(layout: string): void {
     this.settings.layoutMode.next(layout);
@@ -178,7 +174,6 @@ export class ThemeSettingsComponent implements OnInit {
     localStorage.setItem('sidebarColor', sidebarColor);
   }
 
-
   resetAllMode() {
     this.settings.changeLayoutMode('1');
     this.settings.changeLayoutWidth('1');
@@ -193,6 +188,6 @@ export class ThemeSettingsComponent implements OnInit {
     this.settings.changeSidebarSize('1');
     this.settings.changeTopbarImage('');
     this.settings.changeSidebarImage('');
-    this.rgbaValues = '84, 109, 254, 1'
+    this.rgbaValues = '84, 109, 254, 1';
   }
 }

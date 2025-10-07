@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomPaginationComponent } from './custom-pagination.component';
 
@@ -8,4 +8,4 @@ import { CustomPaginationComponent } from './custom-pagination.component';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   exports: [CustomPaginationComponent],
 })
-export class CustomPaginationModule { }
+export class CustomPaginationModule {}

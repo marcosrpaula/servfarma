@@ -1,29 +1,28 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 // Component Pages
-import { IndexComponent } from "./index/index.component";
-import { NftComponent } from "./nft/nft.component";
+import { IndexComponent } from './index/index.component';
 import { JobComponent } from './job/job.component';
+import { NftComponent } from './nft/nft.component';
 
 const routes: Routes = [
   {
-    path: "",
-    component: IndexComponent
+    path: '',
+    component: IndexComponent,
   },
   {
-    path: "nft",
-    component: NftComponent
+    path: 'nft',
+    component: NftComponent,
   },
   {
-    path: "job",
-    component: JobComponent
-  }
+    path: 'job',
+    component: JobComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-
-export class LandingRoutingModule { }
+export class LandingRoutingModule {}

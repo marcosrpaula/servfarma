@@ -1,35 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   NormalizedHttpError,
   NotificationService,
 } from '../../../../core/notifications/notification.service';
-import { SharedModule } from '../../../../shared/shared.module';
 import { applyServerValidationErrors } from '../../../../shared/common/server-validation.util';
-import { BanksApiService } from '../services/banks.api.service';
-import { BanksStateService } from '../services/banks-state.service';
 import {
   BankDetailsViewModel,
   BankViewModel,
   CreateBankPayload,
   UpdateBankPayload,
 } from '../../../../shared/models/banks';
+import { SharedModule } from '../../../../shared/shared.module';
+import { BanksStateService } from '../services/banks-state.service';
+import { BanksApiService } from '../services/banks.api.service';
 
 @Component({
   selector: 'app-bank-upsert',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    SharedModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule],
   templateUrl: './bank-upsert.component.html',
   styleUrls: ['./bank-upsert.component.scss'],
 })
@@ -70,7 +61,9 @@ export class BankUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const bank = this.resolveBankForReadOnly();
         if (!bank) {
-          this.notifications.error('Nao foi possivel carregar os dados do banco para visualizacao. Acesse novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados do banco para visualizacao. Acesse novamente a partir da listagem.',
+          );
           this.router.navigate(['/banks']);
           return;
         }
@@ -170,13 +163,11 @@ export class BankUpsertComponent implements OnInit {
       messages.push('Este campo e obrigatorio.');
     }
     if (errors['minlength']) {
-      const requiredLength =
-        errors['minlength'].requiredLength ?? errors['minlength'].min;
+      const requiredLength = errors['minlength'].requiredLength ?? errors['minlength'].min;
       messages.push(`Informe pelo menos ${requiredLength} caracteres.`);
     }
     if (errors['maxlength']) {
-      const maxLength =
-        errors['maxlength'].requiredLength ?? errors['maxlength'].max;
+      const maxLength = errors['maxlength'].requiredLength ?? errors['maxlength'].max;
       messages.push(`Use no maximo ${maxLength} caracteres.`);
     }
     if (errors['server']) {
@@ -200,9 +191,7 @@ export class BankUpsertComponent implements OnInit {
     return messages;
   }
 
-  private patchForm(
-    bank: Pick<BankViewModel, 'name' | 'bankCode' | 'isActive'>
-  ): void {
+  private patchForm(bank: Pick<BankViewModel, 'name' | 'bankCode' | 'isActive'>): void {
     this.form.patchValue({
       name: bank?.name ?? '',
       bankCode: bank?.bankCode ?? '',
@@ -221,17 +210,11 @@ export class BankUpsertComponent implements OnInit {
 
   private getBankFromNavigationState(): BankViewModel | undefined {
     const nav = this.router.getCurrentNavigation();
-    const fromNavigation = nav?.extras?.state?.['bank'] as
-      | BankViewModel
-      | undefined;
+    const fromNavigation = nav?.extras?.state?.['bank'] as BankViewModel | undefined;
     if (fromNavigation) {
       return { ...fromNavigation };
     }
-    if (
-      typeof history !== 'undefined' &&
-      history.state &&
-      typeof history.state === 'object'
-    ) {
+    if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
       const candidate = (history.state as Record<string, unknown>)['bank'] as
         | BankViewModel
         | undefined;

@@ -1,25 +1,21 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { environment } from "../../../../config/environment";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../../config/environment';
+import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
 import {
-  ListSuppliesParams,
   DryPackageInput,
+  ListSuppliesParams,
   PackageViewModel,
   RefrigeratedPackageInput,
   SimpleItemInput,
   SimpleItemViewModel,
-} from "../../../../shared/models/supplies";
-export type { ListSuppliesParams } from "../../../../shared/models/supplies";
-import {
-  PagedResult,
-  RawPagedResult,
-  mapRawPaged,
-} from "../../../../shared/models/pagination";
-import { buildHttpParams } from "../../../../shared/utils/http-params";
+} from '../../../../shared/models/supplies';
+import { buildHttpParams } from '../../../../shared/utils/http-params';
+export type { ListSuppliesParams } from '../../../../shared/models/supplies';
 
-@Injectable({ providedIn: "root" })
+@Injectable({ providedIn: 'root' })
 export class SuppliesApiService {
   private readonly baseUrl = `${environment.apiBaseUrl}/api/v1/supplies`;
 
@@ -45,14 +41,17 @@ export class SuppliesApiService {
   }
 
   createSimpleItem(input: SimpleItemInput): Observable<SimpleItemViewModel> {
-    return this.http.post<SimpleItemViewModel>(`${this.baseUrl}/simple`, this.toSimpleItemPayload(input));
+    return this.http.post<SimpleItemViewModel>(
+      `${this.baseUrl}/simple`,
+      this.toSimpleItemPayload(input),
+    );
   }
 
-  updateSimpleItem(
-    id: string,
-    input: SimpleItemInput
-  ): Observable<SimpleItemViewModel> {
-    return this.http.put<SimpleItemViewModel>(`${this.baseUrl}/simple/${id}`, this.toSimpleItemPayload(input));
+  updateSimpleItem(id: string, input: SimpleItemInput): Observable<SimpleItemViewModel> {
+    return this.http.put<SimpleItemViewModel>(
+      `${this.baseUrl}/simple/${id}`,
+      this.toSimpleItemPayload(input),
+    );
   }
 
   getDryPackage(id: string): Observable<PackageViewModel> {
@@ -60,36 +59,37 @@ export class SuppliesApiService {
   }
 
   createDryPackage(input: DryPackageInput): Observable<PackageViewModel> {
-    return this.http.post<PackageViewModel>(`${this.baseUrl}/dry-package`, this.toDryPackagePayload(input));
+    return this.http.post<PackageViewModel>(
+      `${this.baseUrl}/dry-package`,
+      this.toDryPackagePayload(input),
+    );
   }
 
-  updateDryPackage(
-    id: string,
-    input: DryPackageInput
-  ): Observable<PackageViewModel> {
-    return this.http.put<PackageViewModel>(`${this.baseUrl}/dry-package/${id}`, this.toDryPackagePayload(input));
+  updateDryPackage(id: string, input: DryPackageInput): Observable<PackageViewModel> {
+    return this.http.put<PackageViewModel>(
+      `${this.baseUrl}/dry-package/${id}`,
+      this.toDryPackagePayload(input),
+    );
   }
 
   getRefrigeratedPackage(id: string): Observable<PackageViewModel> {
     return this.http.get<PackageViewModel>(`${this.baseUrl}/refrigerated-package/${id}`);
   }
 
-  createRefrigeratedPackage(
-    input: RefrigeratedPackageInput
-  ): Observable<PackageViewModel> {
+  createRefrigeratedPackage(input: RefrigeratedPackageInput): Observable<PackageViewModel> {
     return this.http.post<PackageViewModel>(
       `${this.baseUrl}/refrigerated-package`,
-      this.toRefrigeratedPackagePayload(input)
+      this.toRefrigeratedPackagePayload(input),
     );
   }
 
   updateRefrigeratedPackage(
     id: string,
-    input: RefrigeratedPackageInput
+    input: RefrigeratedPackageInput,
   ): Observable<PackageViewModel> {
     return this.http.put<PackageViewModel>(
       `${this.baseUrl}/refrigerated-package/${id}`,
-      this.toRefrigeratedPackagePayload(input)
+      this.toRefrigeratedPackagePayload(input),
     );
   }
 

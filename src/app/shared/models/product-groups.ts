@@ -1,4 +1,4 @@
-import { ListRequestParams } from "./api/base-view.model";
+import { ListRequestParams } from './api/base-view.model';
 
 export interface ProductGroupViewModel {
   id: string;
@@ -12,12 +12,12 @@ export interface ProductGroupViewModel {
 
 export interface ProductGroupDetailsViewModel extends ProductGroupViewModel {}
 
-export type ProductGroupSortableField = "createdAt" | "name" | "isActive";
+export type ProductGroupSortableField = 'createdAt' | 'name' | 'isActive';
 
 export interface ProductGroupListFilters {
   name?: string;
   isActive?: boolean;
 }
 
-export type ListProductGroupsParams =
-  ListRequestParams<ProductGroupSortableField> & ProductGroupListFilters;
+export type ListProductGroupsParams = ListRequestParams<ProductGroupSortableField> &
+  ProductGroupListFilters;

@@ -4,7 +4,10 @@ import { KeycloakAuthService } from './keycloak.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
-  constructor(private auth: KeycloakAuthService, private router: Router) {}
+  constructor(
+    private auth: KeycloakAuthService,
+    private router: Router,
+  ) {}
 
   async canActivate(): Promise<boolean | UrlTree> {
     if (this.auth.isLoggedIn()) return true;

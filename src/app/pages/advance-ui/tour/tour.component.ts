@@ -1,26 +1,23 @@
-
-import { Component, OnInit, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ShepherdService } from 'angular-shepherd';
-import { steps as defaultSteps, defaultStepOptions } from './data';
+import { defaultStepOptions, steps as defaultSteps } from './data';
 
 @Component({
-    selector: 'app-tour',
-    templateUrl: './tour.component.html',
-    styleUrls: ['./tour.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'app-tour',
+  templateUrl: './tour.component.html',
+  styleUrls: ['./tour.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 
 /**
  * Tour Component
  */
 export class TourComponent implements OnInit, AfterViewInit {
-  
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
-  constructor(private shepherdService: ShepherdService) { }
+  constructor(private shepherdService: ShepherdService) {}
 
   ngAfterViewInit() {
     this.shepherdService.defaultStepOptions = defaultStepOptions;
@@ -32,12 +29,8 @@ export class TourComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-     this.breadCrumbItems = [
-      { label: 'Advance UI' },
-      { label: 'Tour', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Advance UI' }, { label: 'Tour', active: true }];
   }
-
 }

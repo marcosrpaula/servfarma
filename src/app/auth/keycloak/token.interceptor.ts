@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, from, switchMap } from 'rxjs';
 import { environment } from '../../config/environment';
 import { KeycloakAuthService } from './keycloak.service';
@@ -14,13 +14,13 @@ export class TokenInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
     return from(this.auth.getToken()).pipe(
-      switchMap(token => {
+      switchMap((token) => {
         if (token) {
           const cloned = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
           return next.handle(cloned);
         }
         return next.handle(req);
-      })
+      }),
     );
   }
 }

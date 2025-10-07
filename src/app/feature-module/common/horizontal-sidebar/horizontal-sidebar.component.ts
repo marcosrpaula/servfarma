@@ -1,18 +1,18 @@
-﻿import { Component, OnDestroy } from '@angular/core';
-import { routes } from '../../../shared/routes/routes';
-import { MainMenu, Menu } from '../../../shared/models/models';
+import { Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { DataService } from '../../../shared/data/data.service';
-import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 import { CommonService } from '../../../shared/common/common.service';
+import { DataService } from '../../../shared/data/data.service';
+import { MainMenu, Menu } from '../../../shared/models/models';
+import { routes } from '../../../shared/routes/routes';
+import { SideBarService } from '../../../shared/side-bar/side-bar.service';
 
 @Component({
-    selector: 'app-horizontal-sidebar',
-    templateUrl: './horizontal-sidebar.component.html',
-    styleUrl: './horizontal-sidebar.component.scss',
-    standalone: false
+  selector: 'app-horizontal-sidebar',
+  templateUrl: './horizontal-sidebar.component.html',
+  styleUrl: './horizontal-sidebar.component.scss',
+  standalone: false,
 })
-export class HorizontalSidebarComponent implements OnDestroy{
+export class HorizontalSidebarComponent implements OnDestroy {
   public routes = routes;
   showSubMenusTab = true;
   openMenuItem: any = null;
@@ -26,7 +26,7 @@ export class HorizontalSidebarComponent implements OnDestroy{
     public router: Router,
     private data: DataService,
     private sideBar: SideBarService,
-    private common: CommonService
+    private common: CommonService,
   ) {
     this.common.base.subscribe((res: string) => {
       this.base = res;
@@ -54,25 +54,25 @@ export class HorizontalSidebarComponent implements OnDestroy{
     //   else this.showSubMenusTab = false;
     // });
   }
-public menuToggle() {
-  this.showSubMenusTab = !this.showSubMenusTab;
-}
-public expandSubMenus(menu: Menu): void {
-  sessionStorage.setItem('menuValue', menu.menuValue);
-  this.side_bar_data.map((mainMenus: MainMenu) => {
-    mainMenus.menu.map((resMenu: Menu) => {
-      // collapse other submenus which are open
-      if (resMenu.menuValue === menu.menuValue) {
-        menu.showSubRoute = !menu.showSubRoute;
-        // if (menu.showSubRoute === false) {
-        //   sessionStorage.removeItem('menuValue');
-        // }
-      } else {
-        resMenu.showSubRoute = false;
-      }
+  public menuToggle() {
+    this.showSubMenusTab = !this.showSubMenusTab;
+  }
+  public expandSubMenus(menu: Menu): void {
+    sessionStorage.setItem('menuValue', menu.menuValue);
+    this.side_bar_data.map((mainMenus: MainMenu) => {
+      mainMenus.menu.map((resMenu: Menu) => {
+        // collapse other submenus which are open
+        if (resMenu.menuValue === menu.menuValue) {
+          menu.showSubRoute = !menu.showSubRoute;
+          // if (menu.showSubRoute === false) {
+          //   sessionStorage.removeItem('menuValue');
+          // }
+        } else {
+          resMenu.showSubRoute = false;
+        }
+      });
     });
-  });
-}
+  }
   public miniSideBarMouseHover(position: string): void {
     this.sideBar.toggleSideBar.subscribe((res: string) => {
       if (res === 'true' || res === 'true') {
@@ -124,4 +124,3 @@ public expandSubMenus(menu: Menu): void {
     }
   }
 }
-

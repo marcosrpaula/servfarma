@@ -1,10 +1,12 @@
-﻿<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
+<app-breadcrumbs [title]="title()" [breadcrumbItems]="breadCrumbItems()"></app-breadcrumbs>
 
 <div class="row">
   <div class="col-12">
     <form [formGroup]="form" (ngSubmit)="save()">
       <div class="card">
-        <div class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div
+          class="card-header border-bottom-dashed d-flex flex-wrap justify-content-between align-items-center gap-2"
+        >
           <div>
             <h5 class="card-title mb-1">{{ title() }}</h5>
             <p class="text-muted mb-0">Informe os dados básicos do banco.</p>
@@ -21,7 +23,9 @@
               Status
               <span
                 class="status-toggle__badge"
-                [ngClass]="form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'"
+                [ngClass]="
+                  form.get('isActive')?.value ? 'badge-status-active' : 'badge-status-inactive'
+                "
               >
                 {{ form.get('isActive')?.value ? 'Ativo' : 'Inativo' }}
               </span>
@@ -52,16 +56,18 @@
                 formControlName="bankCode"
                 type="text"
                 class="form-control"
-                placeholder="Código (opcional)"
+                placeholder="Código do banco"
                 [readonly]="isReadOnly()"
                 [class.is-invalid]="showInvalid('bankCode')"
               />
-              <div class="invalid-feedback d-block" *ngFor="let message of controlMessages('bankCode')">
+              <div
+                class="invalid-feedback d-block"
+                *ngFor="let message of controlMessages('bankCode')"
+              >
                 {{ message }}
               </div>
             </div>
           </div>
-
 
           <div class="alert alert-danger mt-3" *ngIf="formLevelMessages().length">
             <ul class="mb-0 ps-3">

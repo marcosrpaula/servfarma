@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ProductGroupsComponent } from './product-groups/product-groups.component';
-import { ProductGroupUpsertComponent } from './product-group-upsert/product-group-upsert.component';
 import { PermissionGuard } from '../../../core/access-control/permission.guard';
+import { ProductGroupUpsertComponent } from './product-group-upsert/product-group-upsert.component';
+import { ProductGroupsComponent } from './product-groups/product-groups.component';
 
 const routes: Routes = [
   {

@@ -30,9 +30,7 @@ export const defaultBankListFilterState: BankListFilterState = {
   isActive: '',
 };
 
-export function normalizeBankListFilters(
-  filters: BankListFilterState
-): BankListFilters {
+export function normalizeBankListFilters(filters: BankListFilterState): BankListFilters {
   const normalized: BankListFilters = {};
 
   const trimmedName = filters.name?.trim();

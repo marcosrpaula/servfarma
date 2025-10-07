@@ -1,5 +1,5 @@
-import { AuditableViewModel, ListRequestParams } from './api/base-view.model';
 import { AddressViewModel, CityViewModel } from './addresses';
+import { AuditableViewModel, ListRequestParams } from './api/base-view.model';
 import { CourierCompanySimpleViewModel } from './courier-companies';
 
 export interface AdValoremRuleViewModel {
@@ -111,4 +111,3 @@ export function normalizeCourierListFilters(filters: CourierListFilterState): Co
 
   return normalized;
 }
-

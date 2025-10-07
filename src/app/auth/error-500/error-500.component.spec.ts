@@ -8,9 +8,8 @@ describe('Error500Component', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [Error500Component]
-    })
-    .compileComponents();
+      declarations: [Error500Component],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Error500Component);
     component = fixture.componentInstance;

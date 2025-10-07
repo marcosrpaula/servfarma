@@ -1,21 +1,20 @@
 import {
+  ApexAnnotations,
   ApexAxisChartSeries,
   ApexChart,
-  ChartComponent,
   ApexDataLabels,
-  ApexPlotOptions,
-  ApexYAxis,
-  ApexLegend,
-  ApexStroke,
-  ApexXAxis,
   ApexFill,
-  ApexTooltip,
-  ApexTitleSubtitle,
-  ApexResponsive,
-  ApexAnnotations,
   ApexGrid,
-  ApexStates
-} from "ng-apexcharts";
+  ApexLegend,
+  ApexPlotOptions,
+  ApexResponsive,
+  ApexStates,
+  ApexStroke,
+  ApexTitleSubtitle,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
+} from 'ng-apexcharts';
 
 export type ChartOptions = {
   series?: ApexAxisChartSeries | any;

@@ -55,14 +55,14 @@ export interface OrdersModel {
 }
 
 export interface customerModel {
-  _id:any;
+  _id: any;
   customer: string;
   email: string;
   phone: string;
   date: string;
   status: string;
   statusClass: string;
-  isSelected?:any;
+  isSelected?: any;
 }
 
 export interface CartModel {
@@ -77,23 +77,22 @@ export interface CartModel {
 }
 
 import {
-  ChartComponent,
-  ApexAxisChartSeries,
-  ApexPlotOptions,
-  ApexChart,
-  ApexXAxis,
-  ApexDataLabels,
-  ApexTitleSubtitle,
-  ApexStroke,
-  ApexGrid,
-  ApexMarkers,
-  ApexFill,
-  ApexYAxis,
-  ApexTooltip,
-  ApexLegend,
   ApexAnnotations,
-  ApexTheme
-} from "ng-apexcharts";
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexDataLabels,
+  ApexFill,
+  ApexGrid,
+  ApexLegend,
+  ApexMarkers,
+  ApexPlotOptions,
+  ApexStroke,
+  ApexTheme,
+  ApexTitleSubtitle,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
+} from 'ng-apexcharts';
 
 export type ChartOptions = {
   series?: ApexAxisChartSeries | any;
@@ -114,7 +113,7 @@ export type ChartOptions = {
   toolbar?: any;
   subtitle?: ApexTitleSubtitle;
   plotOptions?: ApexPlotOptions;
-  theme?: ApexTheme
+  theme?: ApexTheme;
 };
 
 export interface sellerModel {
@@ -123,5 +122,5 @@ export interface sellerModel {
   sellername: string;
   stock: string;
   ballence: string;
-  category:string;
+  category: string;
 }

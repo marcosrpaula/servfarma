@@ -3,33 +3,29 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-    selector: 'app-modals',
-    templateUrl: './modals.component.html',
-    styleUrls: ['./modals.component.scss'],
-    standalone: false
+  selector: 'app-modals',
+  templateUrl: './modals.component.html',
+  styleUrls: ['./modals.component.scss'],
+  standalone: false,
 })
 export class ModalsComponent implements OnInit {
-
   // bread crumb items
   breadCrumbItems!: Array<{}>;
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal) {}
 
   ngOnInit(): void {
     /**
-    * BreadCrumb
-    */
-     this.breadCrumbItems = [
-      { label: 'Base UI' },
-      { label: 'Modals', active: true }
-    ];
+     * BreadCrumb
+     */
+    this.breadCrumbItems = [{ label: 'Base UI' }, { label: 'Modals', active: true }];
   }
 
   /**
    * Open modal
    * @param content modal content
    */
-   openModal(content: any) {
+  openModal(content: any) {
     this.modalService.open(content);
   }
 
@@ -37,7 +33,7 @@ export class ModalsComponent implements OnInit {
    * Open center modal
    * @param centerDataModal center modal data
    */
-   centerModal(centerDataModal: any) {
+  centerModal(centerDataModal: any) {
     this.modalService.open(centerDataModal, { centered: true });
   }
 
@@ -45,7 +41,7 @@ export class ModalsComponent implements OnInit {
    * Lunch modal
    * @param content modal content
    */
-   LunchModal(content: any) {
+  LunchModal(content: any) {
     this.modalService.open(content);
   }
 
@@ -53,42 +49,42 @@ export class ModalsComponent implements OnInit {
    * Static modal
    * @param StaticDataModal modal content
    */
-   StaticModal(StaticDataModal: any) {
+  StaticModal(StaticDataModal: any) {
     this.modalService.open(StaticDataModal, { centered: true });
   }
 
-   /**
+  /**
    * Open scroll modal
    * @param toggleDataModal scroll modal data
    */
-    toggleModal(staticDataModal: any) {
-      this.modalService.open(staticDataModal, { centered: true });
-    }
-    secondModal(toggleSecondModal: any) {
-      this.modalService.open(toggleSecondModal, { centered: true });
-    }
+  toggleModal(staticDataModal: any) {
+    this.modalService.open(staticDataModal, { centered: true });
+  }
+  secondModal(toggleSecondModal: any) {
+    this.modalService.open(toggleSecondModal, { centered: true });
+  }
 
-    /**
+  /**
    * Lunch Demo modal
    * @param content modal content
    */
-   LunchDemoModal(content: any) {
+  LunchDemoModal(content: any) {
     this.modalService.open(content);
   }
 
-   /**
+  /**
    * Open scroll modal
    * @param scrollDataModal scroll modal data
    */
-    scrollModal(scrollDataModal: any) {
-      this.modalService.open(scrollDataModal, { scrollable: true });
-    }
+  scrollModal(scrollDataModal: any) {
+    this.modalService.open(scrollDataModal, { scrollable: true });
+  }
 
   /**
    * Open modal
    * @param content modal content
    */
-   MaryModal(content: any) {
+  MaryModal(content: any) {
     this.modalService.open(content);
   }
 
@@ -96,7 +92,7 @@ export class ModalsComponent implements OnInit {
    * Open small modal
    * @param smallDataModal small modal data
    */
-   fullModal(smallDataModal: any) {
+  fullModal(smallDataModal: any) {
     this.modalService.open(smallDataModal, { size: 'fullscreen', windowClass: 'modal-holder' });
   }
 
@@ -104,11 +100,11 @@ export class ModalsComponent implements OnInit {
    * Open extra large modal
    * @param exlargeModal extra large modal data
    */
-   extraLarge(exlargeModal: any) {
+  extraLarge(exlargeModal: any) {
     this.modalService.open(exlargeModal, { size: 'xl', centered: true });
   }
 
- /**
+  /**
    * Open Large modal
    * @param largeDataModal large modal data
    */
@@ -120,7 +116,7 @@ export class ModalsComponent implements OnInit {
    * Open small modal
    * @param smallDataModal small modal data
    */
-   smallModal(smallDataModal: any) {
+  smallModal(smallDataModal: any) {
     this.modalService.open(smallDataModal, { size: 'sm', centered: true });
   }
 
@@ -128,7 +124,7 @@ export class ModalsComponent implements OnInit {
    * Full Sm modal
    * @param smallDataModal small modal data
    */
-   fullSMModal(smallDataModal: any) {
+  fullSMModal(smallDataModal: any) {
     this.modalService.open(smallDataModal, { size: 'sm', centered: true });
   }
 
@@ -136,7 +132,7 @@ export class ModalsComponent implements OnInit {
    * Full Md modal
    * @param fullMdDataModal small modal data
    */
-   fullMDModal(fullMdDataModal: any) {
+  fullMDModal(fullMdDataModal: any) {
     this.modalService.open(fullMdDataModal, { size: 'md', centered: true });
   }
 
@@ -144,7 +140,7 @@ export class ModalsComponent implements OnInit {
    * Full Lg modal
    * @param fullMdDataModal small modal data
    */
-   fullLGModal(fullMdDataModal: any) {
+  fullLGModal(fullMdDataModal: any) {
     this.modalService.open(fullMdDataModal, { size: 'lg', centered: true });
   }
 
@@ -152,7 +148,7 @@ export class ModalsComponent implements OnInit {
    * Full Xl modal
    * @param fullXlDataModal small modal data
    */
-   fullXLModal(fullXlDataModal: any) {
+  fullXLModal(fullXlDataModal: any) {
     this.modalService.open(fullXlDataModal, { size: 'xl', centered: true });
   }
 
@@ -160,23 +156,22 @@ export class ModalsComponent implements OnInit {
    * Full XXl modal
    * @param fullXxlDataModal small modal data
    */
-   fullXXLModal(fullXxlDataModal: any) {
+  fullXXLModal(fullXxlDataModal: any) {
     this.modalService.open(fullXxlDataModal, { size: 'xxl', centered: true });
   }
 
   /**
    * Show Code Toggle
    */
-   ShowCode(event: any) {
+  ShowCode(event: any) {
     let card = event.target.closest('.card');
     const preview = card.children[1].children[1];
     const codeView = card.children[1].children[2];
-    if(codeView != null){
+    if (codeView != null) {
       codeView.classList.toggle('d-none');
     }
-    if(preview != null){
+    if (preview != null) {
       preview.classList.toggle('d-none');
-      
     }
   }
 
@@ -184,7 +179,7 @@ export class ModalsComponent implements OnInit {
    * Open Success modal
    * @param successModal Success modal data
    */
-   successModal(successModal: any) {
+  successModal(successModal: any) {
     this.modalService.open(successModal, { centered: true });
   }
 
@@ -192,7 +187,7 @@ export class ModalsComponent implements OnInit {
    * Open Login modal
    * @param loginDataModal Login modal data
    */
-   loginModal(loginDataModal: any) {
+  loginModal(loginDataModal: any) {
     this.modalService.open(loginDataModal, { centered: true });
   }
 
@@ -200,16 +195,15 @@ export class ModalsComponent implements OnInit {
    * Open subscribe modal
    * @param subscribeDataModal subscribe modal data
    */
-   subscribeModal(subscribeDataModal: any) {
-    this.modalService.open(subscribeDataModal, { size: 'lg',centered: true });
+  subscribeModal(subscribeDataModal: any) {
+    this.modalService.open(subscribeDataModal, { size: 'lg', centered: true });
   }
 
   /**
    * Open Sign Up modal
    * @param signupDataModal Sign Up modal data
    */
-   signupModal(signupDataModal: any) {
+  signupModal(signupDataModal: any) {
     this.modalService.open(signupDataModal, { centered: true });
   }
-
 }

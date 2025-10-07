@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PermissionGuard } from '../../../core/access-control/permission.guard';
 
-import { UsersComponent } from './users/users.component';
-import { UserUpsertComponent } from './user-upsert/user-upsert.component';
 import { PermissionsComponent } from './permissions/permissions.component';
+import { UserUpsertComponent } from './user-upsert/user-upsert.component';
+import { UsersComponent } from './users/users.component';
 
 // Se você tiver um shell (ex.: UserManagementComponent), troque conforme o seu.
 // Aqui vou sem shell para manter simples.
@@ -33,11 +33,11 @@ const routes: Routes = [
     canActivate: [PermissionGuard],
     data: { permission: { module: 'users', level: 'read' } },
   },
-  { path: '', pathMatch: 'full', redirectTo: 'users' }
+  { path: '', pathMatch: 'full', redirectTo: 'users' },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class UserManagementRoutingModule {}

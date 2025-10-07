@@ -4,68 +4,34 @@ import {
   CourierSortableField,
   CourierViewModel,
 } from '../../../../shared/models/couriers';
-import { ListViewState, cloneListViewState } from '../../../../shared/models/api/list-state';
+import {
+  EntityListState,
+  EntityListStateService,
+  ListSortState,
+} from '../../../../shared/state/entity-list-state.service';
 
-export type CouriersListViewState = ListViewState<
-  CourierViewModel,
-  CourierSortableField,
-  CourierListFilterState
->;
+export type CourierSortLabel = 'CreatedDate' | 'Name' | 'Status';
+
+export interface CouriersListState
+  extends EntityListState<CourierViewModel, CourierListFilterState, CourierSortableField> {
+  sort: ListSortState<CourierSortableField> & { label: CourierSortLabel };
+}
 
 @Injectable({ providedIn: 'root' })
-export class CouriersStateService {
-  private readonly cache = new Map<string, CourierViewModel>();
-  private listState: CouriersListViewState | null = null;
-
-  setMany(couriers: CourierViewModel[]): void {
-    couriers.forEach((courier) => this.upsert(courier));
+export class CouriersStateService extends EntityListStateService<
+  CourierViewModel,
+  CourierListFilterState,
+  CourierSortableField
+> {
+  override setListState(state: CouriersListState): void {
+    super.setListState(state);
   }
 
-  upsert(courier: CourierViewModel): void {
-    this.cache.set(courier.id, { ...courier });
+  override getListState(): CouriersListState | null {
+    return super.getListState() as CouriersListState | null;
   }
 
-  getById(id: string | null | undefined): CourierViewModel | undefined {
-    if (!id) {
-      return undefined;
-    }
-    const courier = this.cache.get(id);
-    return courier ? { ...courier } : undefined;
-  }
-
-  setListState(state: CouriersListViewState): void {
-    this.listState = cloneListViewState(state);
-  }
-
-  getListState(): CouriersListViewState | null {
-    if (!this.listState) {
-      return null;
-    }
-    return cloneListViewState(this.listState);
-  }
-
-  updateListItem(updated: CourierViewModel): void {
-    this.upsert(updated);
-    if (!this.listState) {
-      return;
-    }
-    if (!this.listState.items.some(courier => courier.id === updated.id)) {
-      return;
-    }
-    this.listState = {
-      ...this.listState,
-      items: this.listState.items.map(courier =>
-        courier.id === updated.id ? { ...updated } : { ...courier }
-      ),
-    };
-  }
-
-  clearListState(): void {
-    this.listState = null;
-  }
-
-  clear(): void {
-    this.cache.clear();
-    this.listState = null;
+  override cloneFilters(filters: CourierListFilterState): CourierListFilterState {
+    return { ...filters };
   }
 }

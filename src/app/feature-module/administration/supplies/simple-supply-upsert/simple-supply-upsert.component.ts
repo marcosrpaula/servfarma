@@ -1,22 +1,17 @@
-﻿import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { SuppliesApiService } from '../services/supplies.api.service';
+import { NotificationService } from '../../../../core/notifications/notification.service';
 import {
   SimpleItemInput,
   SimpleItemType,
   SimpleItemViewModel,
   SupplyType,
 } from '../../../../shared/models/supplies';
-import { SuppliesStateService } from '../services/supplies-state.service';
-import { NotificationService } from '../../../../core/notifications/notification.service';
 import { SharedModule } from '../../../../shared/shared.module';
+import { SuppliesStateService } from '../services/supplies-state.service';
+import { SuppliesApiService } from '../services/supplies.api.service';
 
 const SIMPLE_TYPE_OPTIONS: { value: SimpleItemType; label: string }[] = [
   { value: 'Label', label: 'Etiqueta' },
@@ -72,7 +67,9 @@ export class SimpleSupplyUpsertComponent implements OnInit {
       if (this.isReadOnly()) {
         const supply = this.resolveSupplyForReadOnly();
         if (!supply) {
-          this.notifications.error('Nao foi possivel carregar os dados do suprimento para visualizacao. Acesse novamente a partir da listagem.');
+          this.notifications.error(
+            'Nao foi possivel carregar os dados do suprimento para visualizacao. Acesse novamente a partir da listagem.',
+          );
           this.router.navigate(['/supplies']);
           return;
         }
@@ -171,7 +168,9 @@ export class SimpleSupplyUpsertComponent implements OnInit {
       return { ...candidate };
     }
     if (typeof history !== 'undefined' && history.state && typeof history.state === 'object') {
-      const historyCandidate = (history.state as Record<string, unknown>)['supply'] as SimpleItemViewModel | undefined;
+      const historyCandidate = (history.state as Record<string, unknown>)['supply'] as
+        | SimpleItemViewModel
+        | undefined;
       if (historyCandidate) {
         return { ...historyCandidate };
       }
@@ -179,8 +178,3 @@ export class SimpleSupplyUpsertComponent implements OnInit {
     return undefined;
   }
 }
-
-
-
-
-

@@ -1,27 +1,26 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-best-selling',
-    templateUrl: './best-selling.component.html',
-    styleUrls: ['./best-selling.component.scss'],
-    standalone: false
+  selector: 'app-best-selling',
+  templateUrl: './best-selling.component.html',
+  styleUrls: ['./best-selling.component.scss'],
+  standalone: false,
 })
 export class BestSellingComponent implements OnInit {
-
   // Best Selling data
-  @Input() BestSelling: Array<{
-    image?: string;
-    pName?: string;
-    date?: string;
-    price?: string;
-    orders?: string;
-    stock?: string;
-    amount?: string;
-  }> | undefined;
+  @Input() BestSelling:
+    | Array<{
+        image?: string;
+        pName?: string;
+        date?: string;
+        price?: string;
+        orders?: string;
+        stock?: string;
+        amount?: string;
+      }>
+    | undefined;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

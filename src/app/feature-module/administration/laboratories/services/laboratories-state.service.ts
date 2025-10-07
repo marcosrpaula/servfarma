@@ -1,82 +1,47 @@
 import { Injectable } from '@angular/core';
-import { LaboratorySortableField, LaboratoryViewModel } from '../../../../shared/models/laboratories';
+import {
+  LaboratorySortableField,
+  LaboratoryViewModel,
+} from '../../../../shared/models/laboratories';
+import {
+  EntityListState,
+  EntityListStateService,
+  ListSortState,
+} from '../../../../shared/state/entity-list-state.service';
 
-interface LaboratoriesListState {
-  tableData: LaboratoryViewModel[];
-  totalItems: number;
-  pageSize: number;
-  backendPage: number;
-  filtroTradeName: string;
-  filtroLegalName: string;
-  filtroDocumento: string;
-  filtroAtivo: '' | 'true' | 'false';
-  orderBy: LaboratorySortableField;
-  ascending: boolean;
-  orderLabel: 'CreatedDate' | 'TradeName' | 'LegalName' | 'Document' | 'Status';
-  lastRequestSignature?: string;
-  lastPagerKey?: string;
+export type LaboratorySortLabel = 'CreatedDate' | 'TradeName' | 'LegalName' | 'Document' | 'Status';
+
+export interface LaboratoryListFiltersState {
+  tradeName: string;
+  legalName: string;
+  document: string;
+  isActive: '' | 'true' | 'false';
+}
+
+export interface LaboratoriesListState
+  extends EntityListState<
+    LaboratoryViewModel,
+    LaboratoryListFiltersState,
+    LaboratorySortableField
+  > {
+  sort: ListSortState<LaboratorySortableField> & { label: LaboratorySortLabel };
 }
 
 @Injectable({ providedIn: 'root' })
-export class LaboratoriesStateService {
-  private readonly cache = new Map<string, LaboratoryViewModel>();
-  private listState: LaboratoriesListState | null = null;
-
-  upsert(laboratory: LaboratoryViewModel): void {
-    this.cache.set(laboratory.id, { ...laboratory });
+export class LaboratoriesStateService extends EntityListStateService<
+  LaboratoryViewModel,
+  LaboratoryListFiltersState,
+  LaboratorySortableField
+> {
+  override setListState(state: LaboratoriesListState): void {
+    super.setListState(state);
   }
 
-  setMany(laboratories: LaboratoryViewModel[]): void {
-    laboratories.forEach(laboratory => this.upsert(laboratory));
+  override getListState(): LaboratoriesListState | null {
+    return super.getListState() as LaboratoriesListState | null;
   }
 
-  getById(id: string | null | undefined): LaboratoryViewModel | undefined {
-    if (!id) {
-      return undefined;
-    }
-    const found = this.cache.get(id);
-    return found ? { ...found } : undefined;
-  }
-
-  setListState(state: LaboratoriesListState): void {
-    this.listState = {
-      ...state,
-      tableData: state.tableData.map(laboratory => ({ ...laboratory })),
-    };
-  }
-
-  getListState(): LaboratoriesListState | null {
-    if (!this.listState) {
-      return null;
-    }
-    return {
-      ...this.listState,
-      tableData: this.listState.tableData.map(laboratory => ({ ...laboratory })),
-    };
-  }
-
-  updateListItem(updated: LaboratoryViewModel): void {
-    this.upsert(updated);
-    if (!this.listState) {
-      return;
-    }
-    if (!this.listState.tableData.some(laboratory => laboratory.id === updated.id)) {
-      return;
-    }
-    this.listState = {
-      ...this.listState,
-      tableData: this.listState.tableData.map(laboratory =>
-        laboratory.id === updated.id ? { ...updated } : { ...laboratory }
-      ),
-    };
-  }
-
-  clearListState(): void {
-    this.listState = null;
-  }
-
-  clear(): void {
-    this.cache.clear();
-    this.listState = null;
+  override cloneFilters(filters: LaboratoryListFiltersState): LaboratoryListFiltersState {
+    return { ...filters };
   }
 }

@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../../config/environment';
-import { RoleViewModel } from '../../../../shared/models/users';
 import { PagedResult, RawPagedResult, mapRawPaged } from '../../../../shared/models/pagination';
+import { RoleViewModel } from '../../../../shared/models/users';
 import { buildHttpParams } from '../../../../shared/utils/http-params';
 
 export interface ListRolesParams {
@@ -27,6 +27,6 @@ export class RolesApiService {
     });
     return this.http
       .get<RawPagedResult<RoleViewModel>>(this.baseUrl, { params: httpParams })
-      .pipe(map(res => mapRawPaged<RoleViewModel>(res)));
+      .pipe(map((res) => mapRawPaged<RoleViewModel>(res)));
   }
 }

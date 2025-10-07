@@ -8,10 +8,9 @@ describe('DateRangePickerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DateRangePickerComponent]
-    })
-    .compileComponents();
-    
+      declarations: [DateRangePickerComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(DateRangePickerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

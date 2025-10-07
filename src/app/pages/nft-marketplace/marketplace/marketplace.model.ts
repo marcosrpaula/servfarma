@@ -1,5 +1,5 @@
 export interface marketplaceModel {
-  id:any,
+  id: any;
   images: Array<{
     image?: Array<{
       img?: string;
@@ -7,21 +7,20 @@ export interface marketplaceModel {
   }>;
 }
 
-// Trading Model 
+// Trading Model
 export interface tradingModel {
   id: number;
   img: string;
   author: string;
   title: string;
   cardImg: string;
-  likes?:any;
+  likes?: any;
   price: string;
   category: string;
   isActive?: any;
 }
 
-
-// Recent Model 
+// Recent Model
 export interface recentModel {
   id?: number;
   img: string;
@@ -29,15 +28,15 @@ export interface recentModel {
   title?: string;
   category?: string;
   highest?: string;
-  price?:string;
+  price?: string;
 }
 
-// Popular Model 
+// Popular Model
 export interface popularModel {
   id: number;
   cardImg: string;
   img: string;
   author: string;
   products: number;
-  isFollow?:any;
+  isFollow?: any;
 }
