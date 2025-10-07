@@ -10,6 +10,7 @@ import {
   CourierCompanyInput,
   CourierCompanyViewModel,
 } from '../../../../shared/models/courier-companies';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { CourierCompaniesStateService } from '../services/courier-companies-state.service';
