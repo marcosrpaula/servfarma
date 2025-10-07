@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ReturnUnitInput, ReturnUnitViewModel } from '../../../../shared/models/return-units';
@@ -30,6 +31,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
   private labsApi = inject(LaboratoriesApiService);
   private returnUnitsState = inject(ReturnUnitsStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -110,7 +112,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getById(this.id()!))
         .subscribe({
           next: (unit) => {
@@ -186,7 +188,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.update(this.id()!, input))
         .subscribe({
           next: (updated) => {
@@ -197,7 +199,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.create(input))
         .subscribe({
           next: () => {
@@ -243,7 +245,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
   }
 
   private loadStates() {
-    this.loadingTracker
+    this.globalLoader
       .track(this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }))
       .subscribe({
         next: (res) => {
@@ -266,7 +268,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
   }
 
   private loadCities(state: StateSimpleViewModel, preserveSelection = false) {
-    this.loadingTracker
+    this.globalLoader
       .track(this.locationsApi.listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true }))
       .subscribe({
         next: (res) => {
@@ -290,7 +292,7 @@ export class ReturnUnitUpsertComponent implements OnInit {
   }
 
   private loadLabs() {
-    this.loadingTracker
+    this.globalLoader
       .track(this.labsApi.list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true }))
       .subscribe({
         next: (res) => {

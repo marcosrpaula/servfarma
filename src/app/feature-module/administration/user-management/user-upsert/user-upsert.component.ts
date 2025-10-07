@@ -14,7 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import { RoleViewModel } from '../../../../shared/models/users';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
@@ -43,6 +43,7 @@ export class UserUpsertComponent implements OnInit {
   private api = inject(UsersApiService);
   private rolesApi = inject(RolesApiService);
   private cdr = inject(ChangeDetectorRef);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   title = computed(() => (this.id() ? 'Editar UsuÃ¡rio' : 'Adicionar UsuÃ¡rio'));
@@ -90,7 +91,7 @@ export class UserUpsertComponent implements OnInit {
   ngOnInit(): void {
     this.id.set(this.route.snapshot.paramMap.get('id'));
 
-    this.loadingTracker
+    this.globalLoader
       .track(this.rolesApi.list({ page: 1, pageSize: 200, orderBy: 'name', ascending: true }))
       .subscribe({
         next: ({ items }) => {
@@ -133,7 +134,7 @@ export class UserUpsertComponent implements OnInit {
   }
 
   private load(id: string) {
-    this.loadingTracker
+    this.globalLoader
       .track(this.api.getById(id))
       .subscribe({
         next: (u: any) => {
@@ -201,7 +202,7 @@ export class UserUpsertComponent implements OnInit {
         permissions,
         isActive: v.isActive,
       };
-      this.loadingTracker.track(this.api.update(this.id()!, dto)).subscribe({ next: done, error: fail });
+      this.globalLoader.track(this.api.update(this.id()!, dto)).subscribe({ next: done, error: fail });
     } else {
       const dto: CreateUserDto = {
         name: v.name,
@@ -209,7 +210,7 @@ export class UserUpsertComponent implements OnInit {
         permissions,
         isActive: v.isActive,
       };
-      this.loadingTracker.track(this.api.create(dto)).subscribe({ next: done, error: fail });
+      this.globalLoader.track(this.api.create(dto)).subscribe({ next: done, error: fail });
     }
   }
 

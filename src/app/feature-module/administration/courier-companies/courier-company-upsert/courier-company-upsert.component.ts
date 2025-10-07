@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import {
   CourierCompanyInput,
@@ -30,6 +30,7 @@ export class CourierCompanyUpsertComponent implements OnInit {
   private state = inject(CourierCompaniesStateService);
   private locationsApi = inject(LocationsApiService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -108,7 +109,7 @@ export class CourierCompanyUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getById(this.id()!))
         .subscribe({
           next: (company) => {
@@ -202,7 +203,7 @@ export class CourierCompanyUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.update(this.id()!, input))
         .subscribe({
           next: (updated) => {
@@ -213,7 +214,7 @@ export class CourierCompanyUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.create(input))
         .subscribe({
           next: () => {
@@ -320,7 +321,7 @@ export class CourierCompanyUpsertComponent implements OnInit {
   }
 
   private loadStates() {
-    this.loadingTracker
+    this.globalLoader
       .track(this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }))
       .subscribe({
         next: (res) => {
@@ -336,7 +337,7 @@ export class CourierCompanyUpsertComponent implements OnInit {
   }
 
   private loadCities(state: StateSimpleViewModel, preserveSelection = false) {
-    this.loadingTracker
+    this.globalLoader
       .track(
         this.locationsApi.listCities(state.abbreviation, {
           pageSize: 200,

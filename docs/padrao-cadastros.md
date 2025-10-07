@@ -13,7 +13,7 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 1. **Arquitetura Angular 19**: migrar para `bootstrapApplication` com `provideRouter` (rotas tipadas, `withComponentInputBinding`, `withViewTransitions`) e remover NgModules.
 2. **Form Shell unificado**: componente standalone `FormShellComponent` com slots (header, body, footer) e sinais (`loading`, `readOnly`, `error`).
 3. **Controle de fluxo declarativo**: substituir `*ngIf/*ngFor` por `@if/@for/@switch`; usar `@defer` para grids/listas pesadas.
-4. **Estados de requisição padronizados**: serviço/utilitário `useCrudResource<T>()` expondo `status` (`idle | loading | success | error`) + componente `LoadingStateComponent` com spinner/skeleton.
+4. **Estados de requisição padronizados**: reutilizar o preloader global do tema Velzon via `GlobalLoaderService` (sinais + contagem interna) notificando o `FeatureModuleComponent` para exibir o `#global-loader` durante fetch/save, sem criar overlay adicional.
 5. **Formulários reativos tipados**: `FormBuilder.nonNullable`, DTOs tipados, máscaras via directives (`documentMaskDirective`, `phoneMaskDirective`).
 6. **Mensagens e i18n**: centralizar strings em arquivo `i18n/pt-BR.json`, usar pipe `i18n` nos templates e componente `FormFieldErrorComponent` para mensagens.
 7. **Design tokens/CSS**: definir tokens SCSS (`$spacing-`, `$color-`) e aplicar BEM (`form-shell__header`, etc.), remover Angular Material em cadastros para manter Bootstrap custom.
@@ -27,14 +27,14 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 3. Migrar interceptors OO para funções puras.
 
 ### Shared – Esforço: Médio
-1. Criar `FormShellComponent`, `LoadingStateComponent`, `FormFieldErrorComponent` standalone.
+1. Criar `FormShellComponent`, `GlobalLoaderService`, `FormFieldErrorComponent` standalone.
 2. Extrair `useCrudResource` (signals + fetch/post/put/delete) no diretório `shared/utils`.
 3. Centralizar tokens SCSS em `styles/_tokens.scss` e mixins `styles/_form.scss`.
 
 ### Administração > Cadastros – Esforço: Grande
 1. Reorganizar por feature `feature/administration/laboratories/{form,list,details}` etc.
 2. Refatorar formulários para `FormBuilder.nonNullable`, tipagem (`LaboratoryFormModel`).
-3. Aplicar `FormShellComponent` com `LoadingStateComponent` e mensagens padronizadas.
+3. Aplicar `FormShellComponent` com `GlobalLoaderService` e mensagens padronizadas.
 4. Implementar `@if`/`@for` nos templates; adicionar `@defer` para tabelas.
 5. Normalizar labels/ordem de campos (dados básicos → contato → endereço → status).
 6. Incluir diretivas de máscara (`documentMaskDirective`, `zipCodeMaskDirective`).
@@ -178,7 +178,7 @@ Outros cadastros seguem padrões semelhantes com variação de labels, ordem de 
 @Component({
   selector: 'app-form-shell',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LoadingStateComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './form-shell.component.html',
   styleUrls: ['./form-shell.component.scss'],
 })
@@ -215,24 +215,39 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) =>
   );
 ```
 
-### LoadingState
+### GlobalLoaderService
 ```ts
-@Component({
-  selector: 'app-loading-state',
-  standalone: true,
-  template: `
-    @switch (state()) {
-      @case ('loading') { <div class="spinner" aria-live="polite"></div> }
-      @case ('error') { <div class="alert alert-danger">{{ message() }}</div> }
-      @case ('empty') { <p class="text-muted">{{ emptyLabel() | i18n }}</p> }
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
+@Injectable({ providedIn: 'root' })
+export class GlobalLoaderService {
+  private readonly visibility$ = new BehaviorSubject(false);
+  private pending = 0;
+
+  readonly isVisible$ = this.visibility$.asObservable();
+
+  show(): void {
+    this.pending++;
+    if (!this.visibility$.value) {
+      this.visibility$.next(true);
     }
-  `,
-  styleUrls: ['./loading-state.component.scss'],
-})
-export class LoadingStateComponent {
-  state = input<'idle' | 'loading' | 'error' | 'empty'>('idle');
-  message = input('');
-  emptyLabel = input('common.empty');
+  }
+
+  hide(): void {
+    if (this.pending > 0) {
+      this.pending--;
+    }
+    if (this.pending === 0 && this.visibility$.value) {
+      this.visibility$.next(false);
+    }
+  }
+
+  track<T>(source$: Observable<T>): Observable<T> {
+    this.show();
+    return source$.pipe(finalize(() => this.hide()));
+  }
 }
 ```
 

@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   LaboratoryDetailsViewModel,
   LaboratoryViewModel,
@@ -31,6 +32,7 @@ export class LaboratoryUpsertComponent implements OnInit {
   private api = inject(LaboratoriesApiService);
   private laboratoriesState = inject(LaboratoriesStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -92,7 +94,7 @@ export class LaboratoryUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getById(this.id()!))
         .subscribe({
           next: (laboratory: LaboratoryDetailsViewModel) => {
@@ -141,7 +143,7 @@ export class LaboratoryUpsertComponent implements OnInit {
         observation: value.observation,
         isActive: value.isActive,
       };
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.update(this.id()!, dto))
         .subscribe({
           next: (updated) => {
@@ -159,7 +161,7 @@ export class LaboratoryUpsertComponent implements OnInit {
         observation: value.observation,
         isActive: value.isActive,
       };
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.create(dto))
         .subscribe({
           next: () => {

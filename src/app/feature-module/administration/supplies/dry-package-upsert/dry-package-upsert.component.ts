@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   DryPackageInput,
   PackageViewModel,
@@ -28,6 +29,7 @@ export class DryPackageUpsertComponent implements OnInit {
   private api = inject(SuppliesApiService);
   private suppliesState = inject(SuppliesStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -86,7 +88,7 @@ export class DryPackageUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getDryPackage(this.id()!))
         .subscribe({
           next: (pkg) => {
@@ -126,7 +128,7 @@ export class DryPackageUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.updateDryPackage(this.id()!, value))
         .subscribe({
           next: (updated) => {
@@ -137,7 +139,7 @@ export class DryPackageUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.createDryPackage(value))
         .subscribe({
           next: () => {

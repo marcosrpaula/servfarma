@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   PackageViewModel,
   RefrigeratedPackageInput,
@@ -28,6 +29,7 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
   private api = inject(SuppliesApiService);
   private suppliesState = inject(SuppliesStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -87,7 +89,7 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getRefrigeratedPackage(this.id()!))
         .subscribe({
           next: (pkg) => {
@@ -127,7 +129,7 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.updateRefrigeratedPackage(this.id()!, value))
         .subscribe({
           next: (updated) => {
@@ -138,7 +140,7 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.createRefrigeratedPackage(value))
         .subscribe({
           next: () => {

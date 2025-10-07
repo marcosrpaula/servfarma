@@ -7,6 +7,7 @@ import {
   NotificationService,
 } from '../../../../core/notifications/notification.service';
 import { applyServerValidationErrors } from '../../../../shared/common/server-validation.util';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   BankDetailsViewModel,
   BankViewModel,
@@ -33,6 +34,7 @@ export class BankUpsertComponent implements OnInit {
   private readonly api = inject(BanksApiService);
   private readonly banksState = inject(BanksStateService);
   private readonly notifications = inject(NotificationService);
+  private readonly globalLoader = inject(GlobalLoaderService);
 
   readonly id = signal<string | null>(null);
   readonly isReadOnly = signal(false);
@@ -80,7 +82,7 @@ export class BankUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getById(this.id()!))
         .subscribe({
           next: (bank: BankDetailsViewModel) => {
@@ -133,7 +135,7 @@ export class BankUpsertComponent implements OnInit {
         bankCode: value.bankCode,
         isActive: value.isActive,
       };
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.update(this.id()!, dto))
         .subscribe({
           next: (updated) => {
@@ -149,7 +151,7 @@ export class BankUpsertComponent implements OnInit {
         bankCode: value.bankCode,
         isActive: value.isActive,
       };
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.create(dto))
         .subscribe({
           next: () => {

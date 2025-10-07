@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   SimpleItemInput,
   SimpleItemType,
@@ -35,6 +36,7 @@ export class SimpleSupplyUpsertComponent implements OnInit {
   private api = inject(SuppliesApiService);
   private suppliesState = inject(SuppliesStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -92,7 +94,7 @@ export class SimpleSupplyUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getSimpleItem(this.id()!))
         .subscribe({
           next: (item) => {
@@ -132,7 +134,7 @@ export class SimpleSupplyUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.updateSimpleItem(this.id()!, value))
         .subscribe({
           next: (updated) => {
@@ -143,7 +145,7 @@ export class SimpleSupplyUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.createSimpleItem(value))
         .subscribe({
           next: () => {

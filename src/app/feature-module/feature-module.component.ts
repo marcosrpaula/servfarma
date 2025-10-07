@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonService } from '../shared/common/common.service';
 import { DataService } from '../shared/data/data.service';
+import { GlobalLoaderService } from '../shared/common/global-loader.service';
 import { SettingService } from '../shared/settings/settings.service';
 import { SideBarService } from '../shared/side-bar/side-bar.service';
 
@@ -72,6 +73,8 @@ export class FeatureModuleComponent implements OnInit {
   withoutLayouts: boolean | null = false;
   showPreloader = false;
   showPreloaderState = '';
+  private manualPreloaderActive = false;
+  private routeLoaderTimeout?: ReturnType<typeof setTimeout>;
   selectedColor = '84, 109, 254, 1';
   selectedColor1 = '555, 555, 555, 1';
   horizontalColor = '555, 555, 555, 1';
@@ -81,22 +84,32 @@ export class FeatureModuleComponent implements OnInit {
     public settings: SettingService,
     private data: DataService,
     private sideBar: SideBarService,
+    private globalLoader: GlobalLoaderService,
   ) {
     this.settings.isLoader.subscribe((res: string) => {
       this.showPreloaderState = res;
+      if (!this.manualPreloaderActive) {
+        this.triggerRoutePreloader();
+      }
+    });
+    this.globalLoader.isVisible$.subscribe((visible: boolean) => {
+      this.manualPreloaderActive = visible;
+      if (visible) {
+        this.clearRoutePreloaderTimeout();
+        this.showPreloader = true;
+      } else if (this.showPreloaderState === '1') {
+        this.triggerRoutePreloader();
+      } else {
+        this.showPreloader = false;
+      }
     });
     this.common.base.subscribe((res: string) => {
       this.base = res;
       this.withoutWrapperPages = this.withoutWrapperPagesArray.includes(this.base);
       this.withoutLayouts = this.withoutLayoutArray.includes(this.base);
 
-      if (this.showPreloaderState === '1') {
-        this.showPreloader = true;
-        setTimeout(() => {
-          this.showPreloader = false;
-        }, 2000);
-      } else {
-        this.showPreloader = false;
+      if (!this.manualPreloaderActive) {
+        this.triggerRoutePreloader();
       }
     });
     this.common.page.subscribe((res: string) => {
@@ -168,6 +181,27 @@ export class FeatureModuleComponent implements OnInit {
     });
   }
   isCollapsed = false;
+
+  private triggerRoutePreloader(): void {
+    this.clearRoutePreloaderTimeout();
+    if (this.showPreloaderState === '1') {
+      this.showPreloader = true;
+      this.routeLoaderTimeout = setTimeout(() => {
+        if (!this.manualPreloaderActive) {
+          this.showPreloader = false;
+        }
+      }, 2000);
+    } else {
+      this.showPreloader = false;
+    }
+  }
+
+  private clearRoutePreloaderTimeout(): void {
+    if (this.routeLoaderTimeout) {
+      clearTimeout(this.routeLoaderTimeout);
+      this.routeLoaderTimeout = undefined;
+    }
+  }
 
   public closeMobileSidebar(): void {
     if (this.mobileSidebar) {

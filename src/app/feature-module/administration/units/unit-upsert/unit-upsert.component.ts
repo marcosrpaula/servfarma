@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import { UnitViewModel } from '../../../../shared/models/units';
 import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -24,6 +25,7 @@ export class UnitUpsertComponent implements OnInit {
   private api = inject(UnitsApiService);
   private unitsState = inject(UnitsStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -76,7 +78,7 @@ export class UnitUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getById(this.id()!))
         .subscribe({
           next: (unit) => {
@@ -121,7 +123,7 @@ export class UnitUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.update(this.id()!, dto))
         .subscribe({
           next: (updated) => {
@@ -136,7 +138,7 @@ export class UnitUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.create(dto))
         .subscribe({
           next: () => {

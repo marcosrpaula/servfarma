@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   PharmaceuticalFormDetailsViewModel,
   PharmaceuticalFormViewModel,
@@ -31,6 +32,7 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
   private api = inject(PharmaceuticalFormsApiService);
   private formsState = inject(PharmaceuticalFormsStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -85,7 +87,7 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
         return;
       }
 
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.getById(this.id()!))
         .subscribe({
           next: (form: PharmaceuticalFormDetailsViewModel) => {
@@ -131,7 +133,7 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.update(this.id()!, dto))
         .subscribe({
           next: (updated) => {
@@ -146,7 +148,7 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.loadingTracker
+      this.globalLoader
         .track(this.api.create(dto))
         .subscribe({
           next: () => {
