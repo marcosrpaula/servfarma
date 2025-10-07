@@ -7,6 +7,8 @@ import {
   LaboratoryDetailsViewModel,
   LaboratoryViewModel,
 } from '../../../../shared/models/laboratories';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SharedModule } from '../../../../shared/shared.module';
 import { LaboratoriesStateService } from '../services/laboratories-state.service';
 import {
@@ -18,7 +20,7 @@ import {
 @Component({
   selector: 'app-laboratory-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './laboratory-upsert.component.html',
   styleUrls: ['./laboratory-upsert.component.scss'],
 })
@@ -46,6 +48,22 @@ export class LaboratoryUpsertComponent implements OnInit {
   ]);
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id()
+        ? 'Atualizando laboratório...'
+        : 'Salvando laboratório...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id()
+        ? 'Carregando dados do laboratório...'
+        : 'Preparando formulário do laboratório...';
+    }
+    return 'Processando...';
+  });
 
   form: FormGroup = this.fb.group({
     tradeName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -74,10 +92,21 @@ export class LaboratoryUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((laboratory: LaboratoryDetailsViewModel) => {
-        this.patchForm(laboratory);
-        this.laboratoriesState.upsert(laboratory);
-      });
+      this.loadingTracker
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (laboratory: LaboratoryDetailsViewModel) => {
+            this.patchForm(laboratory);
+            this.laboratoriesState.upsert(laboratory);
+          },
+          error: () => {
+            const message =
+              'Não foi possível carregar os dados do laboratório. Tente novamente a partir da listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/laboratories']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -112,14 +141,16 @@ export class LaboratoryUpsertComponent implements OnInit {
         observation: value.observation,
         isActive: value.isActive,
       };
-      this.api.update(this.id()!, dto).subscribe({
-        next: (updated) => {
-          this.laboratoriesState.upsert(updated);
-          this.laboratoriesState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.update(this.id()!, dto))
+        .subscribe({
+          next: (updated) => {
+            this.laboratoriesState.upsert(updated);
+            this.laboratoriesState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
       const dto: CreateLaboratoryDto = {
         tradeName: value.tradeName,
@@ -128,13 +159,15 @@ export class LaboratoryUpsertComponent implements OnInit {
         observation: value.observation,
         isActive: value.isActive,
       };
-      this.api.create(dto).subscribe({
-        next: () => {
-          this.laboratoriesState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.create(dto))
+        .subscribe({
+          next: () => {
+            this.laboratoriesState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 

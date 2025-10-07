@@ -5,7 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ProjectInput, ProjectViewModel } from '../../../../shared/models/projects';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
 import { ProjectsStateService } from '../services/projects-state.service';
 import { ProjectsApiService } from '../services/projects.api.service';
@@ -26,7 +28,7 @@ const SERVICE_TYPE_OPTIONS: ServiceTypeOption[] = [
 @Component({
   selector: 'app-project-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './project-upsert.component.html',
   styleUrls: ['./project-upsert.component.scss'],
 })
@@ -56,6 +58,18 @@ export class ProjectUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando projeto...' : 'Salvando projeto...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id() ? 'Carregando dados do projeto...' : 'Carregando dados necessários...';
+    }
+    return 'Processando...';
+  });
   labs: LaboratoryViewModel[] = [];
 
   form: FormGroup = this.fb.group({
@@ -97,10 +111,20 @@ export class ProjectUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((project) => {
-        this.patchForm(project);
-        this.projectsState.upsert(project);
-      });
+      this.loadingTracker
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (project) => {
+            this.patchForm(project);
+            this.projectsState.upsert(project);
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados do projeto. Acesse novamente a partir da listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/projects']);
+          },
+        });
       return;
     }
 
@@ -165,22 +189,26 @@ export class ProjectUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.api.update(this.id()!, input).subscribe({
-        next: (updated) => {
-          this.projectsState.upsert(updated);
-          this.projectsState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.update(this.id()!, input))
+        .subscribe({
+          next: (updated) => {
+            this.projectsState.upsert(updated);
+            this.projectsState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
-      this.api.create(input).subscribe({
-        next: () => {
-          this.projectsState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.create(input))
+        .subscribe({
+          next: () => {
+            this.projectsState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 
@@ -212,16 +240,23 @@ export class ProjectUpsertComponent implements OnInit {
   }
 
   private loadLaboratories() {
-    this.labsApi
-      .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
-      .subscribe((res) => {
-        this.labs = res.items || [];
-        if (!this.id() && !this.isReadOnly() && this.labs.length === 1) {
-          const control = this.form.get('laboratoryId');
-          if (!control?.value) {
-            control?.setValue(this.labs[0].id, { emitEvent: false });
+    this.loadingTracker
+      .track(this.labsApi.list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.labs = res.items || [];
+          if (!this.id() && !this.isReadOnly() && this.labs.length === 1) {
+            const control = this.form.get('laboratoryId');
+            if (!control?.value) {
+              control?.setValue(this.labs[0].id, { emitEvent: false });
+            }
           }
-        }
+        },
+        error: () => {
+          const message = 'Não foi possível carregar os laboratórios. Atualize a página e tente novamente.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+        },
       });
   }
 

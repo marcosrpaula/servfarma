@@ -8,14 +8,16 @@ import {
   PackageViewModel,
   SimpleItemViewModel,
 } from '../../../../shared/models/supplies';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SuppliesStateService } from '../services/supplies-state.service';
 import { SuppliesApiService } from '../services/supplies.api.service';
 
 @Component({
   selector: 'app-dry-package-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './dry-package-upsert.component.html',
   styleUrls: ['./dry-package-upsert.component.scss'],
 })
@@ -42,6 +44,18 @@ export class DryPackageUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando pacote seco...' : 'Salvando pacote seco...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return 'Carregando dados do pacote seco...';
+    }
+    return 'Processando...';
+  });
 
   form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -72,10 +86,20 @@ export class DryPackageUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getDryPackage(this.id()!).subscribe((pkg) => {
-        this.patchForm(pkg);
-        this.suppliesState.upsert(pkg);
-      });
+      this.loadingTracker
+        .track(this.api.getDryPackage(this.id()!))
+        .subscribe({
+          next: (pkg) => {
+            this.patchForm(pkg);
+            this.suppliesState.upsert(pkg);
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados do pacote. Volte para a listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/supplies']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -102,22 +126,26 @@ export class DryPackageUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.api.updateDryPackage(this.id()!, value).subscribe({
-        next: (updated) => {
-          this.suppliesState.upsert(updated);
-          this.suppliesState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.updateDryPackage(this.id()!, value))
+        .subscribe({
+          next: (updated) => {
+            this.suppliesState.upsert(updated);
+            this.suppliesState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
-      this.api.createDryPackage(value).subscribe({
-        next: () => {
-          this.suppliesState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.createDryPackage(value))
+        .subscribe({
+          next: () => {
+            this.suppliesState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 
