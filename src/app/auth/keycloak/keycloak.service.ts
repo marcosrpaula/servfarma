@@ -36,8 +36,14 @@ export class KeycloakAuthService {
     }
   };
 
-  login(redirectUri?: string) {
-    this.keycloak?.login({ redirectUri });
+  login(options?: string | { redirectUri?: string; prompt?: string }) {
+    if (!this.keycloak) return;
+    if (typeof options === 'string' || !options) {
+      const redirectUri = typeof options === 'string' ? options : undefined;
+      this.keycloak.login(redirectUri ? { redirectUri } : undefined);
+      return;
+    }
+    this.keycloak.login(options);
   }
 
   logout(redirectUri?: string) {

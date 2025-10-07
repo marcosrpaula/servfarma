@@ -5,6 +5,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 
+interface MenuNode extends Omit<MenuItem, 'subItems' | 'childItem' | 'isCollapsed'> {
+  isCollapsed: boolean;
+  subItems?: MenuNode[];
+  childItem?: MenuNode[];
+}
+
 @Component({
   selector: 'app-two-column-sidebar',
   templateUrl: './two-column-sidebar.component.html',
@@ -14,7 +20,7 @@ import { MenuItem } from './menu.model';
 export class TwoColumnSidebarComponent implements OnInit {
   menu: any;
   toggle: any = true;
-  menuItems: MenuItem[] = [];
+  menuItems: MenuNode[] = [];
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
@@ -26,8 +32,7 @@ export class TwoColumnSidebarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Menu Items
-    this.menuItems = MENU;
+    this.menuItems = this.initializeMenu(MENU);
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.initActiveMenu();
@@ -258,5 +263,29 @@ export class TwoColumnSidebarComponent implements OnInit {
    */
   SidebarHide() {
     document.body.classList.remove('vertical-sidebar-enable');
+  }
+
+  private initializeMenu(items?: MenuItem[]): MenuNode[] {
+    if (!items?.length) {
+      return [];
+    }
+    return items.map((item) => this.cloneMenuNode(item));
+  }
+
+  private cloneMenuNode(item: MenuItem): MenuNode {
+    const subItems = this.initializeMenu(item.subItems);
+    const childItems = this.initializeMenu(item.childItem);
+    const { subItems: _, childItem: __, isCollapsed, ...rest } = item;
+    const node: MenuNode = {
+      ...rest,
+      isCollapsed: typeof isCollapsed === 'boolean' ? isCollapsed : true,
+    };
+    if (subItems.length) {
+      node.subItems = subItems;
+    }
+    if (childItems.length) {
+      node.childItem = childItems;
+    }
+    return node;
   }
 }

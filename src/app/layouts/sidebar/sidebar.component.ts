@@ -3,8 +3,15 @@ import { NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { environment } from 'src/environments/environment';
+import { AccessControlService } from '../../core/access-control/access-control.service';
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
+
+interface MenuNode extends Omit<MenuItem, 'subItems' | 'childItem' | 'isCollapsed'> {
+  isCollapsed: boolean;
+  subItems?: MenuNode[];
+  childItem?: MenuNode[];
+}
 
 @Component({
   selector: 'app-sidebar',
@@ -15,20 +22,30 @@ import { MenuItem } from './menu.model';
 export class SidebarComponent implements OnInit {
   menu: any;
   toggle: any = true;
-  menuItems: MenuItem[] = [];
+  menuItems: MenuNode[] = [];
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
   constructor(
     private router: Router,
     public translate: TranslateService,
+    private readonly access: AccessControlService,
   ) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-    // Menu Items
-    this.menuItems = MENU;
+    this.rebuildMenu();
+    this.access.ready$.subscribe((ready) => {
+      if (ready) {
+        this.rebuildMenu();
+      }
+    });
+    this.access.permissions$.subscribe(() => {
+      if (this.access.isReady()) {
+        this.rebuildMenu();
+      }
+    });
     this.router.events.subscribe((event) => {
       if (document.documentElement.getAttribute('data-layout') != 'twocolumn') {
         if (event instanceof NavigationEnd) {
@@ -229,5 +246,50 @@ export class SidebarComponent implements OnInit {
    */
   SidebarHide() {
     document.body.classList.remove('vertical-sidebar-enable');
+  }
+
+  private rebuildMenu(): void {
+    this.menuItems = this.filterMenuItems(MENU);
+    if (document.documentElement.getAttribute('data-layout') !== 'twocolumn') {
+      setTimeout(() => this.initActiveMenu(), 0);
+    }
+  }
+
+  private filterMenuItems(items: MenuItem[] | undefined): MenuNode[] {
+    if (!items?.length) {
+      return [];
+    }
+    return items
+      .map((item) => this.filterMenuItem(item))
+      .filter((item): item is MenuNode => !!item);
+  }
+
+  private filterMenuItem(item: MenuItem): MenuNode | null {
+    const visibleChildren = this.filterMenuItems(item.subItems);
+    const hasVisibleChildren = visibleChildren.length > 0;
+    const visibleChildItems = this.filterMenuItems(item.childItem);
+    const hasVisibleChildItems = visibleChildItems.length > 0;
+    const requirement = item.requiredPermission;
+    const isAllowed = !requirement || (this.access.isReady() && this.access.canAny(requirement));
+
+    if (!isAllowed && !hasVisibleChildren && !hasVisibleChildItems) {
+      return null;
+    }
+
+    const { subItems, childItem, isCollapsed, ...rest } = item;
+    const cloned: MenuNode = {
+      ...rest,
+      isCollapsed: typeof isCollapsed === 'boolean' ? isCollapsed : true,
+    };
+
+    if (hasVisibleChildren) {
+      cloned.subItems = visibleChildren;
+    }
+
+    if (hasVisibleChildItems) {
+      cloned.childItem = visibleChildItems;
+    }
+
+    return cloned;
   }
 }

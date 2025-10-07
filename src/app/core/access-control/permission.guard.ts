@@ -66,12 +66,16 @@ export class PermissionGuard implements CanActivate, CanActivateChild, CanMatch 
         if (!this.hasPendingLoginRedirect()) {
           this.markPendingLoginRedirect();
           const redirectUri = this.buildRedirectUri(targetUrl);
-          this.keycloak.login(redirectUri);
+          const options: { redirectUri?: string; prompt?: string } = { prompt: 'login' };
+          if (redirectUri) {
+            options.redirectUri = redirectUri;
+          }
+          this.keycloak.login(options);
           return false;
         }
 
         this.clearPendingLoginRedirect();
-        return this.router.parseUrl(this.access.getFallbackRoute());
+        return this.router.parseUrl(this.resolveFallbackRoute());
       }),
     );
   }
@@ -107,4 +111,9 @@ export class PermissionGuard implements CanActivate, CanActivateChild, CanMatch 
   }
 
   private static readonly LOGIN_REDIRECT_FLAG = 'permission-guard-login-redirect';
+
+  private resolveFallbackRoute(): string {
+    const fallback = this.access.getFallbackRoute();
+    return fallback && fallback.trim() ? fallback : '/';
+  }
 }

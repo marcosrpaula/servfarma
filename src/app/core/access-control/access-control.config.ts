@@ -1,7 +1,7 @@
 import { AccessControlConfig } from './access-control.types';
 
 export const ACCESS_CONTROL_CONFIG: AccessControlConfig = {
-  fallbackRoute: '/error-404',
+  fallbackRoute: '/',
   apiPrefix: '/api/v1',
   moduleMap: {
     lab: 'laboratories',
