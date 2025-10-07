@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   PackageViewModel,
   RefrigeratedPackageInput,
@@ -26,6 +27,7 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
   private api = inject(SuppliesApiService);
   private suppliesState = inject(SuppliesStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -73,10 +75,20 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getRefrigeratedPackage(this.id()!).subscribe((pkg) => {
-        this.patchForm(pkg);
-        this.suppliesState.upsert(pkg);
-      });
+      this.globalLoader
+        .track(this.api.getRefrigeratedPackage(this.id()!))
+        .subscribe({
+          next: (pkg) => {
+            this.patchForm(pkg);
+            this.suppliesState.upsert(pkg);
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados do pacote. Volte para a listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/supplies']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -103,22 +115,26 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.api.updateRefrigeratedPackage(this.id()!, value).subscribe({
-        next: (updated) => {
-          this.suppliesState.upsert(updated);
-          this.suppliesState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.updateRefrigeratedPackage(this.id()!, value))
+        .subscribe({
+          next: (updated) => {
+            this.suppliesState.upsert(updated);
+            this.suppliesState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
-      this.api.createRefrigeratedPackage(value).subscribe({
-        next: () => {
-          this.suppliesState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.createRefrigeratedPackage(value))
+        .subscribe({
+          next: () => {
+            this.suppliesState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 

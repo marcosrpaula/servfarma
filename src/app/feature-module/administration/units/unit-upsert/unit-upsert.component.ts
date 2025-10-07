@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import { UnitViewModel } from '../../../../shared/models/units';
 import { SharedModule } from '../../../../shared/shared.module';
 import { UnitsStateService } from '../services/units-state.service';
@@ -22,6 +23,7 @@ export class UnitUpsertComponent implements OnInit {
   private api = inject(UnitsApiService);
   private unitsState = inject(UnitsStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -62,10 +64,20 @@ export class UnitUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((unit) => {
-        this.patchForm(unit);
-        this.unitsState.upsert(unit);
-      });
+      this.globalLoader
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (unit) => {
+            this.patchForm(unit);
+            this.unitsState.upsert(unit);
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados da unidade. Volte para a listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/units']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -97,26 +109,30 @@ export class UnitUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.api.update(this.id()!, dto).subscribe({
-        next: (updated) => {
-          this.unitsState.upsert(updated);
-          this.unitsState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.update(this.id()!, dto))
+        .subscribe({
+          next: (updated) => {
+            this.unitsState.upsert(updated);
+            this.unitsState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
       const dto: CreateUnitDto = {
         name: value.name,
         isActive: value.isActive,
       };
-      this.api.create(dto).subscribe({
-        next: () => {
-          this.unitsState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.create(dto))
+        .subscribe({
+          next: () => {
+            this.unitsState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 

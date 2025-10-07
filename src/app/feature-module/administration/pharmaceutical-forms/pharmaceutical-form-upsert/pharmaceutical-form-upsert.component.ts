@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   PharmaceuticalFormDetailsViewModel,
   PharmaceuticalFormViewModel,
@@ -29,6 +30,7 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
   private api = inject(PharmaceuticalFormsApiService);
   private formsState = inject(PharmaceuticalFormsStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -69,10 +71,21 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((form: PharmaceuticalFormDetailsViewModel) => {
-        this.patchForm(form);
-        this.formsState.upsert(form);
-      });
+      this.globalLoader
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (form: PharmaceuticalFormDetailsViewModel) => {
+            this.patchForm(form);
+            this.formsState.upsert(form);
+          },
+          error: () => {
+            const message =
+              'Não foi possível carregar os dados da forma farmacêutica. Acesse novamente a partir da listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/pharmaceutical-forms']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -104,26 +117,30 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.api.update(this.id()!, dto).subscribe({
-        next: (updated) => {
-          this.formsState.upsert(updated);
-          this.formsState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.update(this.id()!, dto))
+        .subscribe({
+          next: (updated) => {
+            this.formsState.upsert(updated);
+            this.formsState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
       const dto: CreatePharmaceuticalFormDto = {
         name: value.name,
         isActive: value.isActive,
       };
-      this.api.create(dto).subscribe({
-        next: () => {
-          this.formsState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.create(dto))
+        .subscribe({
+          next: () => {
+            this.formsState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 

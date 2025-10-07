@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ProjectInput, ProjectViewModel } from '../../../../shared/models/projects';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -38,6 +39,7 @@ export class ProjectUpsertComponent implements OnInit {
   private labsApi = inject(LaboratoriesApiService);
   private projectsState = inject(ProjectsStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -97,10 +99,20 @@ export class ProjectUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((project) => {
-        this.patchForm(project);
-        this.projectsState.upsert(project);
-      });
+      this.globalLoader
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (project) => {
+            this.patchForm(project);
+            this.projectsState.upsert(project);
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados do projeto. Acesse novamente a partir da listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/projects']);
+          },
+        });
       return;
     }
 
@@ -165,22 +177,26 @@ export class ProjectUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.api.update(this.id()!, input).subscribe({
-        next: (updated) => {
-          this.projectsState.upsert(updated);
-          this.projectsState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.update(this.id()!, input))
+        .subscribe({
+          next: (updated) => {
+            this.projectsState.upsert(updated);
+            this.projectsState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
-      this.api.create(input).subscribe({
-        next: () => {
-          this.projectsState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.create(input))
+        .subscribe({
+          next: () => {
+            this.projectsState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 
@@ -212,16 +228,23 @@ export class ProjectUpsertComponent implements OnInit {
   }
 
   private loadLaboratories() {
-    this.labsApi
-      .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
-      .subscribe((res) => {
-        this.labs = res.items || [];
-        if (!this.id() && !this.isReadOnly() && this.labs.length === 1) {
-          const control = this.form.get('laboratoryId');
-          if (!control?.value) {
-            control?.setValue(this.labs[0].id, { emitEvent: false });
+    this.globalLoader
+      .track(this.labsApi.list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.labs = res.items || [];
+          if (!this.id() && !this.isReadOnly() && this.labs.length === 1) {
+            const control = this.form.get('laboratoryId');
+            if (!control?.value) {
+              control?.setValue(this.labs[0].id, { emitEvent: false });
+            }
           }
-        }
+        },
+        error: () => {
+          const message = 'Não foi possível carregar os laboratórios. Atualize a página e tente novamente.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+        },
       });
   }
 

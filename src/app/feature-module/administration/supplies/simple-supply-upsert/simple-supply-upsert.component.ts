@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   SimpleItemInput,
   SimpleItemType,
@@ -33,6 +34,7 @@ export class SimpleSupplyUpsertComponent implements OnInit {
   private api = inject(SuppliesApiService);
   private suppliesState = inject(SuppliesStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -78,10 +80,20 @@ export class SimpleSupplyUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getSimpleItem(this.id()!).subscribe((item) => {
-        this.patchForm(item);
-        this.suppliesState.upsert(item);
-      });
+      this.globalLoader
+        .track(this.api.getSimpleItem(this.id()!))
+        .subscribe({
+          next: (item) => {
+            this.patchForm(item);
+            this.suppliesState.upsert(item);
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados do suprimento. Volte para a listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/supplies']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -108,22 +120,26 @@ export class SimpleSupplyUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.api.updateSimpleItem(this.id()!, value).subscribe({
-        next: (updated) => {
-          this.suppliesState.upsert(updated);
-          this.suppliesState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.updateSimpleItem(this.id()!, value))
+        .subscribe({
+          next: (updated) => {
+            this.suppliesState.upsert(updated);
+            this.suppliesState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
-      this.api.createSimpleItem(value).subscribe({
-        next: () => {
-          this.suppliesState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.createSimpleItem(value))
+        .subscribe({
+          next: () => {
+            this.suppliesState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 

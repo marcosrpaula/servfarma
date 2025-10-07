@@ -7,6 +7,7 @@ import {
   NotificationService,
 } from '../../../../core/notifications/notification.service';
 import { applyServerValidationErrors } from '../../../../shared/common/server-validation.util';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   BankDetailsViewModel,
   BankViewModel,
@@ -31,6 +32,7 @@ export class BankUpsertComponent implements OnInit {
   private readonly api = inject(BanksApiService);
   private readonly banksState = inject(BanksStateService);
   private readonly notifications = inject(NotificationService);
+  private readonly globalLoader = inject(GlobalLoaderService);
 
   readonly id = signal<string | null>(null);
   readonly isReadOnly = signal(false);
@@ -72,10 +74,19 @@ export class BankUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((bank: BankDetailsViewModel) => {
-        this.patchForm(bank);
-        this.banksState.upsert(bank);
-      });
+      this.globalLoader
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (bank: BankDetailsViewModel) => {
+            this.patchForm(bank);
+            this.banksState.upsert(bank);
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados do banco. Volte para a listagem.';
+            this.notifications.error(message);
+            this.router.navigate(['/banks']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -116,27 +127,31 @@ export class BankUpsertComponent implements OnInit {
         bankCode: value.bankCode,
         isActive: value.isActive,
       };
-      this.api.update(this.id()!, dto).subscribe({
-        next: (updated) => {
-          this.banksState.upsert(updated);
-          this.banksState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.update(this.id()!, dto))
+        .subscribe({
+          next: (updated) => {
+            this.banksState.upsert(updated);
+            this.banksState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
       const dto: CreateBankPayload = {
         name: value.name,
         bankCode: value.bankCode,
         isActive: value.isActive,
       };
-      this.api.create(dto).subscribe({
-        next: () => {
-          this.banksState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.create(dto))
+        .subscribe({
+          next: () => {
+            this.banksState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 

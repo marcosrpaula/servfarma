@@ -3,6 +3,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import {
   LaboratoryDetailsViewModel,
   LaboratoryViewModel,
@@ -29,6 +30,7 @@ export class LaboratoryUpsertComponent implements OnInit {
   private api = inject(LaboratoriesApiService);
   private laboratoriesState = inject(LaboratoriesStateService);
   private notifications = inject(NotificationService);
+  private globalLoader = inject(GlobalLoaderService);
 
   id = signal<string | null>(null);
   isReadOnly = signal(false);
@@ -74,10 +76,21 @@ export class LaboratoryUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((laboratory: LaboratoryDetailsViewModel) => {
-        this.patchForm(laboratory);
-        this.laboratoriesState.upsert(laboratory);
-      });
+      this.globalLoader
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (laboratory: LaboratoryDetailsViewModel) => {
+            this.patchForm(laboratory);
+            this.laboratoriesState.upsert(laboratory);
+          },
+          error: () => {
+            const message =
+              'Não foi possível carregar os dados do laboratório. Tente novamente a partir da listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/laboratories']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -112,14 +125,16 @@ export class LaboratoryUpsertComponent implements OnInit {
         observation: value.observation,
         isActive: value.isActive,
       };
-      this.api.update(this.id()!, dto).subscribe({
-        next: (updated) => {
-          this.laboratoriesState.upsert(updated);
-          this.laboratoriesState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.update(this.id()!, dto))
+        .subscribe({
+          next: (updated) => {
+            this.laboratoriesState.upsert(updated);
+            this.laboratoriesState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
       const dto: CreateLaboratoryDto = {
         tradeName: value.tradeName,
@@ -128,13 +143,15 @@ export class LaboratoryUpsertComponent implements OnInit {
         observation: value.observation,
         isActive: value.isActive,
       };
-      this.api.create(dto).subscribe({
-        next: () => {
-          this.laboratoriesState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.globalLoader
+        .track(this.api.create(dto))
+        .subscribe({
+          next: () => {
+            this.laboratoriesState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 
