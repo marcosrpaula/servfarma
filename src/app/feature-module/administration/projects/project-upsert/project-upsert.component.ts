@@ -6,7 +6,9 @@ import { NotificationService } from '../../../../core/notifications/notification
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ProjectInput, ProjectViewModel } from '../../../../shared/models/projects';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
 import { ProjectsStateService } from '../services/projects-state.service';
 import { ProjectsApiService } from '../services/projects.api.service';
@@ -27,7 +29,7 @@ const SERVICE_TYPE_OPTIONS: ServiceTypeOption[] = [
 @Component({
   selector: 'app-project-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './project-upsert.component.html',
   styleUrls: ['./project-upsert.component.scss'],
 })
@@ -58,6 +60,18 @@ export class ProjectUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando projeto...' : 'Salvando projeto...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id() ? 'Carregando dados do projeto...' : 'Carregando dados necessários...';
+    }
+    return 'Processando...';
+  });
   labs: LaboratoryViewModel[] = [];
 
   form: FormGroup = this.fb.group({

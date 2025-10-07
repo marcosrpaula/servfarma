@@ -17,6 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
 import { RoleViewModel } from '../../../../shared/models/users';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { RolesApiService } from '../services/roles.api.service';
 import { CreateUserDto, UpdateUserDto, UsersApiService } from '../services/users.api.service';
 
@@ -30,6 +31,7 @@ import { CreateUserDto, UpdateUserDto, UsersApiService } from '../services/users
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
+    LoadingOverlayComponent,
   ],
   providers: [RolesApiService],
   templateUrl: './user-upsert.component.html',
@@ -52,6 +54,18 @@ export class UserUpsertComponent implements OnInit {
   ]);
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando usuário...' : 'Salvando usuário...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id() ? 'Carregando dados do usuário...' : 'Carregando permissões disponíveis...';
+    }
+    return 'Processando...';
+  });
 
   roles: Array<{ id: string; name: string }> = [];
 

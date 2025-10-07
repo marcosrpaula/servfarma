@@ -8,7 +8,9 @@ import {
   PharmaceuticalFormDetailsViewModel,
   PharmaceuticalFormViewModel,
 } from '../../../../shared/models/pharmaceutical-forms';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { PharmaceuticalFormsStateService } from '../services/pharmaceutical-forms-state.service';
 import {
   CreatePharmaceuticalFormDto,
@@ -19,7 +21,7 @@ import {
 @Component({
   selector: 'app-pharmaceutical-form-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './pharmaceutical-form-upsert.component.html',
   styleUrls: ['./pharmaceutical-form-upsert.component.scss'],
 })
@@ -46,6 +48,20 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
   ]);
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando forma farmacêutica...' : 'Salvando forma farmacêutica...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id()
+        ? 'Carregando dados da forma farmacêutica...'
+        : 'Preparando formulário da forma farmacêutica...';
+    }
+    return 'Processando...';
+  });
 
   form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(100)]],

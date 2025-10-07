@@ -9,14 +9,16 @@ import {
   PackageViewModel,
   SimpleItemViewModel,
 } from '../../../../shared/models/supplies';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SuppliesStateService } from '../services/supplies-state.service';
 import { SuppliesApiService } from '../services/supplies.api.service';
 
 @Component({
   selector: 'app-dry-package-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './dry-package-upsert.component.html',
   styleUrls: ['./dry-package-upsert.component.scss'],
 })
@@ -44,6 +46,18 @@ export class DryPackageUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando pacote seco...' : 'Salvando pacote seco...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return 'Carregando dados do pacote seco...';
+    }
+    return 'Processando...';
+  });
 
   form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],

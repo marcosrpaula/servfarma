@@ -11,13 +11,14 @@ import {
   CourierCompanyViewModel,
 } from '../../../../shared/models/courier-companies';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { CourierCompaniesStateService } from '../services/courier-companies-state.service';
 import { CourierCompaniesApiService } from '../services/courier-companies.api.service';
 
 @Component({
   selector: 'app-courier-company-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './courier-company-upsert.component.html',
   styleUrls: ['./courier-company-upsert.component.scss'],
 })
@@ -46,6 +47,20 @@ export class CourierCompanyUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando transportadora...' : 'Salvando transportadora...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id()
+        ? 'Carregando dados da transportadora...'
+        : 'Carregando recursos da transportadora...';
+    }
+    return 'Processando...';
+  });
 
   states: StateSimpleViewModel[] = [];
   cities: CitySimpleViewModel[] = [];

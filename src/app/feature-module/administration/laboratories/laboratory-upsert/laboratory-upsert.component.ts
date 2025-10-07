@@ -8,6 +8,8 @@ import {
   LaboratoryDetailsViewModel,
   LaboratoryViewModel,
 } from '../../../../shared/models/laboratories';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SharedModule } from '../../../../shared/shared.module';
 import { LaboratoriesStateService } from '../services/laboratories-state.service';
 import {
@@ -19,7 +21,7 @@ import {
 @Component({
   selector: 'app-laboratory-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './laboratory-upsert.component.html',
   styleUrls: ['./laboratory-upsert.component.scss'],
 })
@@ -48,6 +50,22 @@ export class LaboratoryUpsertComponent implements OnInit {
   ]);
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id()
+        ? 'Atualizando laboratório...'
+        : 'Salvando laboratório...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id()
+        ? 'Carregando dados do laboratório...'
+        : 'Preparando formulário do laboratório...';
+    }
+    return 'Processando...';
+  });
 
   form: FormGroup = this.fb.group({
     tradeName: ['', [Validators.required, Validators.maxLength(100)]],

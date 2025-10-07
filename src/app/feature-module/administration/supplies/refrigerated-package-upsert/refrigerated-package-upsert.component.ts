@@ -9,14 +9,16 @@ import {
   RefrigeratedPackageInput,
   SimpleItemViewModel,
 } from '../../../../shared/models/supplies';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SuppliesStateService } from '../services/supplies-state.service';
 import { SuppliesApiService } from '../services/supplies.api.service';
 
 @Component({
   selector: 'app-refrigerated-package-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './refrigerated-package-upsert.component.html',
   styleUrls: ['./refrigerated-package-upsert.component.scss'],
 })
@@ -44,6 +46,18 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando pacote refrigerado...' : 'Salvando pacote refrigerado...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return 'Carregando dados do pacote refrigerado...';
+    }
+    return 'Processando...';
+  });
 
   form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],

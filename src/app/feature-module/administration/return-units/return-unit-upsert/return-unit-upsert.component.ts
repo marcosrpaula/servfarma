@@ -8,7 +8,9 @@ import { GlobalLoaderService } from '../../../../shared/common/global-loader.ser
 import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ReturnUnitInput, ReturnUnitViewModel } from '../../../../shared/models/return-units';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
 import { ReturnUnitsStateService } from '../services/return-units-state.service';
 import { ReturnUnitsApiService } from '../services/return-units.api.service';
@@ -16,7 +18,7 @@ import { ReturnUnitsApiService } from '../services/return-units.api.service';
 @Component({
   selector: 'app-return-unit-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './return-unit-upsert.component.html',
   styleUrls: ['./return-unit-upsert.component.scss'],
 })
@@ -46,6 +48,18 @@ export class ReturnUnitUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando unidade de devolução...' : 'Salvando unidade de devolução...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return 'Carregando dados da unidade de devolução...';
+    }
+    return 'Processando...';
+  });
 
   states: StateSimpleViewModel[] = [];
   cities: CitySimpleViewModel[] = [];

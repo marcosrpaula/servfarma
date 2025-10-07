@@ -24,7 +24,9 @@ import {
   CourierWithCitiesViewModel,
   ServedCityInput,
 } from '../../../../shared/models/couriers';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { CourierCompaniesApiService } from '../../courier-companies/services/courier-companies.api.service';
 import { CouriersStateService } from '../services/couriers-state.service';
 import { CouriersApiService } from '../services/couriers.api.service';
@@ -39,7 +41,7 @@ const requireAtLeastOneSelection = (control: AbstractControl): ValidationErrors 
 @Component({
   selector: 'app-courier-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './courier-upsert.component.html',
 })
 export class CourierUpsertComponent implements OnInit {
