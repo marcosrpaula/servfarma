@@ -17,7 +17,6 @@ import { ToastModule } from 'primeng/toast';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LayoutsModule } from './layouts/layouts.module';
-import { PagesModule } from './pages/pages.module';
 
 import { environment } from '../environments/environment';
 import { KeycloakAuthService } from './auth/keycloak/keycloak.service';
@@ -86,7 +85,6 @@ export function initializeKeycloak(auth: KeycloakAuthService): () => Promise<boo
       ApplicationEffects,
       ApikeyEffects,
     ]),
-    PagesModule,
     ToastModule,
     NgPipesModule,
   ],
