@@ -7,7 +7,9 @@ import { NotificationService } from '../../../../core/notifications/notification
 import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import { LaboratoryViewModel } from '../../../../shared/models/laboratories';
 import { ReturnUnitInput, ReturnUnitViewModel } from '../../../../shared/models/return-units';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { LaboratoriesApiService } from '../../laboratories/services/laboratories.api.service';
 import { ReturnUnitsStateService } from '../services/return-units-state.service';
 import { ReturnUnitsApiService } from '../services/return-units.api.service';
@@ -15,7 +17,7 @@ import { ReturnUnitsApiService } from '../services/return-units.api.service';
 @Component({
   selector: 'app-return-unit-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './return-unit-upsert.component.html',
   styleUrls: ['./return-unit-upsert.component.scss'],
 })
@@ -44,6 +46,18 @@ export class ReturnUnitUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando unidade de devolução...' : 'Salvando unidade de devolução...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return 'Carregando dados da unidade de devolução...';
+    }
+    return 'Processando...';
+  });
 
   states: StateSimpleViewModel[] = [];
   cities: CitySimpleViewModel[] = [];
@@ -96,11 +110,21 @@ export class ReturnUnitUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((unit) => {
-        this.bindUnit(unit);
-        this.returnUnitsState.upsert(unit);
-        this.loadStates();
-      });
+      this.loadingTracker
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (unit) => {
+            this.bindUnit(unit);
+            this.returnUnitsState.upsert(unit);
+            this.loadStates();
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados da unidade de devolução. Volte para a listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/return-units']);
+          },
+        });
       return;
     }
 
@@ -162,22 +186,26 @@ export class ReturnUnitUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.api.update(this.id()!, input).subscribe({
-        next: (updated) => {
-          this.returnUnitsState.upsert(updated);
-          this.returnUnitsState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.update(this.id()!, input))
+        .subscribe({
+          next: (updated) => {
+            this.returnUnitsState.upsert(updated);
+            this.returnUnitsState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
-      this.api.create(input).subscribe({
-        next: () => {
-          this.returnUnitsState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.create(input))
+        .subscribe({
+          next: () => {
+            this.returnUnitsState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 
@@ -215,43 +243,64 @@ export class ReturnUnitUpsertComponent implements OnInit {
   }
 
   private loadStates() {
-    this.locationsApi
-      .listStates({ pageSize: 100, orderBy: 'name', ascending: true })
-      .subscribe((res) => {
-        this.states = res.items || [];
-        if (this.pendingStateAbbreviation) {
-          const state = this.states.find((s) => s.abbreviation === this.pendingStateAbbreviation);
-          if (state) {
-            this.form.get('address.stateId')?.setValue(state.id, { emitEvent: false });
-            this.loadCities(state, true);
+    this.loadingTracker
+      .track(this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.states = res.items || [];
+          if (this.pendingStateAbbreviation) {
+            const state = this.states.find((s) => s.abbreviation === this.pendingStateAbbreviation);
+            if (state) {
+              this.form.get('address.stateId')?.setValue(state.id, { emitEvent: false });
+              this.loadCities(state, true);
+            }
+            this.pendingStateAbbreviation = null;
           }
-          this.pendingStateAbbreviation = null;
-        }
+        },
+        error: () => {
+          const message = 'Não foi possível carregar os estados. Atualize e tente novamente.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+        },
       });
   }
 
   private loadCities(state: StateSimpleViewModel, preserveSelection = false) {
-    this.locationsApi
-      .listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true })
-      .subscribe((res) => {
-        this.cities = res.items || [];
-        if (preserveSelection && this.pendingCityId) {
-          const exists = this.cities.some((c) => c.id === this.pendingCityId);
-          if (exists) {
-            this.form.get('address.cityId')?.setValue(this.pendingCityId, { emitEvent: false });
+    this.loadingTracker
+      .track(this.locationsApi.listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.cities = res.items || [];
+          if (preserveSelection && this.pendingCityId) {
+            const exists = this.cities.some((c) => c.id === this.pendingCityId);
+            if (exists) {
+              this.form.get('address.cityId')?.setValue(this.pendingCityId, { emitEvent: false });
+            }
+            this.pendingCityId = null;
+          } else {
+            this.form.get('address.cityId')?.setValue('', { emitEvent: false });
           }
-          this.pendingCityId = null;
-        } else {
-          this.form.get('address.cityId')?.setValue('', { emitEvent: false });
-        }
+        },
+        error: () => {
+          const message = 'Não foi possível carregar as cidades selecionadas. Tente novamente.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+        },
       });
   }
 
   private loadLabs() {
-    this.labsApi
-      .list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true })
-      .subscribe((res) => {
-        this.labs = res.items || [];
+    this.loadingTracker
+      .track(this.labsApi.list({ page: 1, pageSize: 100, orderBy: 'trade_name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.labs = res.items || [];
+        },
+        error: () => {
+          const message = 'Não foi possível carregar os laboratórios. Atualize a página e tente novamente.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+        },
       });
   }
 

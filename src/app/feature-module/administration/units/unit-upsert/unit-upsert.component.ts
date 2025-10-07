@@ -4,14 +4,16 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { UnitViewModel } from '../../../../shared/models/units';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { UnitsStateService } from '../services/units-state.service';
 import { CreateUnitDto, UnitsApiService, UpdateUnitDto } from '../services/units.api.service';
 
 @Component({
   selector: 'app-unit-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './unit-upsert.component.html',
   styleUrls: ['./unit-upsert.component.scss'],
 })
@@ -37,6 +39,18 @@ export class UnitUpsertComponent implements OnInit {
   ]);
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando unidade...' : 'Salvando unidade...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id() ? 'Carregando dados da unidade...' : 'Preparando formulário da unidade...';
+    }
+    return 'Processando...';
+  });
 
   form: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -62,10 +76,20 @@ export class UnitUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((unit) => {
-        this.patchForm(unit);
-        this.unitsState.upsert(unit);
-      });
+      this.loadingTracker
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (unit) => {
+            this.patchForm(unit);
+            this.unitsState.upsert(unit);
+          },
+          error: () => {
+            const message = 'Não foi possível carregar os dados da unidade. Volte para a listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/units']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -97,26 +121,30 @@ export class UnitUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.api.update(this.id()!, dto).subscribe({
-        next: (updated) => {
-          this.unitsState.upsert(updated);
-          this.unitsState.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.update(this.id()!, dto))
+        .subscribe({
+          next: (updated) => {
+            this.unitsState.upsert(updated);
+            this.unitsState.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
       const dto: CreateUnitDto = {
         name: value.name,
         isActive: value.isActive,
       };
-      this.api.create(dto).subscribe({
-        next: () => {
-          this.unitsState.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.create(dto))
+        .subscribe({
+          next: () => {
+            this.unitsState.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 

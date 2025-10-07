@@ -23,7 +23,9 @@ import {
   CourierWithCitiesViewModel,
   ServedCityInput,
 } from '../../../../shared/models/couriers';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { CourierCompaniesApiService } from '../../courier-companies/services/courier-companies.api.service';
 import { CouriersStateService } from '../services/couriers-state.service';
 import { CouriersApiService } from '../services/couriers.api.service';
@@ -38,7 +40,7 @@ const requireAtLeastOneSelection = (control: AbstractControl): ValidationErrors 
 @Component({
   selector: 'app-courier-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './courier-upsert.component.html',
 })
 export class CourierUpsertComponent implements OnInit {
@@ -66,7 +68,18 @@ export class CourierUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
-  isLoading = signal(false);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando entregador...' : 'Salvando entregador...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return 'Carregando dados do entregador...';
+    }
+    return 'Processando...';
+  });
 
   states: StateSimpleViewModel[] = [];
   cities: CitySimpleViewModel[] = [];
@@ -146,11 +159,16 @@ export class CourierUpsertComponent implements OnInit {
       }
       const state = this.states.find((s) => s.id === stateId);
       if (state) {
-        this.locationsApi
-          .listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true })
-          .subscribe((res) => {
-            this.citySelectorCities = res.items || [];
-            this.citySelector.get('cityId')?.setValue('', { emitEvent: false });
+        this.loadingTracker
+          .track(this.locationsApi.listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true }))
+          .subscribe({
+            next: (res) => {
+              this.citySelectorCities = res.items || [];
+              this.citySelector.get('cityId')?.setValue('', { emitEvent: false });
+            },
+            error: () => {
+              this.notifications.error('Não foi possível carregar as cidades disponíveis.');
+            },
           });
       }
     });
@@ -173,19 +191,33 @@ export class CourierUpsertComponent implements OnInit {
     if (!stateId || !cityId || !this.id()) return;
 
     const payload: ServedCityInput = { cityIds: [cityId] };
-    this.api.addServedCities(this.id()!, payload).subscribe((courier) => {
-      this.updateServedCities(courier as CourierWithCitiesViewModel);
-      this.citySelector.reset();
-      this.citySelectorCities = [];
-    });
+    this.loadingTracker
+      .track(this.api.addServedCities(this.id()!, payload))
+      .subscribe({
+        next: (courier) => {
+          this.updateServedCities(courier as CourierWithCitiesViewModel);
+          this.citySelector.reset();
+          this.citySelectorCities = [];
+        },
+        error: () => {
+          this.notifications.error('Não foi possível adicionar a cidade atendida.');
+        },
+      });
   }
 
   removeServedCity(cityId: string) {
     if (this.isReadOnly() || !this.id()) return;
     const payload: ServedCityInput = { cityIds: [cityId] };
-    this.api.removeServedCities(this.id()!, payload).subscribe((courier) => {
-      this.updateServedCities(courier as CourierWithCitiesViewModel);
-    });
+    this.loadingTracker
+      .track(this.api.removeServedCities(this.id()!, payload))
+      .subscribe({
+        next: (courier) => {
+          this.updateServedCities(courier as CourierWithCitiesViewModel);
+        },
+        error: () => {
+          this.notifications.error('Não foi possível remover a cidade atendida.');
+        },
+      });
   }
 
   save() {
@@ -259,23 +291,27 @@ export class CourierUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.api.update(this.id()!, input).subscribe({
-        next: (updated) => {
-          this.state.upsert(updated);
-          this.state.updateListItem(updated);
-          this.updateServedCities(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.update(this.id()!, input))
+        .subscribe({
+          next: (updated) => {
+            this.state.upsert(updated);
+            this.state.updateListItem(updated);
+            this.updateServedCities(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
-      this.api.create(input).subscribe({
-        next: () => {
-          this.state.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.create(input))
+        .subscribe({
+          next: () => {
+            this.state.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 
@@ -285,21 +321,23 @@ export class CourierUpsertComponent implements OnInit {
 
   private fetchCourier() {
     if (!this.id()) return;
-    this.isLoading.set(true);
-    this.api.getById(this.id()!).subscribe({
-      next: (courier) => {
-        this.state.upsert(courier);
-        this.applyCourier(courier);
-        if (this.isReadOnly()) {
-          this.form.disable({ emitEvent: false });
-          this.citySelector.disable({ emitEvent: false });
-        }
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.isLoading.set(false);
-      },
-    });
+    this.loadingTracker
+      .track(this.api.getById(this.id()!))
+      .subscribe({
+        next: (courier) => {
+          this.state.upsert(courier);
+          this.applyCourier(courier);
+          if (this.isReadOnly()) {
+            this.form.disable({ emitEvent: false });
+            this.citySelector.disable({ emitEvent: false });
+          }
+        },
+        error: () => {
+          const message = 'Não foi possível carregar os dados do entregador. Volte para a listagem.';
+          this.notifications.error(message);
+          this.router.navigate(['/couriers']);
+        },
+      });
   }
 
   private applyCourier(courier: CourierViewModel | CourierWithCitiesViewModel): void {
@@ -400,39 +438,49 @@ export class CourierUpsertComponent implements OnInit {
   }
 
   private loadStates() {
-    this.locationsApi
-      .listStates({ pageSize: 100, orderBy: 'name', ascending: true })
-      .subscribe((res) => {
-        this.states = res.items || [];
-        if (this.pendingAddressStateAbbreviation) {
-          const state = this.states.find(
-            (s) => s.abbreviation === this.pendingAddressStateAbbreviation,
-          );
-          if (state) {
-            this.form.get('address.stateId')?.setValue(state.id, { emitEvent: false });
-            this.loadAddressCities(state, true);
+    this.loadingTracker
+      .track(this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.states = res.items || [];
+          if (this.pendingAddressStateAbbreviation) {
+            const state = this.states.find(
+              (s) => s.abbreviation === this.pendingAddressStateAbbreviation,
+            );
+            if (state) {
+              this.form.get('address.stateId')?.setValue(state.id, { emitEvent: false });
+              this.loadAddressCities(state, true);
+            }
+            this.pendingAddressStateAbbreviation = null;
           }
-          this.pendingAddressStateAbbreviation = null;
-        }
+        },
+        error: () => {
+          this.notifications.error('Não foi possível carregar os estados.');
+        },
       });
   }
 
   private loadAddressCities(state: StateSimpleViewModel, preserveSelection = false) {
-    this.locationsApi
-      .listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true })
-      .subscribe((res) => {
-        this.cities = res.items || [];
-        if (preserveSelection && this.pendingAddressCityId) {
-          const exists = this.cities.some((c) => c.id === this.pendingAddressCityId);
-          if (exists) {
-            this.form
-              .get('address.cityId')
-              ?.setValue(this.pendingAddressCityId, { emitEvent: false });
+    this.loadingTracker
+      .track(this.locationsApi.listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.cities = res.items || [];
+          if (preserveSelection && this.pendingAddressCityId) {
+            const exists = this.cities.some((c) => c.id === this.pendingAddressCityId);
+            if (exists) {
+              this.form
+                .get('address.cityId')
+                ?.setValue(this.pendingAddressCityId, { emitEvent: false });
+            }
+            this.pendingAddressCityId = null;
+          } else {
+            this.form.get('address.cityId')?.setValue('', { emitEvent: false });
           }
-          this.pendingAddressCityId = null;
-        } else {
-          this.form.get('address.cityId')?.setValue('', { emitEvent: false });
-        }
+        },
+        error: () => {
+          this.notifications.error('Não foi possível carregar as cidades do endereço.');
+        },
       });
   }
 
@@ -441,10 +489,15 @@ export class CourierUpsertComponent implements OnInit {
   }
 
   private loadCompanies() {
-    this.courierCompaniesApi
-      .list({ page: 1, pageSize: 100, orderBy: 'name', ascending: true })
-      .subscribe((res) => {
-        this.companyOptions = res.items || [];
+    this.loadingTracker
+      .track(this.courierCompaniesApi.list({ page: 1, pageSize: 100, orderBy: 'name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.companyOptions = res.items || [];
+        },
+        error: () => {
+          this.notifications.error('Não foi possível carregar as transportadoras disponíveis.');
+        },
       });
   }
 }

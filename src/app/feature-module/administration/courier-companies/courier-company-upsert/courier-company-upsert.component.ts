@@ -4,19 +4,21 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { CitySimpleViewModel, StateSimpleViewModel } from '../../../../shared/models/addresses';
 import {
   CourierCompanyInput,
   CourierCompanyViewModel,
 } from '../../../../shared/models/courier-companies';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { CourierCompaniesStateService } from '../services/courier-companies-state.service';
 import { CourierCompaniesApiService } from '../services/courier-companies.api.service';
 
 @Component({
   selector: 'app-courier-company-upsert',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, LoadingOverlayComponent],
   templateUrl: './courier-company-upsert.component.html',
   styleUrls: ['./courier-company-upsert.component.scss'],
 })
@@ -44,6 +46,20 @@ export class CourierCompanyUpsertComponent implements OnInit {
 
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando transportadora...' : 'Salvando transportadora...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id()
+        ? 'Carregando dados da transportadora...'
+        : 'Carregando recursos da transportadora...';
+    }
+    return 'Processando...';
+  });
 
   states: StateSimpleViewModel[] = [];
   cities: CitySimpleViewModel[] = [];
@@ -92,10 +108,21 @@ export class CourierCompanyUpsertComponent implements OnInit {
         return;
       }
 
-      this.api.getById(this.id()!).subscribe((company) => {
-        this.applyCompany(company);
-        this.state.upsert(company);
-      });
+      this.loadingTracker
+        .track(this.api.getById(this.id()!))
+        .subscribe({
+          next: (company) => {
+            this.applyCompany(company);
+            this.state.upsert(company);
+          },
+          error: () => {
+            const message =
+              'Não foi possível carregar os dados da transportadora. Tente novamente a partir da listagem.';
+            this.errorMessage.set(message);
+            this.notifications.error(message);
+            this.router.navigate(['/courier-companies']);
+          },
+        });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -175,22 +202,26 @@ export class CourierCompanyUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.api.update(this.id()!, input).subscribe({
-        next: (updated) => {
-          this.state.upsert(updated);
-          this.state.updateListItem(updated);
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.update(this.id()!, input))
+        .subscribe({
+          next: (updated) => {
+            this.state.upsert(updated);
+            this.state.updateListItem(updated);
+            navigateToList();
+          },
+          error: failure,
+        });
     } else {
-      this.api.create(input).subscribe({
-        next: () => {
-          this.state.clearListState();
-          navigateToList();
-        },
-        error: failure,
-      });
+      this.loadingTracker
+        .track(this.api.create(input))
+        .subscribe({
+          next: () => {
+            this.state.clearListState();
+            navigateToList();
+          },
+          error: failure,
+        });
     }
   }
 
@@ -289,28 +320,48 @@ export class CourierCompanyUpsertComponent implements OnInit {
   }
 
   private loadStates() {
-    this.locationsApi
-      .listStates({ pageSize: 100, orderBy: 'name', ascending: true })
-      .subscribe((res) => {
-        this.states = res.items || [];
-        this.applyPendingAddressSelection();
+    this.loadingTracker
+      .track(this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }))
+      .subscribe({
+        next: (res) => {
+          this.states = res.items || [];
+          this.applyPendingAddressSelection();
+        },
+        error: () => {
+          const message = 'Não foi possível carregar os estados. Atualize a página e tente novamente.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+        },
       });
   }
 
   private loadCities(state: StateSimpleViewModel, preserveSelection = false) {
-    this.locationsApi
-      .listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true })
-      .subscribe((res) => {
-        this.cities = res.items || [];
-        if (preserveSelection && this.pendingCityId) {
-          const exists = this.cities.some((c) => c.id === this.pendingCityId);
-          if (exists) {
-            this.form.get('address.cityId')?.setValue(this.pendingCityId, { emitEvent: false });
+    this.loadingTracker
+      .track(
+        this.locationsApi.listCities(state.abbreviation, {
+          pageSize: 200,
+          orderBy: 'name',
+          ascending: true,
+        }),
+      )
+      .subscribe({
+        next: (res) => {
+          this.cities = res.items || [];
+          if (preserveSelection && this.pendingCityId) {
+            const exists = this.cities.some((c) => c.id === this.pendingCityId);
+            if (exists) {
+              this.form.get('address.cityId')?.setValue(this.pendingCityId, { emitEvent: false });
+            }
+            this.pendingCityId = null;
+          } else {
+            this.form.get('address.cityId')?.setValue('', { emitEvent: false });
           }
-          this.pendingCityId = null;
-        } else {
-          this.form.get('address.cityId')?.setValue('', { emitEvent: false });
-        }
+        },
+        error: () => {
+          const message = 'Não foi possível carregar as cidades selecionadas. Tente novamente.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+        },
       });
   }
 }

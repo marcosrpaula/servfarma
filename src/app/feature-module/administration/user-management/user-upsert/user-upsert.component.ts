@@ -14,8 +14,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { RoleViewModel } from '../../../../shared/models/users';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { RolesApiService } from '../services/roles.api.service';
 import { CreateUserDto, UpdateUserDto, UsersApiService } from '../services/users.api.service';
 
@@ -29,6 +31,7 @@ import { CreateUserDto, UpdateUserDto, UsersApiService } from '../services/users
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
+    LoadingOverlayComponent,
   ],
   providers: [RolesApiService],
   templateUrl: './user-upsert.component.html',
@@ -50,6 +53,18 @@ export class UserUpsertComponent implements OnInit {
   ]);
   isSaving = signal(false);
   errorMessage = signal<string | null>(null);
+  private loadingTracker = createLoadingTracker();
+  readonly isLoading = this.loadingTracker.isLoading;
+  readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
+  readonly loadingMessage = computed(() => {
+    if (this.isSaving()) {
+      return this.id() ? 'Atualizando usuário...' : 'Salvando usuário...';
+    }
+    if (this.loadingTracker.isLoading()) {
+      return this.id() ? 'Carregando dados do usuário...' : 'Carregando permissões disponíveis...';
+    }
+    return 'Processando...';
+  });
 
   roles: Array<{ id: string; name: string }> = [];
 
@@ -75,71 +90,86 @@ export class UserUpsertComponent implements OnInit {
   ngOnInit(): void {
     this.id.set(this.route.snapshot.paramMap.get('id'));
 
-    this.rolesApi
-      .list({ page: 1, pageSize: 200, orderBy: 'name', ascending: true })
-      .subscribe(({ items }) => {
-        const groups = new Map<string, { readId?: string; writeId?: string }>();
-        for (const r of items) {
-          const [mod, action] = (r.name || '').split(':');
-          if (!mod || !action) continue;
-          const g = groups.get(mod) ?? {};
-          if (action.toLowerCase() === 'read') g.readId = r.id;
-          if (action.toLowerCase() === 'admin' || action.toLowerCase() === 'write')
-            g.writeId = r.id;
-          groups.set(mod, g);
-        }
-        this.permissionGroups = Array.from(groups.entries())
-          .map(([module, v]) => ({ module, ...v }))
-          .sort((a, b) => a.module.localeCompare(b.module));
+    this.loadingTracker
+      .track(this.rolesApi.list({ page: 1, pageSize: 200, orderBy: 'name', ascending: true }))
+      .subscribe({
+        next: ({ items }) => {
+          const groups = new Map<string, { readId?: string; writeId?: string }>();
+          for (const r of items) {
+            const [mod, action] = (r.name || '').split(':');
+            if (!mod || !action) continue;
+            const g = groups.get(mod) ?? {};
+            if (action.toLowerCase() === 'read') g.readId = r.id;
+            if (action.toLowerCase() === 'admin' || action.toLowerCase() === 'write')
+              g.writeId = r.id;
+            groups.set(mod, g);
+          }
+          this.permissionGroups = Array.from(groups.entries())
+            .map(([module, v]) => ({ module, ...v }))
+            .sort((a, b) => a.module.localeCompare(b.module));
 
-        const controls = this.permissionGroups.map((pg) =>
-          this.fb.group(
-            {
-              module: [pg.module],
-              enabled: [false],
-              level: [''],
-            },
-            { validators: [this.requireLevelWhenEnabled()] },
-          ),
-        );
-        const arr = this.fb.array(controls, [this.requireAtLeastOnePermission()]);
-        this.form.setControl('permissions', arr);
+          const controls = this.permissionGroups.map((pg) =>
+            this.fb.group(
+              {
+                module: [pg.module],
+                enabled: [false],
+                level: [''],
+              },
+              { validators: [this.requireLevelWhenEnabled()] },
+            ),
+          );
+          const arr = this.fb.array(controls, [this.requireAtLeastOnePermission()]);
+          this.form.setControl('permissions', arr);
 
-        if (this.id()) this.load(this.id()!);
+          if (this.id()) this.load(this.id()!);
 
-        this.cdr.detectChanges();
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          const message = 'Não foi possível carregar as permissões. Atualize a página e tente novamente.';
+          this.errorMessage.set(message);
+        },
       });
   }
 
   private load(id: string) {
-    this.api.getById(id).subscribe((u: any) => {
-      this.form.patchValue({
-        name: u.name ?? '',
-        email: u.email ?? '',
-        isActive: u.isActive ?? true,
-      });
+    this.loadingTracker
+      .track(this.api.getById(id))
+      .subscribe({
+        next: (u: any) => {
+          this.form.patchValue({
+            name: u.name ?? '',
+            email: u.email ?? '',
+            isActive: u.isActive ?? true,
+          });
 
-      // Marca checkboxes de acordo com as roles do usuÃÂ¡rio
-      if (Array.isArray(u.permissions)) {
-        const userRoleNames: string[] = u.permissions
-          .map((p: RoleViewModel) => p?.name)
-          .filter(Boolean);
-        this.permissionGroups.forEach((pg, i) => {
-          const group = this.permissionsArray.at(i) as FormGroup;
-          const hasRead = userRoleNames.some((n) => n === `${pg.module}:read`);
-          const hasWrite = userRoleNames.some(
-            (n) => n === `${pg.module}:admin` || n === `${pg.module}:write`,
-          );
-          if (hasWrite) group.get('level')?.setValue('write', { emitEvent: false });
-          else if (hasRead) group.get('level')?.setValue('read', { emitEvent: false });
+          // Marca checkboxes de acordo com as roles do usuário
+          if (Array.isArray(u.permissions)) {
+            const userRoleNames: string[] = u.permissions
+              .map((p: RoleViewModel) => p?.name)
+              .filter(Boolean);
+            this.permissionGroups.forEach((pg, i) => {
+              const group = this.permissionsArray.at(i) as FormGroup;
+              const hasRead = userRoleNames.some((n) => n === `${pg.module}:read`);
+              const hasWrite = userRoleNames.some(
+                (n) => n === `${pg.module}:admin` || n === `${pg.module}:write`,
+              );
+              if (hasWrite) group.get('level')?.setValue('write', { emitEvent: false });
+              else if (hasRead) group.get('level')?.setValue('read', { emitEvent: false });
 
-          const enabled = hasRead || hasWrite;
-          group.get('enabled')?.setValue(enabled, { emitEvent: false });
-        });
+              const enabled = hasRead || hasWrite;
+              group.get('enabled')?.setValue(enabled, { emitEvent: false });
+            });
 
-        // garante atualizaÃÂ§ÃÂ£o da marcaÃÂ§ÃÂ£o na view
-        this.cdr.detectChanges();
-      }
+            // garante atualização da marcação na view
+            this.cdr.detectChanges();
+          }
+        },
+        error: () => {
+          const message = 'Não foi possível carregar os dados do usuário. Volte para a listagem e tente novamente.';
+          this.errorMessage.set(message);
+          this.router.navigate(['/user-management/users']);
+        },
     });
   }
 
@@ -171,7 +201,7 @@ export class UserUpsertComponent implements OnInit {
         permissions,
         isActive: v.isActive,
       };
-      this.api.update(this.id()!, dto).subscribe({ next: done, error: fail });
+      this.loadingTracker.track(this.api.update(this.id()!, dto)).subscribe({ next: done, error: fail });
     } else {
       const dto: CreateUserDto = {
         name: v.name,
@@ -179,7 +209,7 @@ export class UserUpsertComponent implements OnInit {
         permissions,
         isActive: v.isActive,
       };
-      this.api.create(dto).subscribe({ next: done, error: fail });
+      this.loadingTracker.track(this.api.create(dto)).subscribe({ next: done, error: fail });
     }
   }
 
