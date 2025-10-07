@@ -1,6 +1,5 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { KeycloakAuthService } from '../../auth/keycloak/keycloak.service';
 import { AuthenticationService } from '../../core/services/auth.service';
 import { TokenStorageService } from '../../core/services/token-storage.service';
@@ -25,7 +24,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private authService: AuthenticationService,
-    private router: Router,
     private tokenStorage: TokenStorageService,
     private keycloak: KeycloakAuthService,
   ) {}
@@ -239,7 +237,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    this.keycloak.logout(window.location.origin);
   }
 
   windowScroll(): void {
