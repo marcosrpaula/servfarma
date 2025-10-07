@@ -4,12 +4,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import {
   DryPackageInput,
   PackageViewModel,
   SimpleItemViewModel,
 } from '../../../../shared/models/supplies';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SuppliesStateService } from '../services/supplies-state.service';
@@ -88,8 +88,8 @@ export class DryPackageUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getDryPackage(this.id()!))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.getDryPackage(this.id()!)))
         .subscribe({
           next: (pkg) => {
             this.patchForm(pkg);
@@ -128,8 +128,8 @@ export class DryPackageUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.globalLoader
-        .track(this.api.updateDryPackage(this.id()!, value))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.updateDryPackage(this.id()!, value)))
         .subscribe({
           next: (updated) => {
             this.suppliesState.upsert(updated);
@@ -139,8 +139,8 @@ export class DryPackageUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.globalLoader
-        .track(this.api.createDryPackage(value))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.createDryPackage(value)))
         .subscribe({
           next: () => {
             this.suppliesState.clearListState();

@@ -4,12 +4,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import {
   PackageViewModel,
   RefrigeratedPackageInput,
   SimpleItemViewModel,
 } from '../../../../shared/models/supplies';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SuppliesStateService } from '../services/supplies-state.service';
@@ -89,8 +89,8 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getRefrigeratedPackage(this.id()!))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.getRefrigeratedPackage(this.id()!)))
         .subscribe({
           next: (pkg) => {
             this.patchForm(pkg);
@@ -129,8 +129,8 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.globalLoader
-        .track(this.api.updateRefrigeratedPackage(this.id()!, value))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.updateRefrigeratedPackage(this.id()!, value)))
         .subscribe({
           next: (updated) => {
             this.suppliesState.upsert(updated);
@@ -140,8 +140,8 @@ export class RefrigeratedPackageUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.globalLoader
-        .track(this.api.createRefrigeratedPackage(value))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.createRefrigeratedPackage(value)))
         .subscribe({
           next: () => {
             this.suppliesState.clearListState();

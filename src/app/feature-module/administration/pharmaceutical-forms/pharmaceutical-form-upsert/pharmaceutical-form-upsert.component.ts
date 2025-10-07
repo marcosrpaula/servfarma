@@ -4,11 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import {
   PharmaceuticalFormDetailsViewModel,
   PharmaceuticalFormViewModel,
 } from '../../../../shared/models/pharmaceutical-forms';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { PharmaceuticalFormsStateService } from '../services/pharmaceutical-forms-state.service';
@@ -87,21 +87,19 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getById(this.id()!))
-        .subscribe({
-          next: (form: PharmaceuticalFormDetailsViewModel) => {
-            this.patchForm(form);
-            this.formsState.upsert(form);
-          },
-          error: () => {
-            const message =
-              'Não foi possível carregar os dados da forma farmacêutica. Acesse novamente a partir da listagem.';
-            this.errorMessage.set(message);
-            this.notifications.error(message);
-            this.router.navigate(['/pharmaceutical-forms']);
-          },
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.getById(this.id()!))).subscribe({
+        next: (form: PharmaceuticalFormDetailsViewModel) => {
+          this.patchForm(form);
+          this.formsState.upsert(form);
+        },
+        error: () => {
+          const message =
+            'Não foi possível carregar os dados da forma farmacêutica. Acesse novamente a partir da listagem.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+          this.router.navigate(['/pharmaceutical-forms']);
+        },
+      });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -133,8 +131,8 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.globalLoader
-        .track(this.api.update(this.id()!, dto))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.update(this.id()!, dto)))
         .subscribe({
           next: (updated) => {
             this.formsState.upsert(updated);
@@ -148,15 +146,13 @@ export class PharmaceuticalFormUpsertComponent implements OnInit {
         name: value.name,
         isActive: value.isActive,
       };
-      this.globalLoader
-        .track(this.api.create(dto))
-        .subscribe({
-          next: () => {
-            this.formsState.clearListState();
-            navigateToList();
-          },
-          error: failure,
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.create(dto))).subscribe({
+        next: () => {
+          this.formsState.clearListState();
+          navigateToList();
+        },
+        error: failure,
+      });
     }
   }
 

@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LocationsApiService } from '../../../../core/locations/locations.api.service';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import {
   CitySimpleViewModel,
   CityViewModel,
@@ -24,7 +25,6 @@ import {
   CourierWithCitiesViewModel,
   ServedCityInput,
 } from '../../../../shared/models/couriers';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import { SharedModule } from '../../../../shared/shared.module';
 import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { CourierCompaniesApiService } from '../../courier-companies/services/courier-companies.api.service';
@@ -163,8 +163,16 @@ export class CourierUpsertComponent implements OnInit {
       }
       const state = this.states.find((s) => s.id === stateId);
       if (state) {
-        this.globalLoader
-          .track(this.locationsApi.listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true }))
+        this.loadingTracker
+          .track(
+            this.globalLoader.track(
+              this.locationsApi.listCities(state.abbreviation, {
+                pageSize: 200,
+                orderBy: 'name',
+                ascending: true,
+              }),
+            ),
+          )
           .subscribe({
             next: (res) => {
               this.citySelectorCities = res.items || [];
@@ -195,8 +203,8 @@ export class CourierUpsertComponent implements OnInit {
     if (!stateId || !cityId || !this.id()) return;
 
     const payload: ServedCityInput = { cityIds: [cityId] };
-    this.globalLoader
-      .track(this.api.addServedCities(this.id()!, payload))
+    this.loadingTracker
+      .track(this.globalLoader.track(this.api.addServedCities(this.id()!, payload)))
       .subscribe({
         next: (courier) => {
           this.updateServedCities(courier as CourierWithCitiesViewModel);
@@ -212,8 +220,8 @@ export class CourierUpsertComponent implements OnInit {
   removeServedCity(cityId: string) {
     if (this.isReadOnly() || !this.id()) return;
     const payload: ServedCityInput = { cityIds: [cityId] };
-    this.globalLoader
-      .track(this.api.removeServedCities(this.id()!, payload))
+    this.loadingTracker
+      .track(this.globalLoader.track(this.api.removeServedCities(this.id()!, payload)))
       .subscribe({
         next: (courier) => {
           this.updateServedCities(courier as CourierWithCitiesViewModel);
@@ -295,8 +303,8 @@ export class CourierUpsertComponent implements OnInit {
 
     this.isSaving.set(true);
     if (this.id()) {
-      this.globalLoader
-        .track(this.api.update(this.id()!, input))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.update(this.id()!, input)))
         .subscribe({
           next: (updated) => {
             this.state.upsert(updated);
@@ -307,15 +315,13 @@ export class CourierUpsertComponent implements OnInit {
           error: failure,
         });
     } else {
-      this.globalLoader
-        .track(this.api.create(input))
-        .subscribe({
-          next: () => {
-            this.state.clearListState();
-            navigateToList();
-          },
-          error: failure,
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.create(input))).subscribe({
+        next: () => {
+          this.state.clearListState();
+          navigateToList();
+        },
+        error: failure,
+      });
     }
   }
 
@@ -325,23 +331,21 @@ export class CourierUpsertComponent implements OnInit {
 
   private fetchCourier() {
     if (!this.id()) return;
-    this.globalLoader
-      .track(this.api.getById(this.id()!))
-      .subscribe({
-        next: (courier) => {
-          this.state.upsert(courier);
-          this.applyCourier(courier);
-          if (this.isReadOnly()) {
-            this.form.disable({ emitEvent: false });
-            this.citySelector.disable({ emitEvent: false });
-          }
-        },
-        error: () => {
-          const message = 'Não foi possível carregar os dados do entregador. Volte para a listagem.';
-          this.notifications.error(message);
-          this.router.navigate(['/couriers']);
-        },
-      });
+    this.loadingTracker.track(this.globalLoader.track(this.api.getById(this.id()!))).subscribe({
+      next: (courier) => {
+        this.state.upsert(courier);
+        this.applyCourier(courier);
+        if (this.isReadOnly()) {
+          this.form.disable({ emitEvent: false });
+          this.citySelector.disable({ emitEvent: false });
+        }
+      },
+      error: () => {
+        const message = 'Não foi possível carregar os dados do entregador. Volte para a listagem.';
+        this.notifications.error(message);
+        this.router.navigate(['/couriers']);
+      },
+    });
   }
 
   private applyCourier(courier: CourierViewModel | CourierWithCitiesViewModel): void {
@@ -442,8 +446,12 @@ export class CourierUpsertComponent implements OnInit {
   }
 
   private loadStates() {
-    this.globalLoader
-      .track(this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.locationsApi.listStates({ pageSize: 100, orderBy: 'name', ascending: true }),
+        ),
+      )
       .subscribe({
         next: (res) => {
           this.states = res.items || [];
@@ -465,8 +473,16 @@ export class CourierUpsertComponent implements OnInit {
   }
 
   private loadAddressCities(state: StateSimpleViewModel, preserveSelection = false) {
-    this.globalLoader
-      .track(this.locationsApi.listCities(state.abbreviation, { pageSize: 200, orderBy: 'name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.locationsApi.listCities(state.abbreviation, {
+            pageSize: 200,
+            orderBy: 'name',
+            ascending: true,
+          }),
+        ),
+      )
       .subscribe({
         next: (res) => {
           this.cities = res.items || [];
@@ -493,8 +509,17 @@ export class CourierUpsertComponent implements OnInit {
   }
 
   private loadCompanies() {
-    this.globalLoader
-      .track(this.courierCompaniesApi.list({ page: 1, pageSize: 100, orderBy: 'name', ascending: true }))
+    this.loadingTracker
+      .track(
+        this.globalLoader.track(
+          this.courierCompaniesApi.list({
+            page: 1,
+            pageSize: 100,
+            orderBy: 'name',
+            ascending: true,
+          }),
+        ),
+      )
       .subscribe({
         next: (res) => {
           this.companyOptions = res.items || [];

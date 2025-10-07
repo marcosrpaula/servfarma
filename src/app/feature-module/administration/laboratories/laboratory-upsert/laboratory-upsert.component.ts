@@ -4,13 +4,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notifications/notification.service';
 import { GlobalLoaderService } from '../../../../shared/common/global-loader.service';
+import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
 import {
   LaboratoryDetailsViewModel,
   LaboratoryViewModel,
 } from '../../../../shared/models/laboratories';
-import { LoadingOverlayComponent } from '../../../../shared/common/loading-overlay/loading-overlay.component';
-import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { SharedModule } from '../../../../shared/shared.module';
+import { createLoadingTracker } from '../../../../shared/utils/loading-tracker';
 import { LaboratoriesStateService } from '../services/laboratories-state.service';
 import {
   CreateLaboratoryDto,
@@ -55,9 +55,7 @@ export class LaboratoryUpsertComponent implements OnInit {
   readonly isBusy = computed(() => this.isSaving() || this.loadingTracker.isLoading());
   readonly loadingMessage = computed(() => {
     if (this.isSaving()) {
-      return this.id()
-        ? 'Atualizando laboratório...'
-        : 'Salvando laboratório...';
+      return this.id() ? 'Atualizando laboratório...' : 'Salvando laboratório...';
     }
     if (this.loadingTracker.isLoading()) {
       return this.id()
@@ -94,21 +92,19 @@ export class LaboratoryUpsertComponent implements OnInit {
         return;
       }
 
-      this.globalLoader
-        .track(this.api.getById(this.id()!))
-        .subscribe({
-          next: (laboratory: LaboratoryDetailsViewModel) => {
-            this.patchForm(laboratory);
-            this.laboratoriesState.upsert(laboratory);
-          },
-          error: () => {
-            const message =
-              'Não foi possível carregar os dados do laboratório. Tente novamente a partir da listagem.';
-            this.errorMessage.set(message);
-            this.notifications.error(message);
-            this.router.navigate(['/laboratories']);
-          },
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.getById(this.id()!))).subscribe({
+        next: (laboratory: LaboratoryDetailsViewModel) => {
+          this.patchForm(laboratory);
+          this.laboratoriesState.upsert(laboratory);
+        },
+        error: () => {
+          const message =
+            'Não foi possível carregar os dados do laboratório. Tente novamente a partir da listagem.';
+          this.errorMessage.set(message);
+          this.notifications.error(message);
+          this.router.navigate(['/laboratories']);
+        },
+      });
     } else if (this.isReadOnly()) {
       this.form.disable({ emitEvent: false });
     }
@@ -143,8 +139,8 @@ export class LaboratoryUpsertComponent implements OnInit {
         observation: value.observation,
         isActive: value.isActive,
       };
-      this.globalLoader
-        .track(this.api.update(this.id()!, dto))
+      this.loadingTracker
+        .track(this.globalLoader.track(this.api.update(this.id()!, dto)))
         .subscribe({
           next: (updated) => {
             this.laboratoriesState.upsert(updated);
@@ -161,15 +157,13 @@ export class LaboratoryUpsertComponent implements OnInit {
         observation: value.observation,
         isActive: value.isActive,
       };
-      this.globalLoader
-        .track(this.api.create(dto))
-        .subscribe({
-          next: () => {
-            this.laboratoriesState.clearListState();
-            navigateToList();
-          },
-          error: failure,
-        });
+      this.loadingTracker.track(this.globalLoader.track(this.api.create(dto))).subscribe({
+        next: () => {
+          this.laboratoriesState.clearListState();
+          navigateToList();
+        },
+        error: failure,
+      });
     }
   }
 
