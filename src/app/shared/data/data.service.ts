@@ -192,6 +192,10 @@ export class DataService {
               requiredPermission: { module: 'user', level: 'read' },
             },
           ],
+          requiredPermission: [
+            { module: 'users', level: 'read' },
+            { module: 'user', level: 'read' },
+          ],
         },
       ],
     },
@@ -364,6 +368,10 @@ export class DataService {
               base: 'roles-permissions',
               requiredPermission: { module: 'user', level: 'read' },
             },
+          ],
+          requiredPermission: [
+            { module: 'users', level: 'read' },
+            { module: 'user', level: 'read' },
           ],
         },
       ],
